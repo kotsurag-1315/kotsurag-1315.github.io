@@ -974,10 +974,20 @@ body.map-page-open { overflow: hidden; }
 }
 .leaflet-control-zoom a:hover { background: var(--bg-alt) !important; }
 .leaflet-control-zoom a.leaflet-disabled { opacity: 0.45; }
-.leaflet-bottom.leaflet-right { margin: 0 14px calc(14px + 96px) 0; }   /* clear bottom nav */
+/* Zoom: always above map-card (card bottom = 102px, card height ~120px → top of card ~222px from bottom) */
+.leaflet-bottom.leaflet-right {
+  margin: 0 !important;
+  bottom: calc(14px + 88px + 130px + 14px) !important; /* nav + card height + gap */
+  right: 14px !important;
+}
+/* When no card open — drop zoom down to just above nav */
+.map-page-inner:not(.map-has-card) .leaflet-bottom.leaflet-right {
+  bottom: calc(14px + 88px + 14px) !important;
+}
 @media (min-width: 900px) {
-  .leaflet-bottom.leaflet-right { margin: 0 14px calc(14px + 96px) 0; }
-  .map-card { right: 14px; } /* restore original */
+  .leaflet-bottom.leaflet-right { bottom: calc(14px + 88px + 14px) !important; right: 14px !important; }
+  .map-page-inner.map-has-card .leaflet-bottom.leaflet-right { bottom: calc(14px + 88px + 14px) !important; }
+  .map-card { right: 14px; }
   .map-card .actions { margin-right: 50px; }
 }
 
@@ -5156,7 +5166,7 @@ function handleGoogleLogin(response) {
     sub: payload.sub,
   };
   // Check if premium user (by email — you can expand this list)
-  const PREMIUM_EMAILS = ['kotsur.a.g@gmail.com'];
+  const PREMIUM_EMAILS = ['kotsur.a.g@gmail.com', 'kirillpescov@gmail.com'];
   STATE.premium = PREMIUM_EMAILS.includes(payload.email);
   saveState();
   // Re-render register page to show profile
@@ -5571,7 +5581,7 @@ function setMapCat(cat) {
   $$('.filter-pill').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
   if (STATE.mapView === 'map') {
     drawMarkers();
-    $('#map-card').classList.remove('active');
+    $('#map-card').classList.remove('active'); document.querySelector('.map-page-inner')?.classList.remove('map-has-card');
   } else {
     renderMapList();
   }
@@ -5585,7 +5595,7 @@ function setCity(cityId) {
   $$('.filter-pill.city').forEach(b => b.classList.toggle('active', b.dataset.city === (STATE.currentCity || '')));
   if (STATE.mapView === 'map') initMap();
   else renderMapList();
-  const card = $('#map-card'); if (card) card.classList.remove('active');
+  const card = $('#map-card'); if (card) { card.classList.remove('active'); document.querySelector('.map-page-inner')?.classList.remove('map-has-card'); }
 }
 
 function setMapView(v) {
@@ -5700,7 +5710,7 @@ function renderMapList() {
             <h4>${escapeHtml(p.name)}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name).replace(/'/g,'')}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined})`}">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')`}">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -5767,7 +5777,7 @@ function renderMapList() {
             <h4>${escapeHtml(p.name)}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name).replace(/'/g,'')}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined})`}">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')`}">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -5821,7 +5831,7 @@ function renderMapList() {
           <h4>${escapeHtml(p.name)}</h4>
         </div>
         <div class="actions">
-          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name).replace(/'/g,'')}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined}) : showPaywall()">
+          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
             ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
           </button>
         </div>
@@ -5916,21 +5926,23 @@ function showMapCard(p, opts = {}) {
       <div class="tag">${escapeHtml(previewText || p.transit || '')}</div>
     </div>
     <div class="actions">
-      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name).replace(/'/g,'')}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined}) : showPaywall()">
+      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
         ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
       </button>
     </div>
   `;
   card.onclick = () => openPlaceDetail(p.id);
   card.classList.add('active');
+  document.querySelector('.map-page-inner')?.classList.add('map-has-card');
 
   if (mapInstance && opts.pan !== false) mapInstance.panTo([p.lat, p.lng]);
 }
 
 // Kakao Map deep link
-function openKakao(lat, lng, name, kakaoUrl, kakaoOptions) {
-  if (!STATE.user) { openAuth(); return; }
-  if (!STATE.premium) { openPremium(); return; }
+function openKakao(lat, lng, name, kakaoUrl, kakaoOptions, placeId) {
+  const free = !placeId || isFreePlace(placeId);
+  if (!free && !STATE.user) { openAuth(); return; }
+  if (!free && !STATE.premium) { openPremium(); return; }
 
   // Если есть массив вариантов — показать выбор
   if (kakaoOptions && Array.isArray(kakaoOptions) && kakaoOptions.length > 1) {
@@ -6131,7 +6143,7 @@ function renderDetail(page) {
         <h1>${escapeHtml(p.name)}</h1>
         <div class="preview">${escapeHtml(previewText)}</div>
         <div class="detail-actions">
-          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name).replace(/'/g,'')}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined}) : showPaywall()">
+          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
             ${!STATE.premium
               ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="18" height="18"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                  <span>${t('detail.open_route')} — Premium</span>`
@@ -6321,7 +6333,7 @@ function renderSaved(page) {
           <div class="meta">${d.han} · ${t('cat.'+(d.subcat||d.cat))} ${isLocked ? '· 🔒' : ''}</div>
         </div>
         <div class="actions">
-          <button class="mini-btn kakao-saved-btn" title="Kakao Map" onclick="event.stopPropagation(); openKakao(${d.lat},${d.lng},'${escapeHtml(d.name).replace(/'/g,'')}',${d.kakaoUrl?`'${d.kakaoUrl}'`:undefined},${d.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(d.kakaoOptions))}'))`:undefined})">
+          <button class="mini-btn kakao-saved-btn" title="Kakao Map" onclick="event.stopPropagation(); openKakao(${d.lat},${d.lng},'${escapeHtml(d.name.replace(/'/g,''))}',${d.kakaoUrl?`'${d.kakaoUrl}'`:undefined},${d.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(d.kakaoOptions))}'))`:undefined},'${d.id}')">
             <span style="display:flex;align-items:center;gap:5px;background:#FEE500;border-radius:8px;padding:6px 12px 6px 10px;font-size:12px;font-weight:800;color:#3C1E1E;white-space:nowrap;min-width:90px;">🗺 Kakao</span>
           </button>
           <button class="mini-btn" title="Remove" onclick="event.stopPropagation(); toggleSavePlace('${d.id}'); renderPage('saved');">✕</button>
