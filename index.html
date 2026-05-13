@@ -354,6 +354,48 @@ body.map-page-open { overflow: hidden; }
   justify-content: center; min-height: 80vh;
   padding: 40px 24px; text-align: center;
 }
+/* Desktop profile layout */
+@media (min-width: 900px) {
+  .profile-about-desktop { display: block !important; }
+}
+/* Desktop profile layout */
+@media (min-width: 900px) {
+  .register-page.profile-logged-in {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    padding: 40px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .profile-col-left {
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .profile-col-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .profile-col-right .register-user-card {
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
+  .profile-col-right .profile-stats {
+    max-width: 100%;
+  }
+  .profile-col-left .profile-route,
+  .profile-col-left a[href*="t.me"],
+  .profile-col-left .register-signout {
+    max-width: 100%;
+  }
+}
+
 .register-logo { font-size: 48px; margin-bottom: 16px; }
 .register-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
 .register-sub { font-size: 14px; color: var(--ink-3); line-height: 1.5; margin-bottom: 32px; max-width: 320px; }
@@ -5163,7 +5205,8 @@ function renderRegister(page) {
     const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 
     page.innerHTML = `
-      <div class="register-page" style="justify-content:flex-start;padding-top:28px;">
+      <div class="register-page profile-logged-in" style="justify-content:flex-start;padding-top:28px;">
+        <div class="profile-col-right">
 
         <!-- User card -->
         <div class="register-user-card" style="flex-direction:row;gap:12px;padding:14px 16px;align-items:center;">
@@ -5196,6 +5239,39 @@ function renderRegister(page) {
             <div class="profile-stat-label">${lang==='ru'?'города':'cities'}</div>
           </div>
         </div>
+
+        <!-- About block — desktop only -->
+        <div style="display:none;" class="profile-about-desktop">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:0;">
+            <div style="font-size:11px;color:var(--ink-3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px;">О гиде</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;">📍</span>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">135+ мест в Корее</div>
+                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Сеул, Пусан, Чеджу — туристические и нетуристические места</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;">🗺️</span>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Интерактивная карта</div>
+                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Все места на карте с маршрутами через Kakao Map</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;">⭐</span>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Premium доступ</div>
+                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Все места, маршруты, советы и скрытые жемчужины от местных</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- /profile-col-right -->
+        <div class="profile-col-left">
 
         <!-- My route -->
         <div class="profile-route" onclick="showPage('saved')">
@@ -5230,6 +5306,7 @@ function renderRegister(page) {
         <!-- Sign out -->
         <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
         <div style="height:32px;"></div>
+        </div><!-- /profile-col-left -->
       </div>
     `;
     return;
@@ -6055,7 +6132,7 @@ function showMapCard(p, opts = {}) {
       </button>
     </div>
   `;
-  card.onclick = () => openPlaceDetail(p.id);
+  card.onclick = (e) => { if (e.target.closest('.btn-kakao, .actions')) return; openPlaceDetail(p.id); };
   card.classList.add('active');
   document.querySelector('.map-page-inner')?.classList.add('map-has-card');
 
