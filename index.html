@@ -392,6 +392,65 @@ body.map-page-open { overflow: hidden; }
 }
 .register-user-name { font-size: 18px; font-weight: 700; }
 .register-user-email { font-size: 13px; color: var(--ink-3); }
+
+/* Profile stats */
+.profile-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  width: 100%; max-width: 320px; margin-bottom: 12px;
+}
+.profile-stat {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 4px; text-align: center;
+}
+.profile-stat-num { font-size: 20px; font-weight: 700; color: var(--ink); }
+.profile-stat-label { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+/* Profile route block */
+.profile-route {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 14px 16px; width: 100%; max-width: 320px; margin-bottom: 12px;
+  cursor: pointer;
+}
+.profile-route-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+.profile-route-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+.profile-route-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-route-tag {
+  background: #FEF3F2; color: #9B3226; font-size: 11px;
+  padding: 3px 8px; border-radius: 20px;
+}
+.profile-route-tag.more {
+  background: var(--bg-alt); color: var(--ink-3);
+}
+/* Tour cards */
+.profile-tours {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 14px 16px; width: 100%; max-width: 320px; margin-bottom: 20px;
+}
+.profile-tours-label {
+  font-size: 11px; color: var(--ink-3); letter-spacing: 0.05em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.profile-tours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.profile-tour-card {
+  border-radius: 12px; padding: 12px 10px;
+}
+.profile-tour-card.red { background: #FEF3F2; }
+.profile-tour-card.purple { background: #EEEDFE; }
+.profile-tour-emoji { font-size: 20px; margin-bottom: 6px; }
+.profile-tour-name { font-size: 12px; font-weight: 600; line-height: 1.3; margin-bottom: 3px; }
+.profile-tour-card.red .profile-tour-name { color: #7B241C; }
+.profile-tour-card.purple .profile-tour-name { color: #3C3489; }
+.profile-tour-desc { font-size: 10px; line-height: 1.4; margin-bottom: 10px; }
+.profile-tour-card.red .profile-tour-desc { color: #A93226; }
+.profile-tour-card.purple .profile-tour-desc { color: #534AB7; }
+.profile-tour-btn {
+  display: block; text-align: center; font-size: 11px; font-weight: 600;
+  padding: 5px 0; border-radius: 8px; text-decoration: none;
+}
+.profile-tour-card.red .profile-tour-btn { background: #C0392B; color: #fff; }
+.profile-tour-card.purple .profile-tour-btn { background: #534AB7; color: #fff; }
+
 .register-signout {
   font-size: 13px; color: var(--ink-3); cursor: pointer;
   border: 1px solid var(--line); border-radius: 999px;
@@ -5094,26 +5153,87 @@ function renderRegister(page) {
   const user = STATE.user;
 
   if (user) {
-    // Logged in — show profile card
+    const saved = STATE.saved || [];
+    const viewed = Object.keys(STATE.reviews || {}).length;
+    const cities = [...new Set(saved.map(id => { const p = PLACES.find(x=>x.id===id); return p ? p.city : null; }).filter(Boolean))].length;
+    const savedPlaces = saved.slice(0,2).map(id => { const p = PLACES.find(x=>x.id===id); return p ? p.name : ''; }).filter(Boolean);
+    const moreCount = Math.max(0, saved.length - 2);
+
+    const firstName = escapeHtml(user.name.split(' ')[0]);
+    const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
     page.innerHTML = `
-      <div class="register-page">
-        <div class="register-logo">🌸</div>
-        <h1 class="register-title">${lang==='ru'?'Добро пожаловать':'Welcome'}, ${escapeHtml(user.name.split(' ')[0])}!</h1>
-        <p class="register-sub">${lang==='ru'?'Вы вошли в KoreaMate':'You are signed in to KoreaMate'}</p>
-        <div class="register-user-card">
+      <div class="register-page" style="justify-content:flex-start;padding-top:28px;">
+
+        <!-- User card -->
+        <div class="register-user-card" style="flex-direction:row;gap:12px;padding:14px 16px;align-items:center;">
           ${user.picture
-            ? `<img class="register-avatar" src="${user.picture}" alt="">`
-            : `<div class="register-avatar-placeholder">👤</div>`
+            ? `<img class="register-avatar" style="width:48px;height:48px;flex-shrink:0;" src="${user.picture}" alt="">`
+            : `<div class="register-avatar-placeholder" style="width:48px;height:48px;flex-shrink:0;font-size:16px;">${initials}</div>`
           }
-          <div class="register-user-name">${escapeHtml(user.name)}</div>
-          <div class="register-user-email">${escapeHtml(user.email)}</div>
+          <div style="flex:1;min-width:0;text-align:left;">
+            <div class="register-user-name" style="font-size:15px;">${escapeHtml(user.name)}</div>
+            <div class="register-user-email">${escapeHtml(user.email)}</div>
+          </div>
           ${STATE.premium
-            ? `<div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;border-radius:999px;padding:6px 18px;font-size:12px;font-weight:800;">⭐ Premium</div>`
-            : `<div style="font-size:12px;color:var(--ink-3);margin-top:4px;">${lang==='ru'?'Базовый доступ':'Free access'}</div>`
+            ? `<div style="background:#FFF3CD;color:#856404;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap;">⭐ Premium</div>`
+            : `<div style="font-size:11px;color:var(--ink-3);white-space:nowrap;">${lang==='ru'?'Базовый':'Free'}</div>`
           }
         </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-num">${saved.length}</div>
+            <div class="profile-stat-label">${lang==='ru'?'сохранено':'saved'}</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num">${PLACES.length}</div>
+            <div class="profile-stat-label">${lang==='ru'?'мест в гиде':'places'}</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num">${cities||0}</div>
+            <div class="profile-stat-label">${lang==='ru'?'города':'cities'}</div>
+          </div>
+        </div>
+
+        <!-- My route -->
+        <div class="profile-route" onclick="showPage('saved')">
+          <div class="profile-route-header">
+            <div class="profile-route-title">🗺 ${lang==='ru'?'Мои сохранённые места':'My saved places'}</div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="profile-route-tags">
+            ${savedPlaces.length
+              ? savedPlaces.map(n=>`<span class="profile-route-tag">${escapeHtml(n)}</span>`).join('')
+              : `<span style="font-size:12px;color:var(--ink-3);">${lang==='ru'?'Пока ничего нет — добавьте места ❤️':'No saved places yet ❤️'}</span>`
+            }
+            ${moreCount > 0 ? `<span class="profile-route-tag more">+ ещё ${moreCount}</span>` : ''}
+          </div>
+        </div>
+
+        <!-- Tours -->
+        <div class="profile-tours">
+          <div class="profile-tours-label">${lang==='ru'?'Туры в Корею':'Tours to Korea'}</div>
+          <div class="profile-tours-grid">
+            <div class="profile-tour-card red">
+              <div class="profile-tour-emoji">🌸</div>
+              <div class="profile-tour-name">${lang==='ru'?'Тур с гидом':'Group tour'}</div>
+              <div class="profile-tour-desc">${lang==='ru'?'Группа до 7 чел. Всё включено':'Up to 7 people. All-inclusive'}</div>
+              <a href="https://t.me/qitour_stuff" target="_blank" class="profile-tour-btn">${lang==='ru'?'Написать':'Contact us'}</a>
+            </div>
+            <div class="profile-tour-card purple">
+              <div class="profile-tour-emoji">📋</div>
+              <div class="profile-tour-name">${lang==='ru'?'Индивидуальный':'Custom tour'}</div>
+              <div class="profile-tour-desc">${lang==='ru'?'Маршрут + документы + бронь':'Route + docs + booking'}</div>
+              <a href="https://t.me/qitour_stuff" target="_blank" class="profile-tour-btn">${lang==='ru'?'Написать':'Contact us'}</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sign out -->
         <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
-        <div style="height:40px;"></div>
+        <div style="height:32px;"></div>
       </div>
     `;
     return;
