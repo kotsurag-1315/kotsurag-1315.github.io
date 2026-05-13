@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FAF7F2">
 <title>KoreaMate — Your guide to South Korea</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -337,6 +338,58 @@ body.map-page-open { overflow: hidden; }
   .topbar-search { display: none; }
   .topbar-search-btn { display: inline-flex; margin-left: auto; }   /* push the trio to the right edge */
 }
+
+/* Register / Login page */
+.register-page {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 80vh;
+  padding: 40px 24px; text-align: center;
+}
+.register-logo { font-size: 48px; margin-bottom: 16px; }
+.register-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.register-sub { font-size: 14px; color: var(--ink-3); line-height: 1.5; margin-bottom: 32px; max-width: 320px; }
+.register-perks {
+  display: flex; gap: 24px; justify-content: center; margin-bottom: 32px;
+}
+.register-perk {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--ink-3); font-weight: 600;
+}
+.register-perk span:first-child { font-size: 26px; }
+.google-btn-wrap {
+  width: 100%; max-width: 320px; margin-bottom: 16px;
+}
+.register-divider {
+  font-size: 12px; color: var(--ink-4); margin-bottom: 12px;
+}
+.register-skip {
+  font-size: 13px; color: var(--ink-3); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.register-user-card {
+  background: var(--card); border-radius: 20px; padding: 24px;
+  width: 100%; max-width: 320px; margin-bottom: 24px;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.register-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  object-fit: cover; border: 3px solid var(--primary-soft);
+}
+.register-avatar-placeholder {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--primary-soft); display: flex; align-items: center;
+  justify-content: center; font-size: 32px;
+}
+.register-user-name { font-size: 18px; font-weight: 700; }
+.register-user-email { font-size: 13px; color: var(--ink-3); }
+.register-signout {
+  font-size: 13px; color: var(--ink-3); cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 20px; margin-top: 4px;
+  transition: background 0.2s;
+}
+.register-signout:hover { background: var(--bg-alt); }
 
 /* Paywall popup */
 .paywall-overlay {
@@ -1733,7 +1786,7 @@ body.map-page-open { overflow: hidden; }
     <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     <span data-i18n="nav.saved">Saved</span>
   </button>
-  <button data-tab="profile" onclick="showPage('profile')">
+  <button data-tab="profile" onclick="showPage('register')">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
     <span data-i18n="nav.profile">Profile</span>
   </button>
@@ -4998,6 +5051,7 @@ function renderPage(name) {
   // Append BEFORE rendering content so child querySelectors (#map-list etc.) work
   root.appendChild(page);
   if (name === 'home') renderHome(page);
+  else if (name === 'register') renderRegister(page);
   else if (name === 'map') renderMapPage(page);
   else if (name === 'saved') renderSaved(page);
   else if (name === 'profile') renderProfile(page);
@@ -5009,6 +5063,100 @@ function renderPage(name) {
 }
 
 // ================= HOME =================
+function renderRegister(page) {
+  const lang = STATE.lang;
+  const user = STATE.user;
+
+  if (user) {
+    // Logged in — show profile card
+    page.innerHTML = `
+      <div class="register-page">
+        <div class="register-logo">🌸</div>
+        <h1 class="register-title">${lang==='ru'?'Добро пожаловать':'Welcome'}, ${escapeHtml(user.name.split(' ')[0])}!</h1>
+        <p class="register-sub">${lang==='ru'?'Вы вошли в KoreaMate':'You are signed in to KoreaMate'}</p>
+        <div class="register-user-card">
+          ${user.picture
+            ? `<img class="register-avatar" src="${user.picture}" alt="">`
+            : `<div class="register-avatar-placeholder">👤</div>`
+          }
+          <div class="register-user-name">${escapeHtml(user.name)}</div>
+          <div class="register-user-email">${escapeHtml(user.email)}</div>
+          ${STATE.premium
+            ? `<div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;border-radius:999px;padding:6px 18px;font-size:12px;font-weight:800;">⭐ Premium</div>`
+            : `<div style="font-size:12px;color:var(--ink-3);margin-top:4px;">${lang==='ru'?'Базовый доступ':'Free access'}</div>`
+          }
+        </div>
+        <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
+        <div style="height:40px;"></div>
+      </div>
+    `;
+    return;
+  }
+
+  // Not logged in — show sign in
+  page.innerHTML = `
+    <div class="register-page">
+      <div class="register-logo">🌸</div>
+      <h1 class="register-title">${lang==='ru'?'Открой всю Корею':'Explore all of Korea'}</h1>
+      <p class="register-sub">${lang==='ru'
+        ? 'Войди через Google чтобы получить доступ ко всем местам, маршрутам и советам'
+        : 'Sign in with Google to unlock all places, routes and tips'}</p>
+      <div class="register-perks">
+        <div class="register-perk"><span>📍</span><span>135+ мест</span></div>
+        <div class="register-perk"><span>🗺️</span><span>Карты</span></div>
+        <div class="register-perk"><span>⭐</span><span>Premium</span></div>
+      </div>
+      <div class="google-btn-wrap" id="google-btn-container"></div>
+      <div class="register-divider">${lang==='ru'?'Безопасный вход через Google':'Secure sign-in via Google'}</div>
+      <span class="register-skip" onclick="showPage('home')">${lang==='ru'?'Продолжить без входа':'Continue without signing in'}</span>
+    </div>
+  `;
+
+  // Render Google button
+  setTimeout(() => {
+    const container = document.getElementById('google-btn-container');
+    if (container && window.google) {
+      google.accounts.id.initialize({
+        client_id: '691857627210-lr672ag2l8geccpan3232kqn9att4kvp.apps.googleusercontent.com',
+        callback: handleGoogleLogin,
+        auto_select: false,
+      });
+      google.accounts.id.renderButton(container, {
+        theme: 'outline',
+        size: 'large',
+        width: 320,
+        text: lang==='ru' ? 'signin_with' : 'signin_with',
+        locale: lang==='ru' ? 'ru' : 'en',
+      });
+    }
+  }, 100);
+}
+
+function handleGoogleLogin(response) {
+  // Decode JWT token from Google
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  STATE.user = {
+    name: payload.name,
+    email: payload.email,
+    picture: payload.picture,
+    sub: payload.sub,
+  };
+  // Check if premium user (by email — you can expand this list)
+  const PREMIUM_EMAILS = ['kotsur.a.g@gmail.com'];
+  STATE.premium = PREMIUM_EMAILS.includes(payload.email);
+  saveState();
+  // Re-render register page to show profile
+  renderPage('register');
+}
+
+function signOut() {
+  if (window.google) google.accounts.id.disableAutoSelect();
+  STATE.user = null;
+  STATE.premium = false;
+  saveState();
+  showPage('home');
+}
+
 function showPaywall() {
   if (document.getElementById('paywall-overlay')) return;
   const overlay = document.createElement('div');
