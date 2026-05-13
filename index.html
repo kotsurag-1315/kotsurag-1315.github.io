@@ -5690,12 +5690,12 @@ function renderMapList() {
         lastCity2 = p.city;
       }
       html += `
-        <div class="map-list-card ${FREE_PLACE_IDS.includes(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
+        <div class="map-list-card ${isFreePlace(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
           <div class="thumb">${thumb}</div>
           <div class="info">
             <div class="chips">
               <span class="chip city">${escapeHtml(cityName)}</span>
-              ${FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : (isLocked ? `<span class="chip lock">🔒 Premium</span>` : ``)}
+              ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
             </div>
             <h4>${escapeHtml(p.name)}</h4>
           </div>
@@ -5757,12 +5757,12 @@ function renderMapList() {
         lastCity2 = p.city;
       }
       html += `
-        <div class="map-list-card ${FREE_PLACE_IDS.includes(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
+        <div class="map-list-card ${isFreePlace(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
           <div class="thumb">${thumb}</div>
           <div class="info">
             <div class="chips">
               <span class="chip city">${escapeHtml(cityName)}</span>
-              ${FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : (isLocked ? `<span class="chip lock">🔒 Premium</span>` : ``)}
+              ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
             </div>
             <h4>${escapeHtml(p.name)}</h4>
           </div>
@@ -5810,13 +5810,13 @@ function renderMapList() {
     }
 
     html += `
-      <div class="map-list-card ${FREE_PLACE_IDS.includes(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
+      <div class="map-list-card ${isFreePlace(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
         <div class="thumb">${thumb}</div>
         <div class="info">
           <div class="chips">
             <span class="chip city">${escapeHtml(cityName)}</span>
             ${!isMultiCat ? '' : `<span class="chip">${t('cat.' + p.cat)}</span>`}
-            ${FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : (isLocked ? `<span class="chip lock">🔒 Premium</span>` : ``)}
+            ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
           </div>
           <h4>${escapeHtml(p.name)}</h4>
         </div>
