@@ -81,7 +81,7 @@ img { max-width: 100%; display: block; }
   min-height: 100vh;
   background: var(--bg);
   position: relative;
-  padding-bottom: 88px; /* nav height */
+  padding-bottom: calc(88px + env(safe-area-inset-bottom)); /* nav height */
 }
 
 @media (min-width: 900px) {
@@ -749,7 +749,7 @@ body.map-page-open { overflow: hidden; }
 .map-page-inner {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 62px - 88px);
+  height: calc(100vh - 62px - 88px - env(safe-area-inset-bottom));
   min-height: 500px;
   position: relative;
 }
@@ -977,12 +977,12 @@ body.map-page-open { overflow: hidden; }
 /* Zoom: always above map-card (card bottom = 102px, card height ~120px → top of card ~222px from bottom) */
 .leaflet-bottom.leaflet-right {
   margin: 0 !important;
-  bottom: calc(14px + 88px + 130px + 14px) !important; /* nav + card height + gap */
+  bottom: calc(14px + 88px + 130px + 14px + env(safe-area-inset-bottom)) !important; /* nav + card height + gap */
   right: 14px !important;
 }
 /* When no card open — drop zoom down to just above nav */
 .map-page-inner:not(.map-has-card) .leaflet-bottom.leaflet-right {
-  bottom: calc(14px + 88px + 14px) !important;
+  bottom: calc(14px + 88px + 14px + env(safe-area-inset-bottom)) !important;
 }
 @media (min-width: 900px) {
   .leaflet-bottom.leaflet-right { bottom: calc(14px + 88px + 14px) !important; right: 14px !important; }
