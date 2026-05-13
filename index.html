@@ -189,11 +189,12 @@ img { max-width: 100%; display: block; }
 .lang-item .chk { color: var(--primary); font-weight: 900; }
 
 /* ============= PAGES ============= */
-.page { display: none; min-height: calc(100vh - 60px); }
+.page { display: none; min-height: calc(100vh - 62px); }
 .page.active { display: block; animation: fadeUp 0.35s ease-out; }
 /* Map page locks body scroll so only map-list scrolls internally */
 body.map-page-open { overflow: hidden; }
 .app.map-page-open { overflow: hidden; height: 100vh; }
+.app.map-page-open .page.active { margin-top: 0; padding-top: 0; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .container { padding: 0 20px; }
@@ -748,12 +749,12 @@ body.map-page-open { overflow: hidden; }
 .map-page-inner {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px - 88px);
+  height: calc(100vh - 62px - 88px);
   min-height: 500px;
   position: relative;
 }
 @media (min-width: 900px) {
-  .map-page-inner { height: calc(100vh - 60px - 88px); }
+  .map-page-inner { height: calc(100vh - 62px - 88px); }
 }
 .map-filters {
   position: relative;
@@ -5142,7 +5143,12 @@ function renderRegister(page) {
 
 function handleGoogleLogin(response) {
   // Decode JWT token from Google
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  // Decode JWT properly handling Unicode (Cyrillic names etc)
+  const base64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
+  const payload = JSON.parse(jsonPayload);
   STATE.user = {
     name: payload.name,
     email: payload.email,
