@@ -5212,24 +5212,20 @@ function renderRegister(page) {
           </div>
         </div>
 
-        <!-- Tours -->
-        <div class="profile-tours">
-          <div class="profile-tours-label">${lang==='ru'?'Туры в Корею':'Tours to Korea'}</div>
-          <div class="profile-tours-grid">
-            <div class="profile-tour-card red">
-              <div class="profile-tour-emoji">🌸</div>
-              <div class="profile-tour-name">${lang==='ru'?'Тур с гидом':'Group tour'}</div>
-              <div class="profile-tour-desc">${lang==='ru'?'Группа до 7 чел. Всё включено':'Up to 7 people. All-inclusive'}</div>
-              <a href="https://t.me/qitour_stuff" target="_blank" class="profile-tour-btn">${lang==='ru'?'Написать':'Contact us'}</a>
-            </div>
-            <div class="profile-tour-card purple">
-              <div class="profile-tour-emoji">📋</div>
-              <div class="profile-tour-name">${lang==='ru'?'Индивидуальный':'Custom tour'}</div>
-              <div class="profile-tour-desc">${lang==='ru'?'Маршрут + документы + бронь':'Route + docs + booking'}</div>
-              <a href="https://t.me/qitour_stuff" target="_blank" class="profile-tour-btn">${lang==='ru'?'Написать':'Contact us'}</a>
-            </div>
+        <!-- Contact -->
+        <a href="https://t.me/qitour_stuff" target="_blank" style="
+          display:flex;align-items:center;justify-content:center;gap:10px;
+          width:100%;max-width:320px;margin-bottom:12px;
+          background:var(--card);border:1px solid var(--line);border-radius:16px;
+          padding:14px 16px;text-decoration:none;
+        ">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="#229ED9"/></svg>
+          <div style="text-align:left;">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);">${lang==='ru'?'Связаться с нами':'Contact us'}</div>
+            <div style="font-size:12px;color:var(--ink-3);">@qitour_stuff · Telegram</div>
           </div>
-        </div>
+          <svg style="margin-left:auto;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
 
         <!-- Sign out -->
         <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
