@@ -749,12 +749,19 @@ body.map-page-open { overflow: hidden; }
 .map-page-inner {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 62px - 88px - env(safe-area-inset-bottom)); height: calc(100vh - 62px - 88px - env(safe-area-inset-bottom));
-  min-height: 500px;
-  position: relative;
+  position: fixed;
+  top: var(--topbar-h, 62px);
+  left: 0; right: 0;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
 }
 @media (min-width: 900px) {
-  .map-page-inner { height: calc(100vh - 62px - 88px); }
+  .map-page-inner {
+    max-width: 1200px;
+    bottom: 96px;
+  }
 }
 .map-filters {
   position: relative;
@@ -977,16 +984,16 @@ body.map-page-open { overflow: hidden; }
 /* Zoom: always above map-card (card bottom = 102px, card height ~120px → top of card ~222px from bottom) */
 .leaflet-bottom.leaflet-right {
   margin: 0 !important;
-  bottom: calc(14px + 88px + 130px + 14px + env(safe-area-inset-bottom)) !important; /* nav + card height + gap */
+  bottom: calc(14px + 130px + 14px) !important; /* card height + gap */
   right: 14px !important;
 }
 /* When no card open — drop zoom down to just above nav */
 .map-page-inner:not(.map-has-card) .leaflet-bottom.leaflet-right {
-  bottom: calc(14px + 88px + 14px + env(safe-area-inset-bottom)) !important;
+  bottom: 14px !important;
 }
 @media (min-width: 900px) {
-  .leaflet-bottom.leaflet-right { bottom: calc(14px + 88px + 14px) !important; right: 14px !important; }
-  .map-page-inner.map-has-card .leaflet-bottom.leaflet-right { bottom: calc(14px + 88px + 14px) !important; }
+  .leaflet-bottom.leaflet-right { bottom: 14px !important; right: 14px !important; }
+  .map-page-inner.map-has-card .leaflet-bottom.leaflet-right { bottom: calc(14px + 130px + 14px) !important; }
   .map-card { right: 14px; }
   .map-card .actions { margin-right: 50px; }
 }
@@ -1012,7 +1019,7 @@ body.map-page-open { overflow: hidden; }
 
 /* Map place card (slide-up) */
 .map-card {
-  position: absolute; left: 14px; right: 14px; bottom: calc(14px + 88px);
+  position: absolute; left: 14px; right: 14px; bottom: 14px;
   z-index: 650;
   background: var(--card); border-radius: 18px;
   padding: 14px;
@@ -5078,7 +5085,7 @@ function renderPage(name) {
   else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
   window.scrollTo(0, 0);
   // Re-init map if needed
-  if (name === 'map') setTimeout(initMap, 100);
+  if (name === 'map') { updateTopbarHeight(); setTimeout(initMap, 100); }
 }
 
 // ================= HOME =================
@@ -6923,7 +6930,13 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Scroll shadow on topbar
+// Scroll shadow on topbar + CSS var for real topbar height (fixes map on notch iPhones)
+function updateTopbarHeight() {
+  const tb = document.getElementById('topbar');
+  if (tb) document.documentElement.style.setProperty('--topbar-h', tb.getBoundingClientRect().height + 'px');
+}
+updateTopbarHeight();
+window.addEventListener('resize', updateTopbarHeight);
 window.addEventListener('scroll', () => {
   $('#topbar').classList.toggle('scrolled', window.scrollY > 8);
 }, { passive: true });
