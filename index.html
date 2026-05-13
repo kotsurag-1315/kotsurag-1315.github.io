@@ -5911,7 +5911,7 @@ function renderMapList() {
             <h4>${escapeHtml(p.name)}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')`}">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -5978,7 +5978,7 @@ function renderMapList() {
             <h4>${escapeHtml(p.name)}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); ${!isFreePlace(p.id) ? 'showPaywall()' : `openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')`}">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -6032,7 +6032,7 @@ function renderMapList() {
           <h4>${escapeHtml(p.name)}</h4>
         </div>
         <div class="actions">
-          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
+          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
             ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
           </button>
         </div>
@@ -6127,7 +6127,7 @@ function showMapCard(p, opts = {}) {
       <div class="tag">${escapeHtml(previewText || p.transit || '')}</div>
     </div>
     <div class="actions">
-      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
+      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
         ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
       </button>
     </div>
@@ -6140,6 +6140,13 @@ function showMapCard(p, opts = {}) {
 }
 
 // Kakao Map deep link
+
+// Safari-safe Kakao opener — тернарник в onclick блокирует window.open в Safari
+function tryOpenKakao(lat, lng, name, kakaoUrl, kakaoOptions, placeId) {
+  if (!isFreePlace(placeId) && !STATE.premium) { showPaywall(); return; }
+  openKakao(lat, lng, name, kakaoUrl, kakaoOptions, placeId);
+}
+
 function openKakao(lat, lng, name, kakaoUrl, kakaoOptions, placeId) {
   const free = !placeId || isFreePlace(placeId);
   if (!free && !STATE.user) { openAuth(); return; }
@@ -6195,7 +6202,7 @@ function showKakaoPicker(placeName, options) {
       background:#FEE500; color:#191919; border:none; border-radius:12px;
       font-weight:600; font-size:14px; cursor:pointer; text-align:left;
     `;
-    btn.onclick = () => {
+    btn.onclick = function() {
       window.open(opt.url, '_blank');
       overlay.remove();
     };
@@ -6344,7 +6351,7 @@ function renderDetail(page) {
         <h1>${escapeHtml(p.name)}</h1>
         <div class="preview">${escapeHtml(previewText)}</div>
         <div class="detail-actions">
-          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="isFreePlace(p.id) ? openKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}') : showPaywall()">
+          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
             ${!isFreePlace(p.id) && !STATE.premium
               ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="18" height="18"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                  <span>${t('detail.open_route')} — Premium</span>`
@@ -6534,7 +6541,7 @@ function renderSaved(page) {
           <div class="meta">${d.han} · ${t('cat.'+(d.subcat||d.cat))} ${isLocked ? '· 🔒' : ''}</div>
         </div>
         <div class="actions">
-          <button class="mini-btn kakao-saved-btn" title="Kakao Map" onclick="event.stopPropagation(); openKakao(${d.lat},${d.lng},'${escapeHtml(d.name.replace(/'/g,''))}',${d.kakaoUrl?`'${d.kakaoUrl}'`:undefined},${d.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(d.kakaoOptions))}'))`:undefined},'${d.id}')">
+          <button class="mini-btn kakao-saved-btn" title="Kakao Map" onclick="event.stopPropagation(); tryOpenKakao(${d.lat},${d.lng},'${escapeHtml(d.name.replace(/'/g,''))}',${d.kakaoUrl?`'${d.kakaoUrl}'`:undefined},${d.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(d.kakaoOptions))}'))`:undefined},'${d.id}')">
             <span style="display:flex;align-items:center;gap:5px;background:#FEE500;border-radius:8px;padding:6px 12px 6px 10px;font-size:12px;font-weight:800;color:#3C1E1E;white-space:nowrap;min-width:90px;">🗺 Kakao</span>
           </button>
           <button class="mini-btn" title="Remove" onclick="event.stopPropagation(); toggleSavePlace('${d.id}'); renderPage('saved');">✕</button>
