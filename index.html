@@ -193,7 +193,7 @@ img { max-width: 100%; display: block; }
 .page.active { display: block; animation: fadeUp 0.35s ease-out; }
 /* Map page locks body scroll so only map-list scrolls internally */
 body.map-page-open { overflow: hidden; }
-.app.map-page-open { overflow: hidden; height: 100vh; }
+.app.map-page-open { overflow: hidden; height: 100dvh; height: 100vh; }
 .app.map-page-open .page.active { margin-top: 0; padding-top: 0; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
@@ -749,7 +749,7 @@ body.map-page-open { overflow: hidden; }
 .map-page-inner {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 62px - 88px - env(safe-area-inset-bottom));
+  height: calc(100dvh - 62px - 88px - env(safe-area-inset-bottom)); height: calc(100vh - 62px - 88px - env(safe-area-inset-bottom));
   min-height: 500px;
   position: relative;
 }
@@ -5500,6 +5500,7 @@ function initMap(attempt = 0) {
 
     // Force size recalculation — fixes blank map on mobile after route change
     setTimeout(() => { try { mapInstance && mapInstance.invalidateSize(); } catch(e){} }, 120);
+    setTimeout(() => { try { mapInstance && mapInstance.invalidateSize(); } catch(e){} }, 500);
   } catch (e) {
     console.error('Map init failed:', e);
     // Soft fallback: switch to list view so user sees something
