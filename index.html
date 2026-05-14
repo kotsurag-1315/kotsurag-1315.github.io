@@ -272,69 +272,64 @@ body.map-page-open { overflow: hidden; }
 
 /* Suggestions dropdown */
 .search-suggest {
-  position: fixed;
-  top: 62px; left: 0; right: 0; bottom: 0;
-  background: var(--bg);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  max-height: 360px;
+  overflow-y: auto;
   z-index: 95;
   display: none;
-  overflow-y: auto;
-  padding: 8px 0 100px;
-  max-width: 480px;
-  margin: 0 auto;
+  padding: 6px;
 }
 .search-suggest.open { display: block; }
 .search-suggest .empty {
-  padding: 60px 20px;
+  padding: 16px 12px;
   color: var(--ink-3);
   font-size: 13px;
   text-align: center;
-  line-height: 1.6;
 }
-.search-suggest .empty::before { content: '🔍'; font-size: 36px; display: block; margin-bottom: 12px; }
 .search-suggest .item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background 0.12s;
   text-align: left;
   width: 100%;
   background: transparent;
-  border: none; border-bottom: 1px solid var(--line);
+  border: none;
   color: var(--ink);
-  font-family: inherit;
 }
-.search-suggest .item:last-child { border-bottom: none; }
-.search-suggest .item:active { background: rgba(237,232,224,0.5); }
+.search-suggest .item:hover,
 .search-suggest .item.active { background: var(--bg-alt); }
 .search-suggest .item .thumb {
-  width: 52px; height: 52px; border-radius: 14px;
-  background: var(--line); flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--bg-alt); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; overflow: hidden;
+  font-size: 18px; overflow: hidden;
 }
-.search-suggest .item .thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+.search-suggest .item .thumb img { width: 100%; height: 100%; object-fit: cover; }
 .search-suggest .item .info { flex: 1; min-width: 0; }
 .search-suggest .item .name {
-  font-size: 14px; font-weight: 700; line-height: 1.3;
+  font-size: 13px; font-weight: 700; line-height: 1.2;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-bottom: 3px;
 }
 .search-suggest .item .meta {
   font-size: 11px; color: var(--ink-3); margin-top: 1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .search-suggest .item mark {
-  background: none; color: var(--primary);
-  font-weight: 800; padding: 0;
+  background: rgba(232, 99, 90, 0.18); color: var(--primary-dark);
+  padding: 0 1px; border-radius: 3px;
 }
 .search-suggest .lock-tag {
-  font-size: 14px; color: var(--ink-3); flex-shrink: 0;
+  font-size: 10px; color: var(--ink-3); flex-shrink: 0;
 }
-.search-suggest-label {
-  font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-3);
-  padding: 14px 16px 8px; display: block;
-}
+.search-suggest-label { display: none; }
 
 /* On narrow screens — hide the inline search and show a search icon button instead */
 .topbar-search-btn {
@@ -7305,10 +7300,7 @@ function renderSuggest(query) {
   if (!_searchResults.length) {
     drop.innerHTML = `<div class="empty">${t('search.empty') || 'Ничего не найдено'}</div>`;
   } else {
-    const labelText = query
-      ? (lang==='ru' ? `Найдено: ${_searchResults.length}` : `Found: ${_searchResults.length}`)
-      : (lang==='ru' ? 'Популярные места' : 'Popular places');
-    drop.innerHTML = `<span class="search-suggest-label">${labelText}</span>` + _searchResults.map((p, i) => {
+    drop.innerHTML = _searchResults.map((p, i) => {
       const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
       const catLabel = t('cat.' + p.cat);
       const isLocked = p.premium && !STATE.premium;
