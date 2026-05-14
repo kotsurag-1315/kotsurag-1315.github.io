@@ -346,16 +346,65 @@ body.map-page-open { overflow: hidden; }
 
 @media (max-width: 720px) {
   .topbar-search { display: none; }
-  .topbar-search.mobile-open {
-    display: flex;
-    position: fixed; top: 10px; left: 12px; right: 12px;
-    z-index: 200;
-    background: var(--card);
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  }
   .topbar-search-btn { display: inline-flex; margin-left: auto; }
 }
+/* Mobile search overlay */
+.mobile-search-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg);
+  flex-direction: column;
+}
+.mobile-search-overlay.open { display: flex; }
+.mobile-search-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.mobile-search-input-wrap {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: rgba(237,232,224,0.7);
+  border-radius: 12px; padding: 9px 12px;
+  border: 1.5px solid transparent;
+}
+.mobile-search-input-wrap:focus-within {
+  border-color: var(--primary);
+  background: var(--card);
+}
+.mobile-search-input {
+  flex: 1; background: none; border: none; outline: none;
+  font-size: 15px; font-family: inherit; color: var(--ink);
+}
+.mobile-search-input::placeholder { color: var(--ink-3); }
+.mobile-search-cancel {
+  font-size: 14px; font-weight: 600; color: var(--primary);
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; padding: 4px; white-space: nowrap;
+}
+.mobile-search-results {
+  flex: 1; overflow-y: auto; padding: 6px;
+}
+.mobile-search-result-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 10px;
+  cursor: pointer; transition: background 0.12s;
+  border: none; background: none; width: 100%;
+  text-align: left; font-family: inherit; color: var(--ink);
+}
+.mobile-search-result-item:active { background: var(--bg-alt); }
+.mobile-result-thumb {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--line); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; overflow: hidden;
+}
+.mobile-result-thumb img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+.mobile-result-info { flex: 1; min-width: 0; }
+.mobile-result-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-result-name mark { background: none; color: var(--primary); font-weight: 800; }
+.mobile-result-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+.mobile-search-empty { padding: 40px 20px; text-align: center; font-size: 13px; color: var(--ink-3); line-height: 1.6; }
 
 /* Register / Login page */
 .register-page {
@@ -2113,6 +2162,183 @@ body.map-page-open { overflow: hidden; }
 .review-badge { display: inline-block; margin-top: 8px; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 8px; }
 .review-badge.tour { background: #FEF3F2; color: var(--primary); }
 .review-badge.guide { background: #E8F4E8; color: #27ae60; }
+
+
+/* ── Premium Profile ── */
+.profile-logged-in { justify-content: flex-start; padding-top: 20px; }
+.profile-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  width: 100%; max-width: 860px;
+  margin: 0 auto;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
+.profile-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* User card */
+.profile-user-card {
+  background: var(--card); border: 0.5px solid var(--line);
+  border-radius: 22px; padding: 26px 20px 20px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.profile-user-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 70px;
+  background: linear-gradient(135deg, #FFF0EC 0%, #FDE8F0 50%, #F5E6FF 100%);
+}
+.profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 12px; margin-top: 4px; }
+.profile-avatar-ring {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, #FFA07A, #C0392B, #9B59B6, #FFA07A);
+  background-size: 300%; padding: 2.5px;
+  animation: ringRotate 4s linear infinite;
+  position: relative; z-index: 1;
+}
+@keyframes ringRotate { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+.profile-avatar-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700; color: var(--ink-2);
+  font-family: 'Cormorant Garamond', serif;
+  overflow: hidden;
+}
+.profile-avatar-inner img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.profile-user-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--ink);
+  margin-bottom: 3px; line-height: 1.2;
+}
+.profile-user-email { font-size: 12px; color: var(--ink-3); margin-bottom: 14px; }
+
+/* Premium card */
+.profile-premium-card {
+  background: linear-gradient(135deg, #2C1654 0%, #C0392B 50%, #8E44AD 100%);
+  background-size: 200%;
+  animation: cardShift 6s ease-in-out infinite alternate;
+  border-radius: 12px; padding: 12px 14px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+}
+@keyframes cardShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+.profile-premium-card::before {
+  content: '🌸🌸🌸';
+  position: absolute; right: -8px; top: -6px;
+  font-size: 38px; opacity: 0.1; letter-spacing: 4px; pointer-events: none;
+}
+.ppc-label { font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 3px; }
+.ppc-title { font-size: 15px; font-weight: 800; color: white; }
+.ppc-status { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); text-align: right; }
+.ppc-icon { font-size: 22px; margin-bottom: 2px; }
+
+/* Stats */
+.profile-stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--line);
+  border-radius: 16px; overflow: hidden;
+  border: 0.5px solid var(--line);
+}
+.profile-stat-cell {
+  background: var(--card); padding: 14px 6px; text-align: center;
+}
+.profile-stat-num {
+  font-size: 26px; font-weight: 800; color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1; margin-bottom: 4px;
+}
+.profile-stat-label { font-size: 10px; color: var(--ink-3); font-weight: 500; }
+
+/* Quick nav */
+.profile-quick-nav {
+  background: var(--card); border: 0.5px solid var(--line);
+  border-radius: 16px; overflow: hidden;
+}
+.profile-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; cursor: pointer;
+  border-bottom: 0.5px solid var(--line);
+  transition: background 0.15s; color: var(--ink);
+  text-decoration: none;
+}
+.profile-nav-item:last-child { border-bottom: none; }
+.profile-nav-item:hover, .profile-nav-item:active { background: var(--bg); }
+.profile-nav-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.pni-1 { background: #FEF3F2; }
+.pni-2 { background: #EDE8F8; }
+.pni-3 { background: #E8F4E8; }
+.profile-nav-label { font-size: 13px; font-weight: 600; flex: 1; }
+.profile-nav-arrow { color: var(--ink-3); font-size: 16px; }
+
+/* Saved block */
+.profile-saved-block {
+  background: var(--card); border: 0.5px solid var(--line);
+  border-radius: 20px; padding: 18px;
+  cursor: pointer; transition: box-shadow 0.2s;
+}
+.profile-saved-block:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.profile-block-title {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.profile-block-title span { font-size: 16px; color: var(--ink-3); }
+.profile-saved-empty {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg); border-radius: 12px; padding: 14px;
+  font-size: 13px; color: var(--ink-3);
+}
+
+/* Tours mini */
+.profile-tours-block {
+  background: var(--card); border: 0.5px solid var(--line);
+  border-radius: 20px; padding: 18px;
+}
+.profile-tours-mini {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.profile-tour-mini {
+  border-radius: 12px; padding: 12px 11px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 100px;
+}
+.ptm-bts { background: linear-gradient(135deg, #F8F0FF, #EDE8F8); }
+.ptm-weeknd { background: linear-gradient(135deg, #FFF0EC, #FCE5DA); }
+.ptm-hiking { background: linear-gradient(135deg, #E8F4E8, #D5EDD5); }
+.ptm-custom { background: linear-gradient(135deg, #FFF9E6, #FFF3CD); }
+.ptm-emoji { font-size: 20px; margin-bottom: 4px; }
+.ptm-name { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 1px; line-height: 1.3; }
+.ptm-meta { font-size: 10px; color: var(--ink-3); margin-bottom: 8px; }
+.ptm-btn {
+  display: block; text-align: center; font-size: 10px; font-weight: 700;
+  padding: 5px; border-radius: 7px; text-decoration: none;
+  color: white; background: rgba(192,57,43,0.82);
+}
+
+/* Contact block */
+.profile-contact-block {
+  background: var(--card); border: 0.5px solid var(--line);
+  border-radius: 16px; overflow: hidden;
+}
+.profile-contact-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; cursor: pointer;
+  transition: background 0.15s; color: var(--ink); text-decoration: none;
+}
+.profile-contact-item:hover { background: var(--bg); }
+.profile-tg-icon {
+  width: 36px; height: 36px; border-radius: 50%; background: #229ED9;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.profile-contact-name { font-size: 13px; font-weight: 700; }
+.profile-contact-handle { font-size: 11px; color: var(--ink-3); }
 
 </style>
 </head>
@@ -5470,123 +5696,168 @@ function renderRegister(page) {
 
   if (user) {
     const saved = STATE.saved || [];
-    const viewed = Object.keys(STATE.reviews || {}).length;
     const cities = [...new Set(saved.map(id => { const p = PLACES.find(x=>x.id===id); return p ? p.city : null; }).filter(Boolean))].length;
+    const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const avatarHtml = user.picture
+      ? `<img src="${user.picture}" alt="">`
+      : initials;
+
+    const toursData = [
+      { cls:'ptm-bts', emoji:'💜', name: lang==='ru'?'Летим по местам BTS':'BTS Location Tour', meta: lang==='ru'?'8–16 июня · Сеул':'Jun 8–16 · Seoul' },
+      { cls:'ptm-weeknd', emoji:'🎶', name: lang==='ru'?'Тур на The Weeknd':'The Weeknd Tour', meta: lang==='ru'?'5–15 октября':'Oct 5–15' },
+      { cls:'ptm-hiking', emoji:'🥾', name: lang==='ru'?'Хайкинг-тур':'Hiking Tour', meta: lang==='ru'?'Сеул, Сокчо':'Seoul, Sokcho' },
+      { cls:'ptm-custom', emoji:'📋', name: lang==='ru'?'Индивидуальный план':'Custom Plan', meta: lang==='ru'?'Любые даты':'Any dates' },
+    ];
+
     const savedPlaces = saved.slice(0,2).map(id => { const p = PLACES.find(x=>x.id===id); return p ? p.name : ''; }).filter(Boolean);
     const moreCount = Math.max(0, saved.length - 2);
 
-    const firstName = escapeHtml(user.name.split(' ')[0]);
-    const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-
     page.innerHTML = `
-      <div class="register-page profile-logged-in" style="justify-content:flex-start;padding-top:28px;">
-        <div class="profile-col-right">
+      <div class="register-page profile-logged-in">
+        <div class="profile-grid">
 
-        <!-- User card -->
-        <div class="register-user-card" style="flex-direction:row;gap:12px;padding:14px 16px;align-items:center;">
-          ${user.picture
-            ? `<img class="register-avatar" style="width:48px;height:48px;flex-shrink:0;" src="${user.picture}" alt="">`
-            : `<div class="register-avatar-placeholder" style="width:48px;height:48px;flex-shrink:0;font-size:16px;">${initials}</div>`
-          }
-          <div style="flex:1;min-width:0;text-align:left;">
-            <div class="register-user-name" style="font-size:15px;">${escapeHtml(user.name)}</div>
-            <div class="register-user-email">${escapeHtml(user.email)}</div>
-          </div>
-          ${STATE.premium
-            ? `<div style="background:#FFF3CD;color:#856404;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap;">⭐ Premium</div>`
-            : `<div style="font-size:11px;color:var(--ink-3);white-space:nowrap;">${lang==='ru'?'Базовый':'Free'}</div>`
-          }
-        </div>
+          <!-- LEFT -->
+          <div class="profile-col">
 
-        <!-- Stats -->
-        <div class="profile-stats">
-          <div class="profile-stat">
-            <div class="profile-stat-num">${saved.length}</div>
-            <div class="profile-stat-label">${lang==='ru'?'сохранено':'saved'}</div>
-          </div>
-          <div class="profile-stat">
-            <div class="profile-stat-num">${PLACES.length}</div>
-            <div class="profile-stat-label">${lang==='ru'?'мест в гиде':'places'}</div>
-          </div>
-          <div class="profile-stat">
-            <div class="profile-stat-num">${cities||0}</div>
-            <div class="profile-stat-label">${lang==='ru'?'города':'cities'}</div>
-          </div>
-        </div>
-
-        <!-- About block — desktop only -->
-        <div style="display:none;" class="profile-about-desktop">
-          <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:0;">
-            <div style="font-size:11px;color:var(--ink-3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px;">О гиде</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;align-items:flex-start;gap:10px;">
-                <span style="font-size:20px;">📍</span>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">135+ мест в Корее</div>
-                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Сеул, Пусан, Чеджу — туристические и нетуристические места</div>
+            <!-- User card -->
+            <div class="profile-user-card">
+              <div class="profile-avatar-wrap">
+                <div class="profile-avatar-ring">
+                  <div class="profile-avatar-inner">${avatarHtml}</div>
                 </div>
               </div>
-              <div style="display:flex;align-items:flex-start;gap:10px;">
-                <span style="font-size:20px;">🗺️</span>
+              <div class="profile-user-name">${escapeHtml(user.name)}</div>
+              <div class="profile-user-email">${escapeHtml(user.email)}</div>
+              ${STATE.premium ? `
+              <div class="profile-premium-card">
                 <div>
-                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Интерактивная карта</div>
-                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Все места на карте с маршрутами через Kakao Map</div>
+                  <div class="ppc-label">${lang==='ru'?'Подписка':'Subscription'}</div>
+                  <div class="ppc-title">✦ Premium</div>
                 </div>
+                <div style="text-align:right;">
+                  <div class="ppc-icon">🌸</div>
+                  <div class="ppc-status">${lang==='ru'?'Активна':'Active'}</div>
+                </div>
+              </div>` : `
+              <div style="background:var(--bg);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--ink-3);text-align:center;">
+                ${lang==='ru'?'Базовый доступ — <span style="color:var(--primary);font-weight:700;cursor:pointer;" onclick="showPaywall()">Получить Premium</span>':'Free access — <span style="color:var(--primary);font-weight:700;cursor:pointer;" onclick="showPaywall()">Get Premium</span>'}
+              </div>`}
+            </div>
+
+            <!-- Stats -->
+            <div class="profile-stats-row">
+              <div class="profile-stat-cell">
+                <div class="profile-stat-num" id="pstat-saved">${saved.length}</div>
+                <div class="profile-stat-label">${lang==='ru'?'сохранено':'saved'}</div>
               </div>
-              <div style="display:flex;align-items:flex-start;gap:10px;">
-                <span style="font-size:20px;">⭐</span>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Premium доступ</div>
-                  <div style="font-size:12px;color:var(--ink-3);line-height:1.4;">Все места, маршруты, советы и скрытые жемчужины от местных</div>
-                </div>
+              <div class="profile-stat-cell">
+                <div class="profile-stat-num" id="pstat-places">0</div>
+                <div class="profile-stat-label">${lang==='ru'?'мест в гиде':'places'}</div>
+              </div>
+              <div class="profile-stat-cell">
+                <div class="profile-stat-num" id="pstat-cities">${cities}</div>
+                <div class="profile-stat-label">${lang==='ru'?'города':'cities'}</div>
               </div>
             </div>
+
+            <!-- Quick nav -->
+            <div class="profile-quick-nav">
+              <div class="profile-nav-item" onclick="showPage('map')">
+                <div class="profile-nav-icon pni-1">🗺</div>
+                <div class="profile-nav-label">${lang==='ru'?'Карта мест':'Places map'}</div>
+                <div class="profile-nav-arrow">›</div>
+              </div>
+              <div class="profile-nav-item" onclick="showPage('tours')">
+                <div class="profile-nav-icon pni-2">🌸</div>
+                <div class="profile-nav-label">${lang==='ru'?'Туры в Корею':'Tours to Korea'}</div>
+                <div class="profile-nav-arrow">›</div>
+              </div>
+              <div class="profile-nav-item" onclick="showPage('tips')">
+                <div class="profile-nav-icon pni-3">📱</div>
+                <div class="profile-nav-label">${lang==='ru'?'Полезное':'Useful'}</div>
+                <div class="profile-nav-arrow">›</div>
+              </div>
+            </div>
+
+            <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
+
+          </div>
+
+          <!-- RIGHT -->
+          <div class="profile-col">
+
+            <!-- Saved -->
+            <div class="profile-saved-block" onclick="showPage('saved')">
+              <div class="profile-block-title">
+                ${lang==='ru'?'Сохранённые места':'Saved places'}
+                <span>›</span>
+              </div>
+              ${savedPlaces.length ? `
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  ${savedPlaces.map(n=>`<span style="background:var(--primary-soft);color:var(--primary);font-size:11px;padding:3px 10px;border-radius:8px;font-weight:600;">${escapeHtml(n)}</span>`).join('')}
+                  ${moreCount>0?`<span style="background:var(--bg-alt);color:var(--ink-3);font-size:11px;padding:3px 10px;border-radius:8px;">+ ещё ${moreCount}</span>`:''}
+                </div>` : `
+                <div class="profile-saved-empty">
+                  <span style="font-size:22px;">🗺</span>
+                  <span>${lang==='ru'?'Пока ничего нет — добавляйте места ❤️':'No saved places yet ❤️'}</span>
+                </div>`}
+            </div>
+
+            <!-- Tours mini -->
+            <div class="profile-tours-block">
+              <div class="profile-block-title">${lang==='ru'?'Туры в Корею':'Tours to Korea'}</div>
+              <div class="profile-tours-mini">
+                ${toursData.map(t=>`
+                  <div class="profile-tour-mini ${t.cls}">
+                    <div>
+                      <div class="ptm-emoji">${t.emoji}</div>
+                      <div class="ptm-name">${t.name}</div>
+                      <div class="ptm-meta">${t.meta}</div>
+                    </div>
+                    <a href="https://t.me/qitour_stuff" target="_blank" class="ptm-btn">${lang==='ru'?'Написать':'Contact'}</a>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="profile-contact-block">
+              <a href="https://t.me/qitour_stuff" target="_blank" class="profile-contact-item">
+                <div class="profile-tg-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="white"/></svg>
+                </div>
+                <div>
+                  <div class="profile-contact-name">${lang==='ru'?'Связаться с нами':'Contact us'}</div>
+                  <div class="profile-contact-handle">@qitour_stuff · Telegram</div>
+                </div>
+                <div style="margin-left:auto;color:var(--ink-3);font-size:16px;">›</div>
+              </a>
+            </div>
+
           </div>
         </div>
-
-        </div><!-- /profile-col-right -->
-        <div class="profile-col-left">
-
-        <!-- My route -->
-        <div class="profile-route" onclick="showPage('saved')">
-          <div class="profile-route-header">
-            <div class="profile-route-title">🗺 ${lang==='ru'?'Мои сохранённые места':'My saved places'}</div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <div class="profile-route-tags">
-            ${savedPlaces.length
-              ? savedPlaces.map(n=>`<span class="profile-route-tag">${escapeHtml(n)}</span>`).join('')
-              : `<span style="font-size:12px;color:var(--ink-3);">${lang==='ru'?'Пока ничего нет — добавьте места ❤️':'No saved places yet ❤️'}</span>`
-            }
-            ${moreCount > 0 ? `<span class="profile-route-tag more">+ ещё ${moreCount}</span>` : ''}
-          </div>
-        </div>
-
-        <!-- Contact -->
-        <a href="https://t.me/qitour_stuff" target="_blank" style="
-          display:flex;align-items:center;justify-content:center;gap:10px;
-          width:100%;max-width:320px;margin-bottom:12px;
-          background:var(--card);border:1px solid var(--line);border-radius:16px;
-          padding:14px 16px;text-decoration:none;
-        ">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="#229ED9"/></svg>
-          <div style="text-align:left;">
-            <div style="font-size:14px;font-weight:600;color:var(--ink);">${lang==='ru'?'Связаться с нами':'Contact us'}</div>
-            <div style="font-size:12px;color:var(--ink-3);">@qitour_stuff · Telegram</div>
-          </div>
-          <svg style="margin-left:auto;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-        </a>
-
-        <!-- Sign out -->
-        <button class="register-signout" onclick="signOut()">${lang==='ru'?'Выйти из аккаунта':'Sign out'}</button>
-        <div style="height:32px;"></div>
-        </div><!-- /profile-col-left -->
       </div>
     `;
+
+    // Накрутка цифры мест
+    setTimeout(() => {
+      const el = document.getElementById('pstat-places');
+      if (!el) return;
+      const target = PLACES.length;
+      const start = performance.now();
+      const duration = 1200;
+      function update(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1-p, 3);
+        el.textContent = Math.round(ease * target);
+        if (p < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }, 200);
+
     return;
   }
 
-  // Not logged in — show sign in
   page.innerHTML = `
     <div class="register-page">
       <div class="register-logo">🌸</div>
@@ -7344,7 +7615,6 @@ function pickSuggest(i) {
 function closeSuggest() {
   $('#search-suggest')?.classList.remove('open');
   _searchActiveIdx = -1;
-  $('#topbar-search')?.classList.remove('mobile-open');
 }
 
 function clearSearch(e) {
@@ -7389,16 +7659,66 @@ function _updateActive() {
 
 /* On mobile narrow screens — focus the (visually hidden) input by temporarily showing it */
 function openMobileSearch() {
-  // На мобиле показываем строку поиска прямо на текущей странице
-  const searchWrap = $('#topbar-search');
-  if (searchWrap) {
-    searchWrap.classList.add('mobile-open');
-    const inp = $('#search-input');
-    if (inp) {
-      inp.focus();
-      inp.select();
-    }
+  let overlay = document.getElementById('mobile-search-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'mobile-search-overlay';
+    overlay.className = 'mobile-search-overlay';
+    overlay.innerHTML = `
+      <div class="mobile-search-bar">
+        <div class="mobile-search-input-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--ink-3)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="mobile-search-inp" class="mobile-search-input" type="search" placeholder="${t('search.placeholder') || 'Куда дальше?'}" autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <button class="mobile-search-cancel" onclick="closeMobileSearch()">${STATE.lang==='ru'?'Отмена':'Cancel'}</button>
+      </div>
+      <div class="mobile-search-results" id="mobile-search-results">
+        <div class="mobile-search-empty">${STATE.lang==='ru'?'Начните вводить название места':'Start typing a place name'}</div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const inp = overlay.querySelector('#mobile-search-inp');
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim();
+      const res = document.getElementById('mobile-search-results');
+      if (!q) {
+        res.innerHTML = '<div class="mobile-search-empty">' + (STATE.lang==='ru'?'Начните вводить название места':'Start typing a place name') + '</div>';
+        return;
+      }
+      const results = getSearchResults(q, 12);
+      const lang = STATE.lang;
+      if (!results.length) {
+        res.innerHTML = '<div class="mobile-search-empty">' + (lang==='ru'?'Ничего не найдено':'Nothing found') + '</div>';
+        return;
+      }
+      res.innerHTML = results.map((p, i) => {
+        const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+        const thumb = p.img
+          ? `<img src="${escapeHtml(p.img)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+          : (p.emoji || '📍');
+        const hl = (s) => s ? s.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>') : s;
+        return `<button class="mobile-search-result-item" onclick="closeMobileSearch();openPlaceDetail('${escapeHtml(p.id)}')">
+          <div class="mobile-result-thumb">${thumb}</div>
+          <div class="mobile-result-info">
+            <div class="mobile-result-name">${hl(p.name)}</div>
+            <div class="mobile-result-meta">${escapeHtml(cityName)}${p.han ? ' · ' + hl(p.han) : ''}</div>
+          </div>
+        </button>`;
+      }).join('');
+    });
   }
+
+  overlay.classList.add('open');
+  setTimeout(() => {
+    const inp = document.getElementById('mobile-search-inp');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 50);
+}
+
+function closeMobileSearch() {
+  const overlay = document.getElementById('mobile-search-overlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
 // Click-outside closes the dropdown
