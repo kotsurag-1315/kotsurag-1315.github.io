@@ -346,7 +346,15 @@ body.map-page-open { overflow: hidden; }
 
 @media (max-width: 720px) {
   .topbar-search { display: none; }
-  .topbar-search-btn { display: inline-flex; margin-left: auto; }   /* push the trio to the right edge */
+  .topbar-search.mobile-open {
+    display: flex;
+    position: fixed; top: 10px; left: 12px; right: 12px;
+    z-index: 200;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+  .topbar-search-btn { display: inline-flex; margin-left: auto; }
 }
 
 /* Register / Login page */
@@ -7336,6 +7344,7 @@ function pickSuggest(i) {
 function closeSuggest() {
   $('#search-suggest')?.classList.remove('open');
   _searchActiveIdx = -1;
+  $('#topbar-search')?.classList.remove('mobile-open');
 }
 
 function clearSearch(e) {
@@ -7380,9 +7389,16 @@ function _updateActive() {
 
 /* On mobile narrow screens — focus the (visually hidden) input by temporarily showing it */
 function openMobileSearch() {
-  // Simple approach: navigate to map page and focus its filter (existing UX).
-  // Could be replaced with a full-screen search modal later.
-  showPage('map');
+  // На мобиле показываем строку поиска прямо на текущей странице
+  const searchWrap = $('#topbar-search');
+  if (searchWrap) {
+    searchWrap.classList.add('mobile-open');
+    const inp = $('#search-input');
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }
 }
 
 // Click-outside closes the dropdown
