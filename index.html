@@ -2341,62 +2341,106 @@ body.map-page-open { overflow: hidden; }
 .profile-contact-handle { font-size: 11px; color: var(--ink-3); }
 
 
+
+
 /* ── Spotlight / Glow effect на карточках категорий ── */
 .cat-tile {
-  --x: 0;
-  --y: 0;
-  --xp: 0.5;
-  --yp: 0.5;
+  --mx: 50%;
+  --my: 50%;
   --hue: 220;
-  --spread: 60;
-  --spotlight-size: 180px;
-  --border-size: 1.5px;
-}
-.cat-tile::before {
-  content: '';
-  position: absolute;
-  inset: calc(var(--border-size) * -1);
-  border-radius: 23px;
-  border: var(--border-size) solid transparent;
-  background-attachment: fixed;
-  background-image: radial-gradient(
-    calc(var(--spotlight-size) * 0.8) calc(var(--spotlight-size) * 0.8) at
-    calc(var(--x) * 1px) calc(var(--y) * 1px),
-    hsl(var(--hue) 80% 65% / 0.8), transparent 100%
-  );
-  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
-  background-position: 50% 50%;
-  mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
-  mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-  -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
-  -webkit-mask-clip: padding-box, border-box;
-  -webkit-mask-composite: destination-in;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 1;
-  filter: brightness(1.5);
 }
 .cat-tile::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 22px;
-  background-image: radial-gradient(
-    var(--spotlight-size) var(--spotlight-size) at
-    calc(var(--x) * 1px) calc(var(--y) * 1px),
-    hsl(var(--hue) 80% 75% / 0.08), transparent 100%
+  background: radial-gradient(
+    160px 160px at var(--mx) var(--my),
+    hsl(var(--hue) 80% 70% / 0.18) 0%,
+    transparent 70%
   );
-  background-attachment: fixed;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.25s;
   z-index: 0;
 }
-.cat-tile.glow-active::before,
 .cat-tile.glow-active::after { opacity: 1; }
 .cat-tile > * { position: relative; z-index: 2; }
+
+/* Border glow — через box-shadow */
+.cat-tile.glow-active {
+  box-shadow: inset 0 0 0 1.5px hsl(var(--hue) 70% 65% / 0.4), 0 4px 24px hsl(var(--hue) 60% 60% / 0.12);
+}
+
+
+/* ── Food subcategories page ── */
+.food-page { padding: 0 0 80px; }
+.food-hero {
+  padding: 24px 20px 16px;
+}
+.food-hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 6px;
+}
+.food-hero-title { font-size: 24px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.food-hero-sub { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+
+.food-subcats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; padding: 16px 16px 0;
+}
+.food-subcat {
+  border-radius: 20px; padding: 18px 16px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.2s;
+  min-height: 130px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border: 1px solid var(--line);
+}
+.food-subcat:active { transform: scale(0.97); }
+.food-subcat.fc-market  { background: linear-gradient(135deg, #FFF8E1, #FFE082); }
+.food-subcat.fc-michelin { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); }
+.food-subcat.fc-idol    { background: linear-gradient(135deg, #FCE4EC, #F8BBD9); }
+.food-subcat.fc-burger  { background: linear-gradient(135deg, #FBE9E7, #FFCCBC); }
+.food-subcat-emoji { font-size: 32px; margin-bottom: 8px; }
+.food-subcat-name { font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.3; margin-bottom: 3px; }
+.food-subcat-desc { font-size: 11px; color: var(--ink-2); line-height: 1.4; }
+.food-subcat-count {
+  font-size: 10px; font-weight: 700; color: var(--ink-3);
+  margin-top: 10px;
+}
+@media (min-width: 900px) {
+  .food-subcats { grid-template-columns: repeat(4, 1fr); }
+}
+
+
+/* ── Food sub tabs ── */
+.food-sub-tabs {
+  display: flex; gap: 6px; padding: 12px 16px 8px;
+  overflow-x: auto; scrollbar-width: none;
+  position: sticky; top: 0; background: var(--bg);
+  z-index: 10; border-bottom: 1px solid var(--line);
+}
+.food-sub-tabs::-webkit-scrollbar { display: none; }
+.food-sub-tab {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 99px; white-space: nowrap;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card);
+  color: var(--ink-3); font-family: inherit;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.food-sub-tab.active {
+  background: var(--primary); color: white; border-color: var(--primary);
+}
+.food-sub-count {
+  background: rgba(255,255,255,0.25); color: inherit;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 99px; min-width: 18px; text-align: center;
+}
+.food-sub-tab:not(.active) .food-sub-count {
+  background: var(--line); color: var(--ink-3);
+}
 
 </style>
 </head>
@@ -2486,6 +2530,9 @@ const I18N = {
     'home.foryou.cta': 'Узнать больше',
     'home.cta_signin': 'Войти, чтобы получить рекомендации',
     'cat.food': 'Еда', 'cat.cafe': 'Кафе', 'cat.kpop': 'K-Pop', 'cat.hiking': 'Хайкинг',
+    'cat.food-market': 'Рынки и уличная еда', 'cat.food-street': 'Уличная еда',
+    'cat.food-michelin': 'Michelin Bib Gourmand', 'cat.cafe-idol': 'Кафе айдолов',
+    'cat.food-burger': 'Бургеры и стритфуд',
     'cat.shopping': 'Шоппинг', 'cat.culture': 'Культура',
     'cat.outlet': 'Аутлеты и ТЦ', 'cat.kbrand': 'К-бренды',
     'cat.sight': 'Достопримечательности', 'cat.bts': 'BTS-места', 'cat.hidden': 'Скрытые места',
@@ -2566,6 +2613,9 @@ const I18N = {
     'home.foryou.cta': 'Learn more',
     'home.cta_signin': 'Sign in to get personalized recs',
     'cat.food': 'Food', 'cat.cafe': 'Cafés', 'cat.kpop': 'K-Pop', 'cat.hiking': 'Hiking',
+    'cat.food-market': 'Markets & Street Food', 'cat.food-street': 'Street Food',
+    'cat.food-michelin': 'Michelin Bib Gourmand', 'cat.cafe-idol': 'Idol Cafés',
+    'cat.food-burger': 'Burgers & Fast Bites',
     'cat.shopping': 'Shopping', 'cat.culture': 'Culture',
     'cat.outlet': 'Malls & Outlets', 'cat.kbrand': 'K-Brands',
     'cat.sight': 'Sights', 'cat.bts': 'BTS Spots', 'cat.hidden': 'Hidden gems',
@@ -2646,6 +2696,9 @@ const I18N = {
     'home.foryou.cta': '자세히',
     'home.cta_signin': '로그인하여 맞춤 추천 받기',
     'cat.food': '음식', 'cat.cafe': '카페', 'cat.kpop': 'K-Pop', 'cat.hiking': '하이킹',
+    'cat.food-market': '시장 & 길거리 음식', 'cat.food-street': '길거리 음식',
+    'cat.food-michelin': '미슐랭 빕 구르망', 'cat.cafe-idol': '아이돌 카페',
+    'cat.food-burger': '버거 & 분식',
     'cat.shopping': '쇼핑', 'cat.culture': '문화',
     'cat.outlet': '쇼핑몰 & 아울렛', 'cat.kbrand': '한국 브랜드',
     'cat.sight': '명소', 'cat.bts': 'BTS 장소', 'cat.hidden': '숨은 명소',
@@ -3268,7 +3321,7 @@ const PLACES =   [
           "han": "앤트러사이트",
           "emoji": "☕",
           "city": "seoul",
-          "cat": "cafe",
+          "cat": "food-market",
           "lat": 37.5445,
           "lng": 126.9128,
           "img": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=900&q=80",
@@ -3289,7 +3342,7 @@ const PLACES =   [
           "han": "광장시장",
           "emoji": "🍜",
           "city": "seoul",
-          "cat": "food",
+          "cat": "cafe-idol",
           "lat": 37.5701,
           "lng": 127.0006,
           "img": "https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=900&q=80",
@@ -3310,7 +3363,7 @@ const PLACES =   [
           "han": "토속촌",
           "emoji": "🍜",
           "city": "seoul",
-          "cat": "food",
+          "cat": "food-market",
           "lat": 37.5783,
           "lng": 126.9722,
           "img": "https://images.unsplash.com/photo-1583224944844-5b268c057b72?w=900&q=80",
@@ -3331,7 +3384,7 @@ const PLACES =   [
           "han": "어니언 안국",
           "emoji": "☕",
           "city": "seoul",
-          "cat": "cafe",
+          "cat": "cafe-idol",
           "lat": 37.576,
           "lng": 126.9856,
           "img": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=900&q=80",
@@ -5679,6 +5732,125 @@ const PLACES =   [
               "Ограниченные коллаборации с Nike, Carhartt и другими брендами — охотно покупается местной молодёжью."
           ],
           "id": "psh23"
+      },
+      {
+          "name": "Gwangjang Market Food Alley",
+          "han": "광장시장 먹자골목",
+          "city": "seoul",
+          "cat": "food-market",
+          "lat": 37.5699,
+          "lng": 126.9994,
+          "img": "",
+          "emoji": "🥘",
+          "premium": false,
+          "desc": {"ru": "Старейший рынок Сеула — живая атмосфера и уличная еда. Пибимбап, пинтток (блины с начинкой), осьминог и легендарный майакгимбап.", "en": "Seoul's oldest market — bibimbap, bindaetteok pancakes and legendary mayak gimbap.", "ko": "서울에서 가장 오래된 광장시장의 먹자골목입니다."},
+          "tips": {"ru": ["Майакгимбап (마약김밥) — крохотные рулетики, от которых невозможно оторваться.", "Лучшее время — обед в будни.", "Едят прямо у лотков — так и надо."], "en": ["Try mayak gimbap.", "Best at lunchtime on weekdays.", "Eat at the stalls."], "ko": ["마약김밥을 꼭 드세요."]},
+          "transport": "Jongno 5-ga (종로5가역) — линия 1",
+          "price": "2 000–8 000 ₩",
+          "time": "утро / день",
+          "duration": "1–2 часа"
+      },
+      {
+          "name": "Myeongdong Street Food",
+          "han": "명동 길거리 음식",
+          "city": "seoul",
+          "cat": "food-street",
+          "lat": 37.5635,
+          "lng": 126.9859,
+          "img": "",
+          "emoji": "🍢",
+          "premium": false,
+          "desc": {"ru": "Главная улица уличной еды Сеула — токпокки, хотдоги с моцареллой, жареный кальмар, блинчики с кимчи. Работает до поздней ночи.", "en": "Seoul's main street food strip — tteokbokki, cheese corn dogs, squid and kimchi pancakes.", "ko": "서울의 대표 길거리 음식 거리입니다."},
+          "tips": {"ru": ["Корейский хотдог с моцареллой — must-try.", "Лучшее время — вечер, когда все лотки открыты.", "Токпокки бывает очень острым — уточняйте."], "en": ["Korean cheese corn dogs are a must.", "Best in the evening.", "Tteokbokki can be very spicy — ask first."], "ko": ["치즈 핫도그는 꼭 드세요.", "저녁에 모든 가게가 열립니다."]},
+          "transport": "Myeongdong (명동역) — линия 4",
+          "price": "2 000–8 000 ₩",
+          "time": "день / вечер",
+          "duration": "1–2 часа"
+      },
+      {
+          "name": "Tosokchon Samgyetang",
+          "han": "토속촌삼계탕",
+          "city": "seoul",
+          "cat": "food-michelin",
+          "lat": 37.5828,
+          "lng": 126.9713,
+          "img": "",
+          "emoji": "🍲",
+          "premium": true,
+          "desc": {"ru": "Легендарный ресторан с 30-летней историей. Самгетанг — куриный суп с женьшенем, рисом и каштанами. Один из самых известных в Сеуле, часто в списках Michelin Bib Gourmand.", "en": "A legendary 30-year restaurant. Samgyetang — chicken soup with ginseng, rice and chestnuts. A Seoul icon, often listed in Michelin Bib Gourmand.", "ko": "30년 전통의 삼계탕 전문점으로 미슐랭 빕 구르망에 자주 선정됩니다."},
+          "tips": {"ru": ["Приходите к открытию (11:00) — очереди вырастают быстро.", "Самгетанг подают в горшочке — очень горячо.", "Рядом с Кёнбоккуном — удобно совмещать."], "en": ["Arrive at opening (11am).", "Served in a hot pot — careful.", "Close to Gyeongbokgung."], "ko": ["개점 시간에 맞춰 가세요."]},
+          "transport": "Gyeongbokgung (경복궁역) — линия 3",
+          "price": "17 000–20 000 ₩",
+          "time": "обед / ужин",
+          "duration": "1–1.5 часа"
+      },
+      {
+          "name": "Yukjeon Sikdang",
+          "han": "육전식당",
+          "city": "seoul",
+          "cat": "food-michelin",
+          "lat": 37.5699,
+          "lng": 126.9860,
+          "img": "",
+          "emoji": "⭐",
+          "premium": true,
+          "desc": {"ru": "Ресторан в Мёндоне, попавший в Michelin Bib Gourmand. Специализируется на юкчжон — говядина в яичной панировке, нежная и сочная. Очередь — знак качества.", "en": "A Michelin Bib Gourmand restaurant in Myeongdong specialising in yukjeon — beef in egg batter, tender and juicy.", "ko": "명동의 미슐랭 빕 구르망 식당으로 육전이 유명합니다."},
+          "tips": {"ru": ["Юкчжон с рисом и кимчи — классический заказ.", "Приходите рано — ресторан закрывается когда заканчиваются продукты.", "Небольшое место, рассчитывайте на очередь."], "en": ["Yukjeon with rice and kimchi is the classic order.", "Come early — closes when sold out.", "Small place, expect a queue."], "ko": ["육전에 밥과 김치를 곁들여 드세요."]},
+          "transport": "Myeongdong (명동역) — линия 4",
+          "price": "12 000–18 000 ₩",
+          "time": "обед",
+          "duration": "30–60 минут"
+      },
+      {
+          "name": "Anthracite Coffee Hongdae",
+          "han": "앤트러사이트 홍대",
+          "city": "seoul",
+          "cat": "cafe-idol",
+          "lat": 37.5489,
+          "lng": 126.9235,
+          "img": "",
+          "emoji": "☕",
+          "premium": false,
+          "desc": {"ru": "Культовая кофейня в бывшей фабрике обуви — высокие потолки, индустриальный интерьер и один из лучших кофе в Сеуле. Любима артистами и айдолами.", "en": "An iconic café in a former shoe factory — high ceilings, industrial vibes and some of Seoul's best coffee. A favourite of idols and artists.", "ko": "신발 공장을 개조한 카페로 아이돌들이 즐겨 찾는 곳입니다."},
+          "tips": {"ru": ["Фирменный дриппинг-кофе — лучший выбор.", "Несколько локаций — Хондэ, Итэвон, Йонхи.", "Приходите в будни — в выходные многолюдно."], "en": ["Try the drip coffee.", "Multiple locations — Hongdae, Itaewon, Yeonhui.", "Quieter on weekdays."], "ko": ["핸드드립 커피가 시그니처 메뉴입니다."]},
+          "transport": "Hapjeong (합정역) — линия 2/6",
+          "price": "6 000–12 000 ₩",
+          "time": "утро / день",
+          "duration": "1–2 часа"
+      },
+      {
+          "name": "Onion Anguk",
+          "han": "어니언 안국",
+          "city": "seoul",
+          "cat": "cafe-idol",
+          "lat": 37.5773,
+          "lng": 126.9848,
+          "img": "",
+          "emoji": "🧅",
+          "premium": true,
+          "desc": {"ru": "Легендарная пекарня-кафе в традиционном ханоке у Букчхона. Очереди с утра за фирменными круассанами и булочками. Место, которое любят айдолы.", "en": "A legendary bakery-café in a traditional hanok near Bukchon. Famous croissants and buns draw queues from opening.", "ko": "북촌 인근 한옥 카페로 크루아상과 소금빵이 유명합니다."},
+          "tips": {"ru": ["Приходите к открытию (8:00) — популярное разбирают быстро.", "Фирменный круассан и соленый хлеб — must-try.", "Интерьер ханока — отдельное удовольствие."], "en": ["Arrive at opening (8am).", "Try the croissant and salt bread.", "The hanok interior is stunning."], "ko": ["개점 시간(8시)에 맞춰 가세요."]},
+          "transport": "Anguk (안국역) — линия 3",
+          "price": "4 000–9 000 ₩",
+          "time": "утро",
+          "duration": "30–60 минут"
+      },
+      {
+          "name": "Isaac Toast",
+          "han": "이삭토스트",
+          "city": "seoul",
+          "cat": "food-burger",
+          "lat": 37.5665,
+          "lng": 126.9783,
+          "img": "",
+          "emoji": "🍔",
+          "premium": false,
+          "desc": {"ru": "Культовая корейская сеть сэндвичей с яйцом и ветчиной — быстро, вкусно и очень по-корейски. Есть везде, но оригинал у Сеульской башни — особенный.", "en": "An iconic Korean egg-and-ham sandwich chain — fast, delicious and very Korean. Found everywhere but the original near N Seoul Tower is special.", "ko": "한국의 대표 토스트 브랜드로 계란과 햄이 들어간 토스트가 유명합니다."},
+          "tips": {"ru": ["Классический заказ — яичный тост с ветчиной и сладким соусом.", "Стоит около 3 000 ₩ — одна из лучших ценностей в городе.", "Едят стоя у ларька — так и надо."], "en": ["Classic order: egg toast with ham and sweet sauce.", "Around ₩3,000 — one of the best value meals in the city.", "Eat standing at the stall."], "ko": ["계란 토스트가 클래식 메뉴입니다."]},
+          "transport": "Myeongdong (명동역) — линия 4",
+          "price": "2 500–5 000 ₩",
+          "time": "утро / день",
+          "duration": "15–30 минут"
       }
   ]
 
@@ -5761,6 +5933,7 @@ function renderPage(name) {
   else if (name === 'profile') renderProfile(page);
   else if (name === 'detail') renderDetail(page);
   else if (name === 'tours') renderTours(page);
+  else if (name === 'food') renderFoodPage(page);
   else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
   window.scrollTo(0, 0);
   // Re-init map if needed
@@ -6158,7 +6331,7 @@ function renderHome(page) {
       id: 'food', emoji: '🍜', cls: 'cat-food',
       label: { ru: 'Еда и кафе', en: 'Food & Cafés', ko: '음식 & 카페' },
       desc: { ru: 'Мишлен, BBQ, курочка, кафе айдолов и стритфуд', en: 'Michelin, BBQ, chicken, idol cafés & street food', ko: '미슐랭, BBQ, 치킨, 아이돌 카페' },
-      cats: ['food','cafe']
+      cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol']
     },
     { 
       id: 'bts', emoji: '💜', cls: 'cat-bts', locked: true,
@@ -6202,6 +6375,7 @@ function renderHome(page) {
       onclick: () => {
         if (showLock) { openPremium(); return; }
         if (c.id === 'tips') { if (!STATE.premium) { showPaywall(); return; } showPage('tips'); return; }
+        if (c.id === 'food') { showPage('food'); return; }
         // For merged categories, use first cat but filter multiple
         STATE.currentMapCat = c.id;
         STATE._mergedCats = c.cats;
@@ -6435,7 +6609,7 @@ const MAP_CAT_DEFS = [
   { id: 'all',       cats: [] },
   { id: 'sight',     cats: ['sight'] },
   { id: 'bts',       cats: ['bts'] },
-  { id: 'food_cafe', cats: ['food','cafe'] },
+  { id: 'food_cafe', cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol'] },
   { id: 'kpop',      cats: ['kpop'] },
   { id: 'shopping',  cats: ['shopping'] },
   { id: 'cherry',    cats: ['cherry'] },
@@ -6525,10 +6699,67 @@ function renderMapList() {
   const isMultiCity = !STATE.currentCity;
   const isSightGroup = mergedCats.includes('sight') && mergedCats.length > 1 || STATE.currentMapCat === 'sight';
   const isShoppingGroup = STATE.currentMapCat === 'shopping';
+  const isFoodGroup = STATE.currentMapCat === 'food' || mergedCats.some(c => ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger'].includes(c)) && mergedCats.length > 3;
 
   const cityLabels = { seoul: { ru: 'Сеул', en: 'Seoul', ko: '서울' }, busan: { ru: 'Пусан', en: 'Busan', ko: '부산' }, jeju: { ru: 'Чеджу', en: 'Jeju', ko: '제주' } };
 
   // ── Category cards for sight view ──
+  // ── Food subcategory tabs ──
+  if (isFoodGroup) {
+    const foodSubs = [
+      { id: 'food-all',     cats: ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger'], emoji: '🍽', label: { ru: 'Все', en: 'All', ko: '전체' } },
+      { id: 'food-market',  cats: ['food-market','food-street'], emoji: '🏪', label: { ru: 'Рынки', en: 'Markets', ko: '시장' } },
+      { id: 'food-michelin',cats: ['food-michelin'],              emoji: '⭐', label: { ru: 'Michelin', en: 'Michelin', ko: '미슐랭' } },
+      { id: 'food-idol',    cats: ['cafe-idol','cafe'],           emoji: '☕', label: { ru: 'Кафе', en: 'Cafés', ko: '카페' } },
+      { id: 'food-burger',  cats: ['food-burger'],                emoji: '🍔', label: { ru: 'Стритфуд', en: 'Street', ko: '분식' } },
+    ];
+    if (!STATE._foodSub) STATE._foodSub = 'food-all';
+    const activeSub = foodSubs.find(s => s.id === STATE._foodSub) || foodSubs[0];
+    const subItems = items.filter(p => activeSub.cats.includes(p.cat));
+    const lPlaces = lang === 'ru' ? 'мест' : lang === 'ko' ? '곳' : 'places';
+
+    let html = `<div class="food-sub-tabs">` +
+      foodSubs.map(s => {
+        const cnt = items.filter(p => s.cats.includes(p.cat)).length;
+        return `<button class="food-sub-tab ${STATE._foodSub === s.id ? 'active' : ''}" onclick="setFoodSub('${s.id}')">${s.emoji} ${s.label[lang] || s.label.ru} <span class="food-sub-count">${cnt}</span></button>`;
+      }).join('') + `</div>`;
+
+    let lastCity = null;
+    subItems.forEach(p => {
+      const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+      const isLocked = p.premium && !STATE.premium;
+      const thumb = p.img ? `<img src="${p.img}" alt="" loading="lazy" onerror="this.style.display='none'">` : (p.emoji || '🍜');
+      if (isMultiCity && p.city !== lastCity) {
+        const cLabel = { seoul: { ru: 'Сеул', en: 'Seoul', ko: '서울' }, busan: { ru: 'Пусан', en: 'Busan', ko: '부산' }, jeju: { ru: 'Чеджу', en: 'Jeju', ko: '제주' } }[p.city]?.[lang] || p.city;
+        html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
+        lastCity = p.city;
+      }
+      const catLbl = t('cat.' + p.cat);
+      html += `
+        <div class="map-list-card ${isFreePlace(p.id)?'':'locked'}" onclick="openPlaceDetail('${p.id}')">
+          <div class="thumb">${thumb}</div>
+          <div class="info">
+            <div class="chips">
+              <span class="chip">${escapeHtml(cityName)}</span>
+              <span class="chip">${escapeHtml(catLbl)}</span>
+              ${isFreePlace(p.id) ? '<span class="chip free">+ FREE</span>' : '<span class="chip premium-chip">🔒 Premium</span>'}
+            </div>
+            <div class="name">${escapeHtml(p.name)}${p.han ? `<span class="han">${escapeHtml(p.han)}</span>` : ''}</div>
+          </div>
+          <div class="actions">
+            <button class="btn-kakao" onclick="event.stopPropagation();tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+              Kakao
+            </button>
+          </div>
+        </div>`;
+    });
+
+    if (!subItems.length) html += `<div class="hint">${lang === 'ru' ? 'Нет мест в этом разделе' : 'No places in this section'}</div>`;
+    wrap.innerHTML = html;
+    return;
+  }
+
   if (isSightGroup) {
     const touristItems    = items.filter(p => !p.premium);
     const nonTouristItems = items.filter(p =>  p.premium);
@@ -8083,6 +8314,91 @@ function renderTours(page) {
   page.appendChild(el('div', { style: 'height:48px;' }));
 }
 
+
+// ================= FOOD PAGE =================
+function renderFoodPage(page) {
+  const lang = STATE.lang;
+  const PLACES_ALL = PLACES;
+
+  const subcats = [
+    {
+      id: 'food-market',
+      cls: 'fc-market',
+      emoji: '🏪',
+      name: { ru: 'Рынки и уличная еда', en: 'Markets & Street Food', ko: '시장 & 길거리 음식' },
+      desc: { ru: 'Кванджан, Мангвон, Мёндон — живая атмосфера и лоточная еда', en: 'Gwangjang, Mangwon, Myeongdong — markets and food stalls', ko: '광장시장, 망원시장 등 전통 시장' },
+      cats: ['food-market', 'food-street'],
+    },
+    {
+      id: 'food-michelin',
+      cls: 'fc-michelin',
+      emoji: '⭐',
+      name: { ru: 'Michelin Bib Gourmand', en: 'Michelin Bib Gourmand', ko: '미슐랭 빕 구르망' },
+      desc: { ru: 'Рестораны из гида Michelin — вкусно, доступно, без пафоса', en: 'Michelin-listed restaurants — delicious, accessible, no fuss', ko: '미슐랭 가이드에 선정된 레스토랑' },
+      cats: ['food-michelin'],
+    },
+    {
+      id: 'cafe-idol',
+      cls: 'fc-idol',
+      emoji: '☕',
+      name: { ru: 'Кафе айдолов', en: 'Idol Cafés', ko: '아이돌 카페' },
+      desc: { ru: 'Места где бывали BTS, BLACKPINK и другие — атмосфера и история', en: 'Where BTS, BLACKPINK and others hung out — vibes and history', ko: 'BTS, BLACKPINK이 자주 찾던 카페' },
+      cats: ['cafe-idol', 'cafe'],
+    },
+    {
+      id: 'food-burger',
+      cls: 'fc-burger',
+      emoji: '🍔',
+      name: { ru: 'Бургеры и стритфуд', en: 'Burgers & Fast Bites', ko: '버거 & 분식' },
+      desc: { ru: 'Корейские хотдоги, тосты Айзека, смэш-бургеры и быстрые перекусы', en: 'Korean corn dogs, Isaac Toast, smash burgers and quick bites', ko: '핫도그, 이삭토스트, 수제버거' },
+      cats: ['food-burger'],
+    },
+  ];
+
+  page.innerHTML = '';
+  const wrap = el('div', { class: 'food-page' });
+
+  const hero = el('div', { class: 'food-hero' });
+  hero.innerHTML = `
+    <div class="food-hero-eyebrow">${lang === 'ru' ? 'Еда и кафе' : 'Food & Cafés'}</div>
+    <div class="food-hero-title">${lang === 'ru' ? 'Где поесть в Корее 🍜' : 'Where to eat in Korea 🍜'}</div>
+    <div class="food-hero-sub">${lang === 'ru' ? 'Рынки, рестораны Michelin, кафе айдолов и стритфуд' : 'Markets, Michelin spots, idol cafés and street food'}</div>
+  `;
+  wrap.appendChild(hero);
+
+  const grid = el('div', { class: 'food-subcats' });
+
+  subcats.forEach(sub => {
+    const count = PLACES_ALL.filter(p => sub.cats.includes(p.cat)).length;
+    const tile = el('div', { class: `food-subcat ${sub.cls}` });
+    tile.innerHTML = `
+      <div>
+        <div class="food-subcat-emoji">${sub.emoji}</div>
+        <div class="food-subcat-name">${sub.name[lang] || sub.name.ru}</div>
+        <div class="food-subcat-desc">${sub.desc[lang] || sub.desc.ru}</div>
+      </div>
+      <div class="food-subcat-count">${count} ${lang === 'ru' ? 'мест' : 'places'}</div>
+    `;
+    tile.onclick = () => {
+      STATE.currentMapCat = sub.id;
+      STATE._mergedCats = sub.cats;
+      STATE.currentCity = null;
+      STATE.mapView = 'list';
+      saveState();
+      showPage('map');
+    };
+    grid.appendChild(tile);
+  });
+
+  wrap.appendChild(grid);
+  page.appendChild(wrap);
+}
+
+
+function setFoodSub(id) {
+  STATE._foodSub = id;
+  renderMapList();
+}
 // ================= TIPS PAGE =================
 const TIPS_DATA = {
   apps: [
@@ -8204,78 +8520,61 @@ function renderTips(page) {
 showPage('home');
 
 
+
+
+
+
 // ── Spotlight effect на карточках категорий ──
 (function() {
   const hueMap = {
-    'cat-sight':   { hue: 20,  spread: 40  },  // тёплый оранжевый
-    'cat-food':    { hue: 140, spread: 50  },  // зелёный
-    'cat-bts':     { hue: 270, spread: 60  },  // фиолетовый
-    'cat-kpop':    { hue: 340, spread: 50  },  // розовый
-    'cat-shopping':{ hue: 200, spread: 50  },  // синий
-    'cat-hiking':  { hue: 100, spread: 40  },  // зелёный
-    'cat-cherry':  { hue: 330, spread: 60  },  // розово-красный
-    'cat-tours':   { hue: 10,  spread: 50  },  // красный
+    'cat-sight':   20,
+    'cat-food':    140,
+    'cat-bts':     270,
+    'cat-kpop':    340,
+    'cat-shopping':200,
+    'cat-hiking':  100,
+    'cat-cherry':  330,
+    'cat-sakura':  330,
+    'cat-tours':   10,
   };
 
-  function getHue(tile) {
-    for (const [cls, vals] of Object.entries(hueMap)) {
-      if (tile.classList.contains(cls)) return vals;
-    }
-    return { hue: 220, spread: 50 };
-  }
-
   function initSpotlight() {
-    const tiles = document.querySelectorAll('.cat-tile');
-    if (!tiles.length) return;
-
-    tiles.forEach(tile => {
-      const { hue, spread } = getHue(tile);
-      tile.style.setProperty('--hue', hue);
-      tile.style.setProperty('--spread', spread);
-    });
-
-    const onMove = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      document.querySelectorAll('.cat-tile').forEach(tile => {
-        tile.style.setProperty('--x', clientX);
-        tile.style.setProperty('--y', clientY);
-
-        const rect = tile.getBoundingClientRect();
-        const dx = clientX - (rect.left + rect.width / 2);
-        const dy = clientY - (rect.top + rect.height / 2);
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const threshold = Math.max(rect.width, rect.height) * 1.2;
-
-        if (dist < threshold) {
-          tile.classList.add('glow-active');
-        } else {
-          tile.classList.remove('glow-active');
-        }
-      });
-    };
-
-    document.addEventListener('pointermove', onMove, { passive: true });
-    document.addEventListener('touchmove', onMove, { passive: true });
-  }
-
-  // Запускаем после рендера страниц
-  const origShowPage = window.showPage;
-  if (typeof origShowPage === 'function') {
-    // Перехватываем после рендера
-    const observer = new MutationObserver(() => {
-      if (document.querySelectorAll('.cat-tile').length) {
-        initSpotlight();
+    document.querySelectorAll('.cat-tile').forEach(tile => {
+      // Установить цвет
+      let hue = 220;
+      for (const [cls, h] of Object.entries(hueMap)) {
+        if (tile.classList.contains(cls)) { hue = h; break; }
       }
+      tile.style.setProperty('--hue', hue);
+
+      // Mouse / touch move
+      const onMove = (e) => {
+        const rect = tile.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        tile.style.setProperty('--mx', x + 'px');
+        tile.style.setProperty('--my', y + 'px');
+        tile.classList.add('glow-active');
+      };
+      const onLeave = () => tile.classList.remove('glow-active');
+
+      tile.addEventListener('pointermove', onMove, { passive: true });
+      tile.addEventListener('pointerleave', onLeave);
+      tile.addEventListener('touchmove', onMove, { passive: true });
+      tile.addEventListener('touchend', onLeave);
     });
-    observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  // Также запускаем при загрузке
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initSpotlight, 300);
+  // Следим за появлением карточек
+  const observer = new MutationObserver(() => {
+    const tiles = document.querySelectorAll('.cat-tile:not([data-glow-init])');
+    tiles.forEach(t => { t.dataset.glowInit = '1'; });
+    if (tiles.length) initSpotlight();
   });
+  observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', () => setTimeout(initSpotlight, 400));
 })();
 
 </script>
