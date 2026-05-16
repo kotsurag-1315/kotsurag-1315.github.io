@@ -2340,6 +2340,64 @@ body.map-page-open { overflow: hidden; }
 .profile-contact-name { font-size: 13px; font-weight: 700; }
 .profile-contact-handle { font-size: 11px; color: var(--ink-3); }
 
+
+/* ── Spotlight / Glow effect на карточках категорий ── */
+.cat-tile {
+  --x: 0;
+  --y: 0;
+  --xp: 0.5;
+  --yp: 0.5;
+  --hue: 220;
+  --spread: 60;
+  --spotlight-size: 180px;
+  --border-size: 1.5px;
+}
+.cat-tile::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--border-size) * -1);
+  border-radius: 23px;
+  border: var(--border-size) solid transparent;
+  background-attachment: fixed;
+  background-image: radial-gradient(
+    calc(var(--spotlight-size) * 0.8) calc(var(--spotlight-size) * 0.8) at
+    calc(var(--x) * 1px) calc(var(--y) * 1px),
+    hsl(var(--hue) 80% 65% / 0.8), transparent 100%
+  );
+  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+  background-position: 50% 50%;
+  mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+  -webkit-mask-clip: padding-box, border-box;
+  -webkit-mask-composite: destination-in;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1;
+  filter: brightness(1.5);
+}
+.cat-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background-image: radial-gradient(
+    var(--spotlight-size) var(--spotlight-size) at
+    calc(var(--x) * 1px) calc(var(--y) * 1px),
+    hsl(var(--hue) 80% 75% / 0.08), transparent 100%
+  );
+  background-attachment: fixed;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 0;
+}
+.cat-tile.glow-active::before,
+.cat-tile.glow-active::after { opacity: 1; }
+.cat-tile > * { position: relative; z-index: 2; }
+
 </style>
 </head>
 <body>
@@ -8144,6 +8202,82 @@ function renderTips(page) {
 
 // Initial render
 showPage('home');
+
+
+// ── Spotlight effect на карточках категорий ──
+(function() {
+  const hueMap = {
+    'cat-sight':   { hue: 20,  spread: 40  },  // тёплый оранжевый
+    'cat-food':    { hue: 140, spread: 50  },  // зелёный
+    'cat-bts':     { hue: 270, spread: 60  },  // фиолетовый
+    'cat-kpop':    { hue: 340, spread: 50  },  // розовый
+    'cat-shopping':{ hue: 200, spread: 50  },  // синий
+    'cat-hiking':  { hue: 100, spread: 40  },  // зелёный
+    'cat-cherry':  { hue: 330, spread: 60  },  // розово-красный
+    'cat-tours':   { hue: 10,  spread: 50  },  // красный
+  };
+
+  function getHue(tile) {
+    for (const [cls, vals] of Object.entries(hueMap)) {
+      if (tile.classList.contains(cls)) return vals;
+    }
+    return { hue: 220, spread: 50 };
+  }
+
+  function initSpotlight() {
+    const tiles = document.querySelectorAll('.cat-tile');
+    if (!tiles.length) return;
+
+    tiles.forEach(tile => {
+      const { hue, spread } = getHue(tile);
+      tile.style.setProperty('--hue', hue);
+      tile.style.setProperty('--spread', spread);
+    });
+
+    const onMove = (e) => {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      document.querySelectorAll('.cat-tile').forEach(tile => {
+        tile.style.setProperty('--x', clientX);
+        tile.style.setProperty('--y', clientY);
+
+        const rect = tile.getBoundingClientRect();
+        const dx = clientX - (rect.left + rect.width / 2);
+        const dy = clientY - (rect.top + rect.height / 2);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const threshold = Math.max(rect.width, rect.height) * 1.2;
+
+        if (dist < threshold) {
+          tile.classList.add('glow-active');
+        } else {
+          tile.classList.remove('glow-active');
+        }
+      });
+    };
+
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('touchmove', onMove, { passive: true });
+  }
+
+  // Запускаем после рендера страниц
+  const origShowPage = window.showPage;
+  if (typeof origShowPage === 'function') {
+    // Перехватываем после рендера
+    const observer = new MutationObserver(() => {
+      if (document.querySelectorAll('.cat-tile').length) {
+        initSpotlight();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // Также запускаем при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initSpotlight, 300);
+  });
+})();
+
 </script>
 </body>
 </html>
