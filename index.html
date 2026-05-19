@@ -6850,7 +6850,7 @@ function renderMapList() {
   const isMultiCity = !STATE.currentCity;
   const isSightGroup = mergedCats.includes('sight') && mergedCats.length > 1 || STATE.currentMapCat === 'sight';
   const isShoppingGroup = STATE.currentMapCat === 'shopping';
-  const isFoodGroup = STATE.currentMapCat === 'food' || mergedCats.some(c => ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger'].includes(c)) && mergedCats.length > 3 || (mergedCats.includes('food-market') || mergedCats.includes('food-street'));
+  const isFoodGroup = STATE.currentMapCat === 'food' || mergedCats.some(c => ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger'].includes(c)) && mergedCats.length > 3 || (mergedCats.length <= 2 && (mergedCats.includes('food-market') || mergedCats.includes('food-street')));
 
   const cityLabels = { seoul: { ru: 'Сеул', en: 'Seoul', ko: '서울' }, busan: { ru: 'Пусан', en: 'Busan', ko: '부산' }, jeju: { ru: 'Чеджу', en: 'Jeju', ko: '제주' } };
 
