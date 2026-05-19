@@ -8311,41 +8311,7 @@ function submitReview() {
 // ================= PREMIUM =================
 let _premPlan = 'year';
 function openPremium() {
-  _premPlan = 'year';
-  const m = $('#modal');
-  m.innerHTML = `
-    <div class="grabber"></div>
-    <h3>👑 ${t('premium.title')}</h3>
-    <div class="modal-sub">${t('premium.subtitle')}</div>
-    <div class="modal-content">
-
-      <div class="plan ${_premPlan==='month'?'selected':''}" onclick="selectPlan('month')" id="plan-month">
-        <h4>Monthly</h4>
-        <div class="price">$4.99 <small>${t('premium.month')}</small></div>
-        <p>Cancel anytime</p>
-      </div>
-
-      <div class="plan ${_premPlan==='year'?'selected':''}" onclick="selectPlan('year')" id="plan-year">
-        <span class="plan-tag">${t('premium.year_save')}</span>
-        <h4>Yearly</h4>
-        <div class="price">$29.99 <small>${t('premium.year')}</small></div>
-        <p>$2.50 / month</p>
-      </div>
-
-      <ul class="feat-list">
-        <li>${t('premium.feat1')}</li>
-        <li>${t('premium.feat2')}</li>
-        <li>${t('premium.feat3')}</li>
-        <li>${t('premium.feat4')}</li>
-        <li>${t('premium.feat5')}</li>
-        <li>${t('premium.feat6')}</li>
-      </ul>
-
-      <button class="btn-primary" onclick="activatePremium()">${t('premium.cta')}</button>
-      <p style="text-align:center;color:#888;font-size:11px;margin-top:8px;">${t('premium.demo')}</p>
-    </div>
-  `;
-  $('#modal-bg').classList.add('active');
+  showPaywall();
 }
 function selectPlan(p) {
   _premPlan = p;
