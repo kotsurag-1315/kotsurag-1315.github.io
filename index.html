@@ -7458,8 +7458,40 @@ function toast(msg) {
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // ================= NAV =================
+// ── Internal navigation stack (prevents browser back from leaving the app) ──
+const _navStack = [];
+
+function navigateBack() {
+  if (_navStack.length > 1) {
+    _navStack.pop(); // remove current
+    const prev = _navStack[_navStack.length - 1];
+    // Restore previous page state without pushing to stack again
+    STATE.currentTab = prev.tab;
+    if (prev.placeId) STATE.currentPlaceId = prev.placeId;
+    if (prev.city !== undefined) STATE.currentCity = prev.city;
+    if (prev.cat !== undefined) STATE.currentMapCat = prev.cat;
+    $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === prev.tab));
+    const isMap = prev.tab === 'map';
+    document.body.classList.toggle('map-page-open', isMap);
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.classList.toggle('map-page-open', isMap);
+    renderPage(prev.tab);
+  }
+}
+
 function showPage(name) {
   STATE.currentTab = name;
+  // Push to internal nav stack
+  _navStack.push({
+    tab: name,
+    placeId: STATE.currentPlaceId,
+    city: STATE.currentCity,
+    cat: STATE.currentMapCat
+  });
+  // Keep stack from growing too large
+  if (_navStack.length > 20) _navStack.shift();
+  // Push browser history state so popstate fires on browser back
+  window.history.pushState({ km: true, tab: name }, '');
   $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   // Lock body scroll on map page, release on others
   const isMap = name === 'map';
@@ -8793,7 +8825,7 @@ function renderDetail(page) {
   page.innerHTML = `
     <div class="detail-wrap">
       <div class="detail-hero">
-        <button class="back-btn" onclick="history.back();showPage('${STATE.currentTab==='detail'?'map':STATE.currentTab}')">
+        <button class="back-btn" onclick="navigateBack()">
           <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <button class="share-btn" onclick="shareDetail('${p.id}')">
@@ -10001,7 +10033,7 @@ function renderTips(page) {
 
   page.innerHTML = `
     <div class="tips-header">
-      <button class="back-btn" onclick="showPage('home')">
+      <button class="back-btn" onclick="navigateBack()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -10047,6 +10079,13 @@ function renderTips(page) {
 
 // Initial render
 showPage('home');
+
+// Intercept browser back button
+window.addEventListener('popstate', function(e) {
+  e.preventDefault();
+  navigateBack();
+});
+// Browser history managed via showPage() pushState calls
 
 // ── Spotlight effect на карточках категорий ──
 (function() {
