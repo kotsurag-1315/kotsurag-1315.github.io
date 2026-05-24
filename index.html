@@ -3010,10 +3010,10 @@ const IMG_MAP = {
 };
 
 function getImg(p) {
-  if (p._imgLoaded) return p.img;
+  // Always check IMG_MAP first (avoids stale cache from re-renders)
   const src = IMG_MAP[p.id] || '';
-  if (src) { p.img = src; p._imgLoaded = true; }
-  return p.img;
+  if (src) return src;
+  return p.img || '';
 }
 
 const PLACES =   [
@@ -8452,7 +8452,8 @@ function renderMapList() {
   }
 
   // ── Default list (non-sight categories) ──
-  let html = `<div class="hint">${items.length} places</div>`;
+  const lPlacesStd = lang === 'ru' ? 'мест' : lang === 'ko' ? '곳' : 'places';
+  let html = `<div class="hint">${items.length} ${lPlacesStd}</div>`;
   let lastCity = null;
   let lastPremiumGroup = null;
 
@@ -8992,8 +8993,9 @@ function renderSaved(page) {
       card.onclick = () => openPlaceDetail(d.id);
       const cityName = CITIES.find(c=>c.id===d.city)?.name[STATE.lang]||d.city;
       const isLocked = d.premium && !STATE.premium;
+      const placeThumbSrc = getImg(d) || d.img || '';
       card.innerHTML = `
-        <div class="thumb"><img src="${d.img}" alt="" loading="lazy"></div>
+        <div class="thumb">${placeThumbSrc ? `<img src="${placeThumbSrc}" alt="" loading="lazy" onerror="this.style.display='none'">` : `<span style="font-size:28px;display:flex;align-items:center;justify-content:center;height:100%;">${d.emoji||'📍'}</span>`}</div>
         <div class="info">
           <div class="city-tag">${cityName}</div>
           <h4>${escapeHtml(d.name)}</h4>
