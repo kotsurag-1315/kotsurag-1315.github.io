@@ -7467,9 +7467,13 @@ function navigateBack() {
     const prev = _navStack[_navStack.length - 1];
     // Restore previous page state without pushing to stack again
     STATE.currentTab = prev.tab;
-    if (prev.placeId) STATE.currentPlaceId = prev.placeId;
+    if (prev.placeId !== undefined) STATE.currentPlace = prev.placeId;
     if (prev.city !== undefined) STATE.currentCity = prev.city;
     if (prev.cat !== undefined) STATE.currentMapCat = prev.cat;
+    if (prev.mergedCats !== undefined) STATE._mergedCats = prev.mergedCats;
+    if (prev.mapView !== undefined) STATE.mapView = prev.mapView;
+    if (prev.shopView !== undefined) STATE._shopView = prev.shopView;
+    if (prev.foodSub !== undefined) STATE._foodSub = prev.foodSub;
     $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === prev.tab));
     const isMap = prev.tab === 'map';
     document.body.classList.toggle('map-page-open', isMap);
@@ -7481,12 +7485,16 @@ function navigateBack() {
 
 function showPage(name) {
   STATE.currentTab = name;
-  // Push to internal nav stack
+  // Push to internal nav stack — сохраняем полное состояние карты
   _navStack.push({
     tab: name,
-    placeId: STATE.currentPlaceId,
+    placeId: STATE.currentPlace,
     city: STATE.currentCity,
-    cat: STATE.currentMapCat
+    cat: STATE.currentMapCat,
+    mergedCats: STATE._mergedCats ? STATE._mergedCats.slice() : null,
+    mapView: STATE.mapView || 'list',
+    shopView: STATE._shopView || null,
+    foodSub: STATE._foodSub || null
   });
   // Keep stack from growing too large
   if (_navStack.length > 20) _navStack.shift();
@@ -8720,8 +8728,38 @@ function showKakaoPicker(placeName, options) {
 // ================= PLACE DETAIL =================
 function openPlaceDetail(placeId) {
   if (!isFreePlace(placeId)) { showPaywall(); return; }
+  // Если сейчас на карте/списке — сохранить текущее состояние карты в стек
+  // чтобы «назад» вернул именно сюда с нужным фильтром
+  if (STATE.currentTab === 'map' || STATE.currentTab === 'food') {
+    _navStack.push({
+      tab: STATE.currentTab,
+      placeId: STATE.currentPlace,
+      city: STATE.currentCity,
+      cat: STATE.currentMapCat,
+      mergedCats: STATE._mergedCats ? STATE._mergedCats.slice() : null,
+      mapView: STATE.mapView || 'list',
+      shopView: STATE._shopView || null,
+      foodSub: STATE._foodSub || null
+    });
+    window.history.pushState({ km: true, tab: STATE.currentTab }, '');
+  }
   STATE.currentPlace = placeId;
-  showPage('detail');
+  // Пушим detail в стек напрямую (без showPage чтобы не дублировать)
+  _navStack.push({
+    tab: 'detail',
+    placeId: placeId,
+    city: STATE.currentCity,
+    cat: STATE.currentMapCat,
+    mergedCats: STATE._mergedCats ? STATE._mergedCats.slice() : null,
+    mapView: STATE.mapView || 'list',
+    shopView: STATE._shopView || null,
+    foodSub: STATE._foodSub || null
+  });
+  if (_navStack.length > 20) _navStack.shift();
+  window.history.pushState({ km: true, tab: 'detail' }, '');
+  STATE.currentTab = 'detail';
+  $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detail'));
+  renderPage('detail');
 }
 
 /* Returns the list of "sibling" places to step through with prev/next.
