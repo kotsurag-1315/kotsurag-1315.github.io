@@ -7461,8 +7461,6 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;'
 const _navStack = [];
 
 function navigateBack() {
-  // Очищаем hash при уходе со страницы места
-  if (location.hash.startsWith('#place/')) history.replaceState(null, '', ' ');
   if (_navStack.length > 1) {
     _navStack.pop(); // remove current
     const prev = _navStack[_navStack.length - 1];
@@ -7480,6 +7478,13 @@ function navigateBack() {
     document.body.classList.toggle('map-page-open', isMap);
     const appEl = document.querySelector('.app');
     if (appEl) appEl.classList.toggle('map-page-open', isMap);
+    // Синхронизируем URL hash с восстановленной страницей,
+    // чтобы reload не вернул на ранее открытое место
+    if (prev.tab === 'detail' && prev.placeId) {
+      history.replaceState(null, '', '#place/' + prev.placeId);
+    } else {
+      history.replaceState(null, '', '#tab/' + prev.tab);
+    }
     renderPage(prev.tab);
   }
 }
@@ -7501,6 +7506,10 @@ function showPage(name) {
   if (_navStack.length > 20) _navStack.shift();
   // Push browser history state so popstate fires on browser back
   window.history.pushState({ km: true, tab: name }, '');
+  // Sync URL hash so reload restores the same tab (detail handled separately in openPlaceDetail)
+  if (name !== 'detail') {
+    history.replaceState(null, '', '#tab/' + name);
+  }
   $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   // Lock body scroll on map page, release on others
   const isMap = name === 'map';
@@ -8837,6 +8846,8 @@ function navPlace(delta) {
   if (!next) return;
   if (!isFreePlace(next.id)) { showPaywall(); return; }
   STATE.currentPlace = next.id;
+  // Синхронизируем hash с новым местом — чтобы reload остался на этой карточке
+  history.replaceState(null, '', '#place/' + next.id);
   renderPage('detail');
   // Subtle scroll to top of detail content
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -10125,8 +10136,10 @@ function renderTips(page) {
   });
 }
 
-// Initial render
-showPage('home');
+// Initial render — реальная стартовая страница выбирается ниже,
+// в блоке «Восстановление текущей страницы после обновления».
+// Если в URL валидный hash (#tab/... или #place/...) — откроется именно она,
+// иначе откроется главная. Это исключает мерцание и перезапись hash.
 
 // Intercept browser back button
 window.addEventListener('popstate', function(e) {
@@ -10373,17 +10386,37 @@ function kmaCheckHash() {
 window.addEventListener('hashchange', kmaCheckHash);
 window.addEventListener('DOMContentLoaded', () => setTimeout(kmaCheckHash, 500));
 
-// ── Восстановление места после обновления (только detail по hash) ──
-(function() {
-  const hash = location.hash;
-  if (hash && hash.startsWith('#place/')) {
+// ── Восстановление текущей страницы после обновления ──
+// Это ЕДИНСТВЕННЫЙ стартовый рендер страницы. Запускается один раз при загрузке.
+// Читает hash из URL и открывает соответствующий раздел.
+// Если hash отсутствует или невалидный — открывается главная.
+(function restoreFromHash() {
+  const validTabs = ['home', 'map', 'saved', 'profile', 'tours', 'food', 'tips', 'register'];
+  const hash = location.hash || '';
+
+  // Detail place: #place/ID
+  if (hash.startsWith('#place/')) {
     const placeId = hash.slice(7).trim();
     const place = PLACES.find(p => p.id === placeId);
-    if (place) {
-      STATE.currentPlace = placeId;
-      showPage('detail');
+    if (place && isFreePlace(placeId)) {
+      // openPlaceDetail сам поставит hash и снимет map-page-open
+      openPlaceDetail(placeId);
+      return;
+    }
+    // Невалидный/закрытый place — упадём на home
+  }
+
+  // Any tab: #tab/NAME
+  if (hash.startsWith('#tab/')) {
+    const tab = hash.slice(5).trim();
+    if (validTabs.includes(tab)) {
+      showPage(tab);
+      return;
     }
   }
+
+  // Fallback — главная
+  showPage('home');
 })();
 </script>
 
