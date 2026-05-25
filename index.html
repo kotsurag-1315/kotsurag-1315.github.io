@@ -7508,7 +7508,16 @@ function showPage(name) {
   window.history.pushState({ km: true, tab: name }, '');
   // Sync URL hash so reload restores the same tab (detail handled separately in openPlaceDetail)
   if (name !== 'detail') {
-    history.replaceState(null, '', '#tab/' + name);
+    if (name === 'map') {
+      // На карте дополнительно записываем выбранные город+категорию
+      const params = [];
+      if (STATE.currentCity) params.push('city=' + encodeURIComponent(STATE.currentCity));
+      if (STATE.currentMapCat && STATE.currentMapCat !== 'all') params.push('cat=' + encodeURIComponent(STATE.currentMapCat));
+      const suffix = params.length ? '?' + params.join('&') : '';
+      history.replaceState(null, '', '#tab/map' + suffix);
+    } else {
+      history.replaceState(null, '', '#tab/' + name);
+    }
   }
   $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   // Lock body scroll on map page, release on others
@@ -8233,6 +8242,7 @@ function setMapCat(cat) {
   const def = MAP_CAT_DEFS.find(c => c.id === cat);
   STATE._mergedCats = (def && def.cats.length > 1) ? def.cats : null;
   $$('.filter-pill').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  syncMapHash();
   if (STATE.mapView === 'map') {
     drawMarkers();
     $('#map-card').classList.remove('active'); document.querySelector('.map-page-inner')?.classList.remove('map-has-card');
@@ -8247,9 +8257,21 @@ function setCity(cityId) {
   const def = MAP_CAT_DEFS.find(c => c.id === STATE.currentMapCat);
   STATE._mergedCats = (def && def.cats.length > 1) ? def.cats : null;
   $$('.filter-pill.city').forEach(b => b.classList.toggle('active', b.dataset.city === (STATE.currentCity || '')));
+  syncMapHash();
   if (STATE.mapView === 'map') initMap();
   else renderMapList();
   const card = $('#map-card'); if (card) { card.classList.remove('active'); document.querySelector('.map-page-inner')?.classList.remove('map-has-card'); }
+}
+
+// Записывает текущие фильтры карты (город + категория) в URL hash,
+// чтобы reload восстанавливал именно этот подраздел.
+function syncMapHash() {
+  if (STATE.currentTab !== 'map') return;
+  const params = [];
+  if (STATE.currentCity) params.push('city=' + encodeURIComponent(STATE.currentCity));
+  if (STATE.currentMapCat && STATE.currentMapCat !== 'all') params.push('cat=' + encodeURIComponent(STATE.currentMapCat));
+  const suffix = params.length ? '?' + params.join('&') : '';
+  history.replaceState(null, '', '#tab/map' + suffix);
 }
 
 function setMapView(v) {
@@ -10406,10 +10428,32 @@ window.addEventListener('DOMContentLoaded', () => setTimeout(kmaCheckHash, 500))
     // Невалидный/закрытый place — упадём на home
   }
 
-  // Any tab: #tab/NAME
+  // Any tab: #tab/NAME (с опциональными query-параметрами для карты)
   if (hash.startsWith('#tab/')) {
-    const tab = hash.slice(5).trim();
+    const rest = hash.slice(5); // например: "map?city=seoul&cat=kpop"
+    const qIdx = rest.indexOf('?');
+    const tab = (qIdx === -1 ? rest : rest.slice(0, qIdx)).trim();
+    const query = qIdx === -1 ? '' : rest.slice(qIdx + 1);
+
     if (validTabs.includes(tab)) {
+      // Для карты восстанавливаем выбранные город и категорию ДО showPage,
+      // чтобы рендер сразу учёл их.
+      if (tab === 'map' && query) {
+        const params = new URLSearchParams(query);
+        const city = params.get('city');
+        const cat = params.get('cat');
+        if (city) {
+          // Проверяем что город существует
+          if (CITIES.some(c => c.id === city)) STATE.currentCity = city;
+        }
+        if (cat) {
+          const def = MAP_CAT_DEFS.find(c => c.id === cat);
+          if (def) {
+            STATE.currentMapCat = cat;
+            STATE._mergedCats = def.cats.length > 1 ? def.cats : null;
+          }
+        }
+      }
       showPage(tab);
       return;
     }
