@@ -55,6 +55,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   min-height: 100vh;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 input, textarea { font-family: inherit; }
@@ -82,6 +84,7 @@ img { max-width: 100%; display: block; }
   background: var(--bg);
   position: relative;
   padding-bottom: calc(88px + env(safe-area-inset-bottom)); /* nav height */
+  touch-action: pan-y;
 }
 
 @media (min-width: 900px) {
@@ -190,7 +193,7 @@ img { max-width: 100%; display: block; }
 
 /* ============= PAGES ============= */
 .page { display: none; min-height: calc(100vh - 62px); }
-.page.active { overflow-y: auto;  display: block; animation: fadeUp 0.35s ease-out; }
+.page.active { display: block; animation: fadeUp 0.35s ease-out; }
 /* Map page locks body scroll so only map-list scrolls internally */
 body.map-page-open { overflow: hidden; }
 .app.map-page-open { overflow: hidden; height: 100dvh; height: 100vh; }
@@ -7523,7 +7526,8 @@ function renderPage(name) {
   else if (name === 'tours') renderTours(page);
   else if (name === 'food') renderFoodPage(page);
   else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
-  window.scrollTo(0, 0);
+  // Для detail не сбрасываем скролл — пользователь должен сразу мочь скроллить
+  if (name !== 'detail') window.scrollTo(0, 0);
   // Re-init map if needed
   if (name === 'map') { updateTopbarHeight(); setTimeout(initMap, 100); }
 }
