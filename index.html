@@ -193,12 +193,12 @@ img { max-width: 100%; display: block; }
 
 /* ============= PAGES ============= */
 .page { display: none; min-height: calc(100vh - 62px); }
-.page.active { display: block; animation: fadeUp 0.35s ease-out; }
+.page.active { display: block; }
 /* Map page locks body scroll so only map-list scrolls internally */
 body.map-page-open { overflow: hidden; }
 .app.map-page-open { overflow: hidden; height: 100dvh; height: 100vh; }
 .app.map-page-open .page.active { margin-top: 0; padding-top: 0; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
 
 .container { padding: 0 20px; }
 
@@ -1285,7 +1285,7 @@ body.map-page-open { overflow: hidden; }
 /* ============= PLACE DETAIL — compact, no giant hero ============= */
 .detail-wrap {
   padding: 0 16px 8px;
-  animation: slideUpDetail 0.2s ease-out both;
+
   pointer-events: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -7490,16 +7490,6 @@ function navigateBack() {
 
 function showPage(name) {
   STATE.currentTab = name;
-  // Сохраняем текущую страницу в sessionStorage для восстановления при обновлении
-  try {
-    sessionStorage.setItem('km_page', JSON.stringify({
-      tab: name,
-      placeId: STATE.currentPlace || null,
-      city: STATE.currentCity || null,
-      cat: STATE.currentMapCat || null,
-      foodSub: STATE._foodSub || null,
-    }));
-  } catch(e) {}
   // Push to internal nav stack — сохраняем полное состояние карты
   _navStack.push({
     tab: name,
@@ -8775,15 +8765,7 @@ function openPlaceDetail(placeId) {
   window.history.pushState({ km: true, tab: 'detail' }, '');
   // Сохраняем ID места в hash для восстановления при обновлении
   if (STATE.currentPlace) history.replaceState(null, '', '#place/' + STATE.currentPlace);
-  // Сохраняем в sessionStorage
-  try {
-    sessionStorage.setItem('km_page', JSON.stringify({
-      tab: 'detail',
-      placeId: STATE.currentPlace,
-      city: STATE.currentCity || null,
-      cat: STATE.currentMapCat || null,
-    }));
-  } catch(e) {}
+
   STATE.currentTab = 'detail';
   $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detail'));
   renderPage('detail');
@@ -10390,34 +10372,17 @@ function kmaCheckHash() {
 window.addEventListener('hashchange', kmaCheckHash);
 window.addEventListener('DOMContentLoaded', () => setTimeout(kmaCheckHash, 500));
 
-// ── Восстановление страницы после обновления ──
+// ── Восстановление места после обновления (только detail по hash) ──
 (function() {
-  // Сначала проверяем hash (для detail)
   const hash = location.hash;
   if (hash && hash.startsWith('#place/')) {
-    const placeId = hash.slice(7);
+    const placeId = hash.slice(7).trim();
     const place = PLACES.find(p => p.id === placeId);
     if (place) {
       STATE.currentPlace = placeId;
       showPage('detail');
-      return;
     }
   }
-  // Затем sessionStorage для любой другой страницы
-  try {
-    const saved = sessionStorage.getItem('km_page');
-    if (saved) {
-      const s = JSON.parse(saved);
-      if (s.tab && s.tab !== 'home') {
-        if (s.city) STATE.currentCity = s.city;
-        if (s.cat) STATE.currentMapCat = s.cat;
-        if (s.foodSub) STATE._foodSub = s.foodSub;
-        if (s.placeId) STATE.currentPlace = s.placeId;
-        showPage(s.tab);
-        return;
-      }
-    }
-  } catch(e) {}
 })();
 </script>
 
