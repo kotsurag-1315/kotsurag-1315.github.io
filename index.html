@@ -8764,6 +8764,10 @@ function openPlaceDetail(placeId) {
   if (STATE.currentPlace) history.replaceState(null, '', '#place/' + STATE.currentPlace);
 
   STATE.currentTab = 'detail';
+  // Снимаем блокировку скролла, оставленную страницей карты
+  document.body.classList.remove('map-page-open');
+  const appElDetail = document.querySelector('.app');
+  if (appElDetail) appElDetail.classList.remove('map-page-open');
   $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detail'));
   renderPage('detail');
 }
