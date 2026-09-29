@@ -3055,9 +3055,19 @@ const IMG_MAP = {
   "pcafe_kotton": ""
 };
 
+const FOOD_MARKET_IMG_MAP = {
+  ph28: 'assets/photos/food-markets/pfm04.webp',
+  ph30: 'assets/photos/food-markets/pfm01.webp',
+  ph33: 'assets/photos/food-markets/pfm03.webp',
+  ph34: 'assets/photos/food-markets/pfm06.webp',
+  ph35: 'assets/photos/food-markets/pfm07.webp',
+  ph36: 'assets/photos/food-markets/pfm02.webp',
+  pfoodm01: 'assets/photos/food-markets/pfm05.webp',
+};
+
 function getImg(p) {
-  // Always check IMG_MAP first (avoids stale cache from re-renders)
-  const src = IMG_MAP[p.id] || '';
+  // Local photos take priority over legacy IMG_MAP entries.
+  const src = FOOD_MARKET_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
@@ -3686,6 +3696,27 @@ const PLACES =   [
           ],
           "premium": true,
           "id": "ph36"
+      },
+      {
+          "name": "Myeongdong Street Market",
+          "han": "명동 야시장",
+          "emoji": "🍢",
+          "city": "seoul",
+          "cat": "food-market",
+          "lat": 37.5636,
+          "lng": 126.9855,
+          "img": "",
+          "transit": "Myeongdong (명동역) — линия 4, выход 6",
+          "entry": "еда от 5,000–15,000 ₩",
+          "best_time": "вечер (17:00–22:00)",
+          "duration": "1–2 часа",
+          "desc": [
+              "Вечерняя улица Мёндона превращается в один большой стритфуд-маркет: шпажки, ттокпокки, хотток, клубника и горячие десерты.",
+              "Лучше приходить после 18:00, когда открываются почти все тележки и включаются неоновые вывески.",
+              "Совмещайте с шопингом в Мёндоне: рынок проходит прямо среди магазинов и косметических бутиков."
+          ],
+          "premium": true,
+          "id": "pfoodm01"
       },
       {
           "name": "LINE FRIENDS",
