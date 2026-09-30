@@ -3065,9 +3065,24 @@ const FOOD_MARKET_IMG_MAP = {
   pfoodm01: 'assets/photos/food-markets/pfm05.webp',
 };
 
+const MICHELIN_IMG_MAP = {
+  palta: 'assets/photos/food-michelin/pmi01.webp',
+  pgomtag: 'assets/photos/food-michelin/pmi02.webp',
+  pjeongmyeon: 'assets/photos/food-michelin/pmi03.webp',
+  pkkuddang: 'assets/photos/food-michelin/pmi04.webp',
+  pkyoja: 'assets/photos/food-michelin/pmi05.webp',
+  pnishi: 'assets/photos/food-michelin/pmi06.webp',
+  pokdol: 'assets/photos/food-michelin/pmi07.webp',
+  poreno: 'assets/photos/food-michelin/pmi08.webp',
+  psarukame: 'assets/photos/food-michelin/pmi09.webp',
+  pseokyо: 'assets/photos/food-michelin/pmi10.webp',
+  ptosokchon: 'assets/photos/food-michelin/pmi11.webp',
+  pwooraeoak: 'assets/photos/food-michelin/pmi12.webp',
+};
+
 function getImg(p) {
   // Local photos take priority over legacy IMG_MAP entries.
-  const src = FOOD_MARKET_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
+  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
