@@ -3095,9 +3095,28 @@ const IDOL_FOOD_IMG_MAP = {
   pyeongdong: 'assets/photos/food-idols/pid12.webp',
 };
 
+const STREET_FOOD_IMG_MAP = {
+  pbaoSeoul: 'assets/photos/food-street/pfs01.webp',
+  pcityboy: 'assets/photos/food-street/pfs02.webp',
+  pfiveguys: 'assets/photos/food-street/pfs03.webp',
+  plefreak: 'assets/photos/food-street/pfs04.webp',
+  pmicook: 'assets/photos/food-street/pfs05.webp',
+  pnoidea: 'assets/photos/food-street/pfs06.webp',
+  poldies: 'assets/photos/food-street/pfs07.webp',
+  ppaperplate: 'assets/photos/food-street/pfs08.webp',
+  pplop: 'assets/photos/food-street/pfs09.webp',
+  prwaka: 'assets/photos/food-street/pfs10.webp',
+  pryong: 'assets/photos/food-street/pfs11.webp',
+  psoso: 'assets/photos/food-street/pfs12.webp',
+  ptacomex: 'assets/photos/food-street/pfs13.webp',
+  prealcheese: 'assets/photos/food-street/pfs14.webp',
+  pvdburger: 'assets/photos/food-street/pfs15.webp',
+  pwetfinger: 'assets/photos/food-street/pfs16.webp',
+};
+
 function getImg(p) {
   // Local photos take priority over legacy IMG_MAP entries.
-  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
+  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || STREET_FOOD_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
