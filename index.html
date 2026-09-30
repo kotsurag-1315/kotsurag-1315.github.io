@@ -2483,6 +2483,7 @@ body.map-page-open { overflow: hidden; }
   .detail-hero .fav-btn { background: rgba(28, 28, 28, 0.65); }
 }
 </style>
+<link rel="stylesheet" href="assets/tours-page.css">
 </head>
 <body>
 <div class="app">
@@ -2522,10 +2523,6 @@ body.map-page-open { overflow: hidden; }
   <button data-tab="home" class="active" onclick="showPage('home')">
     <svg viewBox="0 0 24 24"><path d="M3 12L12 4l9 8M5 10v10h14V10"/></svg>
     <span data-i18n="nav.home">Home</span>
-  </button>
-  <button data-tab="map" onclick="goMapTab()">
-    <svg viewBox="0 0 24 24"><path d="M9 20l-6-3V5l6 3 6-3 6 3v12l-6-3-6 3z"/><path d="M9 8v12M15 5v12"/></svg>
-    <span data-i18n="nav.map">Map</span>
   </button>
   <button data-tab="tours" onclick="showPage('tours')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
@@ -7780,7 +7777,7 @@ function renderPage(name) {
   else if (name === 'saved') renderSaved(page);
   else if (name === 'profile') renderProfile(page);
   else if (name === 'detail') renderDetail(page);
-  else if (name === 'tours') renderTours(page);
+  else if (name === 'tours') renderToursV2(page);
   else if (name === 'food') renderFoodPage(page);
   else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
   window.scrollTo(0, 0);
@@ -10467,6 +10464,9 @@ window.addEventListener('popstate', function(e) {
 })();
 
 </script>
+
+<script src="assets/tours-data.js"></script>
+<script src="assets/tours-page.js"></script>
 
 <!-- ====================== АДМИН-ПАНЕЛЬ (доступна по #admin в URL) ====================== -->
 <div id="kma-admin" style="display:none;position:fixed;inset:0;background:#fff;z-index:99999;overflow-y:auto;padding:20px;font-family:system-ui,-apple-system,sans-serif;">
