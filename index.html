@@ -3114,9 +3114,23 @@ const STREET_FOOD_IMG_MAP = {
   pwetfinger: 'assets/photos/food-street/pfs16.webp',
 };
 
+const KBBQ_IMG_MAP = {
+  pbaekje: 'assets/photos/food-kbbq/pkb01.webp',
+  pcowpig: 'assets/photos/food-kbbq/pkb02.webp',
+  pdaol: 'assets/photos/food-kbbq/pkb03.webp',
+  phongojib: 'assets/photos/food-kbbq/pkb04.webp',
+  pjiwoo: 'assets/photos/food-kbbq/pkb05.webp',
+  pjodaepo: 'assets/photos/food-kbbq/pkb06.webp',
+  pjongsamyook: 'assets/photos/food-kbbq/pkb07.webp',
+  pkungfu: 'assets/photos/food-kbbq/pkb08.webp',
+  pmeongseogjib: 'assets/photos/food-kbbq/pkb09.webp',
+  pmyeongryun: 'assets/photos/food-kbbq/pkb10.webp',
+  pyoonseul: 'assets/photos/food-kbbq/pkb11.webp',
+};
+
 function getImg(p) {
   // Local photos take priority over legacy IMG_MAP entries.
-  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || STREET_FOOD_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
+  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || STREET_FOOD_IMG_MAP[p.id] || KBBQ_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
