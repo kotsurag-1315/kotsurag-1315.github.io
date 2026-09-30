@@ -7654,7 +7654,7 @@ function loadState() {
       currentCity: null,
       currentPlace: null,
       currentMapCat: 'all',
-      mapView: s.mapView || 'map', // 'map' | 'list'
+      mapView: 'list', // Каталог теперь всегда открывается списком.
       user: s.user || null,
       saved: s.saved || [],
       reviews: s.reviews || {},  // { placeId: [ {user, name, rating, text, date} ] }
@@ -8290,6 +8290,8 @@ let _mapCardPinned = false;
 
 function renderMapPage(page) {
   const cats = MAP_CAT_DEFS;
+  // Сохранённый в браузере старый режим карты больше не должен показываться.
+  if (STATE.mapView !== 'list') { STATE.mapView = 'list'; saveState(); }
   page.innerHTML = `
     <div class="map-page-inner${STATE.mapView==='list'?' list-view':''}">
       <div class="map-filters">
@@ -8303,12 +8305,6 @@ function renderMapPage(page) {
           ${cats.map(c => `
             <button class="filter-pill ${STATE.currentMapCat===c.id?'active':''}" data-cat="${c.id}" onclick="setMapCat('${c.id}')">${c.id==='all'?t('map.all'):t('cat.'+c.id)}</button>
           `).join('')}
-        </div>
-        <div class="map-filters-row toggle-row">
-          <div class="segmented" role="tablist" aria-label="View">
-            <button class="${STATE.mapView==='map'?'active':''}" onclick="setMapView('map')" role="tab" aria-selected="${STATE.mapView==='map'}">${t('map.view_map')}</button>
-            <button class="${STATE.mapView==='list'?'active':''}" onclick="setMapView('list')" role="tab" aria-selected="${STATE.mapView==='list'}">${t('map.view_list')}</button>
-          </div>
         </div>
       </div>
       <div id="map-leaflet"></div>
