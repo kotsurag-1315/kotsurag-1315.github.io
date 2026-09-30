@@ -3080,9 +3080,24 @@ const MICHELIN_IMG_MAP = {
   pwooraeoak: 'assets/photos/food-michelin/pmi12.webp',
 };
 
+const IDOL_FOOD_IMG_MAP = {
+  pfarben: 'assets/photos/food-idols/pid01.webp',
+  pchompi: 'assets/photos/food-idols/pid02.webp',
+  pdaebong: 'assets/photos/food-idols/pid03.webp',
+  pdosan: 'assets/photos/food-idols/pid04.webp',
+  pdosigogi: 'assets/photos/food-idols/pid05.webp',
+  pkrappom: 'assets/photos/food-idols/pid06.webp',
+  pnikuya: 'assets/photos/food-idols/pid07.webp',
+  pseoseo: 'assets/photos/food-idols/pid08.webp',
+  psutjang: 'assets/photos/food-idols/pid09.webp',
+  pthehouse: 'assets/photos/food-idols/pid10.webp',
+  psecondбест: 'assets/photos/food-idols/pid11.webp',
+  pyeongdong: 'assets/photos/food-idols/pid12.webp',
+};
+
 function getImg(p) {
   // Local photos take priority over legacy IMG_MAP entries.
-  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
+  const src = FOOD_MARKET_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
