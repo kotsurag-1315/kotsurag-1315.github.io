@@ -1047,7 +1047,6 @@ body.map-page-open { overflow: hidden; }
 }
 .map-list-card:hover { box-shadow: var(--shadow); }
 .map-list-card:active { transform: scale(0.99); }
-.map-list-card, .sight-cat-cards, .list-group-header { transition: opacity 0.08s linear; }
 .cohort-link {
   cursor: pointer;
   color: var(--red);
@@ -7289,7 +7288,7 @@ function renderMapPage(page) {
     </div>
   `;
 
-  if (STATE.mapView === 'list') { renderMapList(); requestAnimationFrame(initListFade); }
+  if (STATE.mapView === 'list') renderMapList();
 }
 
 function initMap(attempt = 0) {
@@ -7664,7 +7663,6 @@ function renderMapList() {
     });
     html += `<div style="height:12px;"></div>`;
     wrap.innerHTML = html;
-    requestAnimationFrame(initListFade);
     return;
   }
 
@@ -7731,7 +7729,6 @@ function renderMapList() {
     });
     html += `<div style="height:12px;"></div>`;
     wrap.innerHTML = html;
-    requestAnimationFrame(initListFade);
     return;
   }
 
@@ -7787,13 +7784,11 @@ function renderMapList() {
 
   html += `<div style="height:12px;"></div>`;
   wrap.innerHTML = html;
-  requestAnimationFrame(initListFade);
 }
 
 function setSightView(view) {
   STATE._sightView = view;
   renderMapList();
-  requestAnimationFrame(initListFade);
 }
 
 function goBackToCohort(cat, city) {
@@ -7809,46 +7804,6 @@ function goBackToCohort(cat, city) {
 function setShopView(view) {
   STATE._shopView = view;
   renderMapList();
-  requestAnimationFrame(initListFade);
-}
-
-// ── Fade cards under sticky filters ──
-function initListFade() {
-  const list = document.getElementById('map-list');
-  if (!list) return;
-  list._fadeHandler && list.removeEventListener('scroll', list._fadeHandler);
-
-  const FADE_ZONE = 158; // matches padding-top = filter height
-  const FADE_SIZE = 80;  // px over which card fades in/out
-
-  function applyFade() {
-    const scrollTop = list.scrollTop;
-    const cards = list.querySelectorAll('.map-list-card, .sight-cat-cards, .list-group-header');
-    cards.forEach(card => {
-      const cardTop = card.offsetTop - scrollTop;
-      // cardTop is distance from top of visible scroll area
-      const bottomEdge = cardTop + card.offsetHeight;
-      // Fully under filter
-      if (bottomEdge < FADE_ZONE - FADE_SIZE) {
-        card.style.opacity = '0';
-        card.style.pointerEvents = 'none';
-      }
-      // Entering the fade zone (from 158-80=78 to 158)
-      else if (cardTop < FADE_ZONE && bottomEdge >= FADE_ZONE - FADE_SIZE) {
-        const overlap = Math.min(FADE_ZONE - cardTop, card.offsetHeight);
-        const ratio = Math.max(0, Math.min(1, 1 - (overlap / Math.min(FADE_SIZE, card.offsetHeight))));
-        card.style.opacity = String(ratio);
-        card.style.pointerEvents = ratio < 0.3 ? 'none' : '';
-      } else {
-        card.style.opacity = '1';
-        card.style.pointerEvents = '';
-      }
-    });
-  }
-
-  list._fadeHandler = applyFade;
-  list.addEventListener('scroll', applyFade, { passive: true });
-  applyFade();
 }
 
 function showMapCard(p, opts = {}) {
