@@ -78,22 +78,34 @@ function renderToursV2(page) {
       </div>
     </div>`;
 
-  page.querySelectorAll('.tv-tour').forEach(card => {
+  const tourCards = Array.from(page.querySelectorAll('.tv-tour'));
+  const setTourOpen = (card, open) => {
+    const head = card.querySelector('.tv-tour-head');
+    const preview = card.querySelector('.tv-preview');
+    const details = card.querySelector('.tv-details');
+    const detailsButton = card.querySelector('.tv-details-toggle');
+    preview.hidden = !open;
+    card.classList.toggle('is-open', open);
+    head.setAttribute('aria-expanded', String(open));
+    head.querySelector('.tv-open-label').textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓');
+    if (!open) {
+      details.hidden = true;
+      detailsButton.setAttribute('aria-expanded', 'false');
+      detailsButton.textContent = tr('Узнать о туре ↓', 'Tour details ↓');
+    }
+  };
+  tourCards.forEach(card => {
     const head = card.querySelector('.tv-tour-head');
     const preview = card.querySelector('.tv-preview');
     const details = card.querySelector('.tv-details');
     const detailsButton = card.querySelector('.tv-details-toggle');
     head.addEventListener('click', () => {
       const open = preview.hidden;
-      preview.hidden = !open;
-      card.classList.toggle('is-open', open);
-      head.setAttribute('aria-expanded', String(open));
-      head.querySelector('.tv-open-label').textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓');
-      if (!open) {
-        details.hidden = true;
-        detailsButton.setAttribute('aria-expanded', 'false');
-        detailsButton.textContent = tr('Узнать о туре ↓', 'Tour details ↓');
-      }
+      if (open) tourCards.forEach(other => {
+        if (other !== card) setTourOpen(other, false);
+      });
+      setTourOpen(card, open);
+      if (open) head.scrollIntoView({ block: 'nearest' });
     });
     detailsButton.addEventListener('click', () => {
       const open = details.hidden;
