@@ -39,13 +39,13 @@ function renderToursV2(page) {
     return `
       <article class="tv-tour${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="false" aria-controls="tv-preview-${id}">
-          <span class="tv-tour-thumb${tour.poster ? ' tv-tour-thumb--poster' : ''}${isDemo ? ' tv-tour-thumb--demo' : ''}" aria-hidden="true"><img src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">${isDemo ? `<span>${artist}</span>` : ''}</span>
+          <span class="tv-tour-thumb${tour.poster ? ' tv-tour-thumb--poster' : ''}${isDemo ? ' tv-tour-thumb--demo' : ''}" aria-hidden="true">${tour.poster ? `<img class="tv-poster-fill" src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">` : ''}<img class="tv-poster-main" src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">${isDemo ? `<span>${artist}</span>` : ''}</span>
           <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
           <span class="tv-open-label">${tr('Подробнее ↓', 'More details ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" hidden>
           <div class="tv-preview-grid">
-            <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? posterAlt : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
+            <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}">${tour.poster ? `<img class="tv-poster-fill" src="${safe(tour.image)}" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ''}<img class="tv-poster-main" src="${safe(tour.image)}" alt="${tour.poster ? posterAlt : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy" decoding="async">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
             <div class="tv-preview-copy">
               <div class="tv-preview-summary">
                 <small>${tr('Концерт', 'Concert')} · ${city}</small>
