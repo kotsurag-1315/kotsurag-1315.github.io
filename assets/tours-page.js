@@ -39,7 +39,7 @@ function renderToursV2(page) {
     return `
       <article class="tv-tour${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="false" aria-controls="tv-preview-${id}">
-          <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
+          <span class="tv-tour-thumb${tour.poster ? ' tv-tour-thumb--poster' : ''}${isDemo ? ' tv-tour-thumb--demo' : ''}" aria-hidden="true"><img src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">${isDemo ? `<span>${artist}</span>` : ''}</span>
           <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
           <span class="tv-open-label">${tr('Подробнее ↓', 'More details ↓')}</span>
         </button>
