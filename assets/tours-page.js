@@ -17,6 +17,11 @@ function renderToursV2(page) {
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
     const isDemo = tour.demo === true;
+    const groupSize = Number.isInteger(tour.groupSize) && tour.groupSize > 0 ? tour.groupSize : 7;
+    const remainingSeats = Number.isInteger(tour.remainingSeats) && tour.remainingSeats >= 0 && tour.remainingSeats <= groupSize ? tour.remainingSeats : null;
+    const soldOut = !isDemo && remainingSeats === 0;
+    const seatsWord = remainingSeats === 1 ? 'место' : remainingSeats >= 2 && remainingSeats <= 4 ? 'места' : 'мест';
+    const seatsLabel = isDemo || remainingSeats === null ? '' : soldOut ? 'SOLD OUT' : tr(`Осталось ${remainingSeats} ${seatsWord}`, `${remainingSeats} ${remainingSeats === 1 ? 'seat' : 'seats'} left`);
     const highlights = ru ? tour.highlights : (tour.highlightsEn || tour.highlights);
     const fromPrice = safe(ru ? tour.fromPrice : (tour.fromPriceEn || tour.fromPrice));
     const detail = (key, fallbackEn) => ru ? tour[key] : (tour[key + 'En'] || fallbackEn);
@@ -26,13 +31,13 @@ function renderToursV2(page) {
       [tr('Что включено', 'Included'), detail('included', 'Services will be listed later')],
       [tr('Что не включено', 'Not included'), detail('excluded', 'Will be stated before booking')],
       [tr('Программа', 'Program'), detail('program', 'Day-by-day plan coming soon')],
-      [tr('Бронирование', 'Booking'), detail('booking', 'Terms will be published with the price')]
+      [tr('Бронирование', 'Booking'), soldOut ? tr('Набор в эту группу завершён. О следующих турах можно узнать у нас.', 'This group is full. Contact us about upcoming trips.') : detail('booking', 'Terms will be published with the price')]
     ];
     return `
       <article class="tv-tour${index === 0 ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
-          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small></span>
+          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr(`до ${groupSize} человек в группе`, `up to ${groupSize} people in the group`)}</small>${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
           <span class="tv-open-label">${index === 0 ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
@@ -50,7 +55,7 @@ function renderToursV2(page) {
           <div class="tv-details" id="tv-details-${id}" hidden>
             <h3>${tr('Подробная информация о туре', 'Tour information')}</h3>
             <div class="tv-fields">${fields.map(([label, value]) => `<div class="tv-field"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`).join('')}</div>
-            <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : tr('Есть вопросы по поездке? Напишите нам — расскажем об условиях бронирования.', 'Questions about this trip? Contact us for booking details.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
+            <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : soldOut ? tr('Места закончились. Напишите нам, чтобы узнать о следующих поездках.', 'This group is full. Contact us about upcoming trips.') : tr('Есть вопросы по поездке? Напишите нам — расскажем об условиях бронирования.', 'Questions about this trip? Contact us for booking details.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
           </div>
         </div>
       </article>`;
