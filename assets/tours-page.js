@@ -12,6 +12,7 @@ function renderToursV2(page) {
   const cards = tours.map((tour, index) => {
     const id = safe(tour.id);
     const title = safe(ru ? tour.title : (tour.titleEn || tour.title));
+    const headerDates = safe((ru ? tour.headerDates : (tour.headerDatesEn || tour.headerDates)) || tr('Даты уточняются', 'Dates to be confirmed'));
     const artist = safe(ru ? tour.artist : (tour.artistEn || tour.artist));
     const month = safe(ru ? tour.month : (tour.monthEn || tour.month));
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
@@ -38,7 +39,7 @@ function renderToursV2(page) {
       <article class="tv-tour${index === 0 ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
-          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
+          <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
           <span class="tv-open-label">${index === 0 ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
