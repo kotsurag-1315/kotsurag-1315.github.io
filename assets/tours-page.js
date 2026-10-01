@@ -64,7 +64,7 @@ function renderToursV2(page) {
 
   page.innerHTML = `
     <div class="tv-shell">
-      <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Другие анонсы пока примерные · даты и детали уточняются', 'Other announcements are previews · dates and details to be confirmed')}</small></header>
+      <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Выберите тур по душе — и поехали за впечатлениями ✨', 'Find a trip you love — and let’s go make memories ✨')}</small></header>
       <div class="tv-layout">
         <section class="tv-main" aria-label="${tr('Предстоящие туры', 'Upcoming tours')}">
           <div class="tv-section-title"><h2>${tr('Предстоящие туры', 'Upcoming tours')}</h2><span>${tr('Выберите, что интересно', 'Choose what interests you')}</span></div>
