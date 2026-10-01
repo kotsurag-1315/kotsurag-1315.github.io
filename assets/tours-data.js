@@ -2,23 +2,25 @@
 // Фото по умолчанию — иллюстрация, а не снимок конкретного концерта.
 window.KM_TOURS = [
   {
-    id: 'weeknd-seoul',
-    title: 'The Weeknd в Сеуле',
-    titleEn: 'The Weeknd in Seoul',
-    artist: 'The Weeknd',
-    month: 'Октябрь',
-    monthEn: 'October',
+    id: 'sample-seoul',
+    demo: true,
+    title: 'Пример: концертный тур в Сеул',
+    titleEn: 'Sample: concert trip to Seoul',
+    artist: 'Сеул + концерт',
+    artistEn: 'Seoul + concert',
+    month: 'Даты уточняются',
+    monthEn: 'Dates to be confirmed',
     city: 'Сеул',
     cityEn: 'Seoul',
-    description: 'Групповая поездка на концерт в Сеуле. Подробную программу, даты и стоимость добавим после согласования.',
-    descriptionEn: 'A group trip to a concert in Seoul. Program, dates and price will be added after confirmation.',
+    description: 'Так будет выглядеть карточка тура: краткое описание поездки, программа, условия и бронирование. Это демонстрация, не открытый к продаже тур.',
+    descriptionEn: 'A preview of a tour card with trip overview, itinerary, terms and booking. This is a demo, not a bookable trip.',
     image: 'assets/tours-concert-illustration.webp',
-    dates: 'Уточняются',
-    price: 'Будет объявлена',
-    included: 'Список услуг добавим позже',
-    excluded: 'Укажем до бронирования',
-    program: 'План поездки по дням появится здесь',
-    booking: 'Условия опубликуем вместе с ценой'
+    dates: 'Пример: 5 дней / 4 ночи. Даты не назначены',
+    price: 'Не установлена — это демонстрация',
+    included: 'Пример: маршрут по дням, помощь с подготовкой поездки, связь с организаторами',
+    excluded: 'Пример: перелёт, проживание, билеты на концерт и личные расходы',
+    program: 'День 1 — знакомство с Сеулом; день 2 — прогулка по районам города; день 3 — концертная программа; дни 4–5 — свободное время и возвращение. Всё это пример структуры, не утверждённый маршрут.',
+    booking: 'Это макет карточки. Бронирование не открыто.'
   },
   {
     id: 'mcr-bangkok',
@@ -85,3 +87,4 @@ window.KM_TOURS = [
     booking: 'Условия опубликуем вместе с ценой'
   }
 ];
+
