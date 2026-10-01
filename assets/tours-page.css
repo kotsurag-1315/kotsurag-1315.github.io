@@ -15,7 +15,8 @@
 .tours-v2 .tv-tour-head { width: 100%; padding: 10px 12px; display: grid; grid-template-columns: 112px minmax(0,1fr); align-items: center; gap: 8px 12px; text-align: left; scroll-margin-top: 80px; }
 .tours-v2 .tv-tour-thumb { position: relative; grid-row: 1 / span 2; display: block; width: 112px; height: 90px; overflow: hidden; border-radius: 13px; background: #111; }
 .tours-v2 .tv-tour-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.tours-v2 .tv-tour-thumb--poster img { object-position: right center; }
+.tours-v2 .tv-tour-thumb--poster .tv-poster-fill { position: absolute; inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px); filter: blur(10px); opacity: .75; }
+.tours-v2 .tv-tour-thumb--poster .tv-poster-main { position: relative; object-fit: contain; }
 .tours-v2 .tv-tour-thumb--demo::after { content: ''; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent,rgba(10,8,20,.8)); }
 .tours-v2 .tv-tour-thumb--demo span { position: absolute; z-index: 1; right: 7px; bottom: 7px; left: 7px; color: #fff; font-size: 11px; font-weight: 800; line-height: 1.15; text-shadow: 0 1px 3px #000; }
 .tours-v2 .tv-tour-heading { min-width: 0; align-self: end; }
@@ -34,8 +35,9 @@
 .tours-v2 .tv-tour-photo img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
 .tours-v2 .tv-tour-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg,transparent 58%,rgba(15,10,20,.55)); pointer-events: none; }
 .tours-v2 .tv-tour-photo span { position: absolute; bottom: 10px; left: 12px; z-index: 1; color: white; font-size: 10px; font-weight: 700; }
-.tours-v2 .tv-tour-photo--poster { min-height: 0; aspect-ratio: 16 / 9; background: #050505; }
-.tours-v2 .tv-tour-photo--poster img { inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); object-fit: contain; }
+.tours-v2 .tv-tour-photo--poster { min-height: 0; aspect-ratio: 16 / 9; background: #111; }
+.tours-v2 .tv-tour-photo--poster .tv-poster-fill { inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); filter: blur(16px); opacity: .75; }
+.tours-v2 .tv-tour-photo--poster .tv-poster-main { object-fit: contain; }
 .tours-v2 .tv-tour-photo--poster::after { display: none; }
 .tours-v2 .tv-preview-copy { padding: 17px; display: flex; flex-direction: column; align-items: flex-start; }
 .tours-v2 .tv-preview-summary { min-width: 0; }
