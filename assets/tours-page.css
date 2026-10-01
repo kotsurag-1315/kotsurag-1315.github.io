@@ -79,7 +79,7 @@
   .tours-v2 .tv-tour-photo--poster { min-height: 0; }
 }
 @media (min-width: 1100px) {
-  .tours-v2 .tv-tour--poster .tv-preview-grid { grid-template-columns: minmax(0,52%) minmax(0,1fr); }
+  .tours-v2 .tv-tour--poster .tv-preview-grid { grid-template-columns: minmax(0,45%) minmax(0,1fr); }
   .tours-v2 .tv-tour-photo--poster { align-self: start; }
 }
 @media (max-width: 399px) {
