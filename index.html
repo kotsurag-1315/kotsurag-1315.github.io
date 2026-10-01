@@ -2546,6 +2546,33 @@ body.map-page-open { overflow: hidden; }
   .detail-hero .share-btn,
   .detail-hero .fav-btn { background: rgba(28, 28, 28, 0.65); }
 }
+.auth-check-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: grid;
+  place-items: center;
+  background: #FAF7F2;
+  padding: 24px;
+}
+.auth-check-overlay[hidden] { display: none; }
+.auth-check-card { text-align: center; color: #262421; }
+.auth-check-brand { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; }
+.auth-check-brand span { color: #E8635A; }
+.auth-check-spinner {
+  width: 32px;
+  height: 32px;
+  margin: 24px auto 16px;
+  border: 3px solid #E8DED5;
+  border-top-color: #E8635A;
+  border-radius: 50%;
+  animation: auth-check-spin .8s linear infinite;
+}
+.auth-check-message { color: #706B66; font-size: 15px; }
+@keyframes auth-check-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .auth-check-spinner { animation: none; }
+}
 </style>
 <link rel="stylesheet" href="assets/tours-page.css">
 </head>
@@ -2606,6 +2633,14 @@ body.map-page-open { overflow: hidden; }
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<div class="auth-check-overlay" id="auth-check-overlay" role="status" aria-live="polite">
+  <div class="auth-check-card">
+    <div class="auth-check-brand"><span>Korea</span>Mate</div>
+    <div class="auth-check-spinner" aria-hidden="true"></div>
+    <div class="auth-check-message" id="auth-check-message">Проверяем доступ…</div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
         onerror="var s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';document.head.appendChild(s);"></script>
@@ -6601,6 +6636,14 @@ const PRIVATE_PLACE_CACHE = new Map();
 let kmAuthRevision = 0;
 let premiumRefreshTimer = null;
 
+function setAuthChecking(active) {
+  const overlay = document.getElementById('auth-check-overlay');
+  if (!overlay) return;
+  const message = document.getElementById('auth-check-message');
+  if (message) message.textContent = STATE.lang === 'ko' ? '접근 권한 확인 중…' : STATE.lang === 'en' ? 'Checking your access…' : 'Проверяем доступ…';
+  overlay.hidden = !active;
+}
+
 function restorePublicCatalog() {
   PLACES.splice(0, PLACES.length, ...PUBLIC_PLACES.map(place => ({ ...place })));
   PRIVATE_PLACE_CACHE.clear();
@@ -6610,6 +6653,7 @@ function restorePublicCatalog() {
 
 async function refreshFirebaseAccount(user) {
   const revision = ++kmAuthRevision;
+  setAuthChecking(true);
   clearTimeout(premiumRefreshTimer);
   const wasPremium = STATE.premium;
   restorePublicCatalog();
@@ -6628,13 +6672,14 @@ async function refreshFirebaseAccount(user) {
   }
   if (user && user.emailVerified && KM_DB) {
     try {
-      await user.getIdToken(true);
       const snapshot = await KM_DB.collection('entitlements').doc(user.uid).get();
       if (revision !== kmAuthRevision || KM_AUTH.currentUser?.uid !== user.uid) return;
       const expiry = snapshot.exists ? snapshot.data().expiresAt : null;
       if (expiry?.toMillis && expiry.toMillis() > Date.now()) {
-        const tipsSnapshot = await KM_DB.collection('premium_meta').doc('tips').get();
-        const catalog = await KM_DB.collection('premium_places').get();
+        const [tipsSnapshot, catalog] = await Promise.all([
+          KM_DB.collection('premium_meta').doc('tips').get(),
+          KM_DB.collection('premium_places').get(),
+        ]);
         if (revision !== kmAuthRevision || KM_AUTH.currentUser?.uid !== user.uid) return;
         const tips = tipsSnapshot.exists ? tipsSnapshot.data() : null;
         if (!Array.isArray(tips?.apps) || tips.apps.length < 6 || !Array.isArray(tips?.hacks) || tips.hacks.length < 4) throw new Error('Premium tips are incomplete');
@@ -6667,6 +6712,7 @@ async function refreshFirebaseAccount(user) {
   if (revision !== kmAuthRevision) return;
   closeModal();
   renderPage(STATE.currentTab);
+  setAuthChecking(false);
 }
 
 if (KM_AUTH) {
@@ -6674,7 +6720,7 @@ if (KM_AUTH) {
     console.warn('Firebase authentication unavailable', error);
     refreshFirebaseAccount(null);
   });
-}
+} else setAuthChecking(false);
 
 // ================= UTILS =================
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
