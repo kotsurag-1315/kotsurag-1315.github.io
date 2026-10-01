@@ -1,5 +1,6 @@
 // Редактируйте анонсы здесь. Не подтверждённые поездки помечайте demo: true.
 // Фото по умолчанию — иллюстрация, а не снимок конкретного концерта.
+// groupSize — максимум участников; remainingSeats: 0 = SOLD OUT, 3 = осталось 3 места, null = число пока неизвестно.
 window.KM_TOURS = [
   {
     id: 'weeknd-seoul-busan',
@@ -10,6 +11,8 @@ window.KM_TOURS = [
     monthEn: 'October',
     city: 'Сеул + Пусан',
     cityEn: 'Seoul + Busan',
+    groupSize: 7,
+    remainingSeats: 0,
     description: '6–15 октября: концерт The Weeknd, прогулки по известным и нетуристическим местам Кореи, три дня в Пусане и празднование дня рождения Чимина. Главное преимущество — индивидуальное размещение в центре: каждый турист живёт один в двухместном номере.',
     descriptionEn: 'October 6–15: The Weeknd concert, iconic and lesser-known places, three days in Busan and a celebration of Jimin’s birthday. The highlight is private accommodation in the city centre: every guest has a twin room to themselves.',
     highlights: ['🛏️ Отдельный номер', '🎤 The Weeknd', '🚄 3 дня в Пусане'],
@@ -41,6 +44,8 @@ window.KM_TOURS = [
     monthEn: 'November',
     city: 'Бангкок',
     cityEn: 'Bangkok',
+    groupSize: 7,
+    remainingSeats: null,
     description: 'Концертная поездка в Бангкок с KoreaMate. Программу и детали путешествия опубликуем позже.',
     descriptionEn: 'A concert trip to Bangkok with KoreaMate. Program and travel details will be published later.',
     image: 'assets/tours-concert-illustration.webp',
@@ -58,6 +63,8 @@ window.KM_TOURS = [
     monthEn: 'December',
     city: 'Бангкок',
     cityEn: 'Bangkok',
+    groupSize: 7,
+    remainingSeats: null,
     description: 'Вариант групповой поездки для поклонников BTS. Это пример анонса; детали подтвердим позже.',
     descriptionEn: 'A possible group trip for BTS fans. This is a sample announcement; details will be confirmed later.',
     image: 'assets/tours-concert-illustration.webp',
@@ -75,6 +82,8 @@ window.KM_TOURS = [
     monthEn: 'December',
     city: 'Куала-Лумпур',
     cityEn: 'Kuala Lumpur',
+    groupSize: 7,
+    remainingSeats: null,
     description: 'Поездка на концерт в Куала-Лумпур. Даты, программу и стоимость добавим после согласования.',
     descriptionEn: 'A concert trip to Kuala Lumpur. Dates, program and price will be added after confirmation.',
     image: 'assets/tours-concert-illustration.webp',
@@ -92,6 +101,8 @@ window.KM_TOURS = [
     monthEn: 'December',
     city: 'Куала-Лумпур',
     cityEn: 'Kuala Lumpur',
+    groupSize: 7,
+    remainingSeats: null,
     description: 'Ещё один вариант групповой поездки для поклонников BTS. Подробности добавим после подтверждения.',
     descriptionEn: 'Another possible group trip for BTS fans. Details will be added after confirmation.',
     image: 'assets/tours-concert-illustration.webp',
