@@ -6637,7 +6637,7 @@ async function refreshFirebaseAccount(user) {
         const catalog = await KM_DB.collection('premium_places').get();
         if (revision !== kmAuthRevision || KM_AUTH.currentUser?.uid !== user.uid) return;
         const tips = tipsSnapshot.exists ? tipsSnapshot.data() : null;
-        if (tips?.apps?.length !== 6 || tips?.hacks?.length !== 4) throw new Error('Premium tips are incomplete');
+        if (!Array.isArray(tips?.apps) || tips.apps.length < 6 || !Array.isArray(tips?.hacks) || tips.hacks.length < 4) throw new Error('Premium tips are incomplete');
         const byId = new Map(catalog.docs.map(doc => [doc.id, doc.data()]));
         if (byId.size !== PRIVATE_PLACE_IDS.length || PRIVATE_PLACE_IDS.some(id => !byId.has(id))) {
           throw new Error('Premium catalogue is incomplete');
