@@ -20,6 +20,8 @@ function renderToursV2(page) {
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
     const isDemo = tour.demo === true;
     const pendingDetails = tour.pendingDetails === true;
+    const posterAspect = Number(tour.posterAspect);
+    const posterStyle = tour.poster && Number.isFinite(posterAspect) && posterAspect > 1 && posterAspect < 3 ? ` style="--poster-aspect: ${posterAspect}"` : '';
     const groupSize = Number.isInteger(tour.groupSize) && tour.groupSize > 0 ? tour.groupSize : 7;
     const remainingSeats = Number.isInteger(tour.remainingSeats) && tour.remainingSeats >= 0 && tour.remainingSeats <= groupSize ? tour.remainingSeats : null;
     const soldOut = !isDemo && remainingSeats === 0;
@@ -38,7 +40,7 @@ function renderToursV2(page) {
       [tr('Бронирование', 'Booking'), soldOut ? tr('Набор в эту группу завершён. О следующих турах можно узнать у нас.', 'This group is full. Contact us about upcoming trips.') : detail('booking', 'Terms will be published with the price')]
     ];
     return `
-      <article class="tv-tour${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
+      <article class="tv-tour${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}"${posterStyle}>
         <button class="tv-tour-head" type="button" aria-expanded="false" aria-controls="tv-preview-${id}">
           <span class="tv-tour-thumb${tour.poster ? ' tv-tour-thumb--poster' : ''}${isDemo ? ' tv-tour-thumb--demo' : ''}" aria-hidden="true">${tour.poster ? `<img class="tv-poster-fill" src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">` : ''}<img class="tv-poster-main" src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">${isDemo ? `<span>${artist}</span>` : ''}</span>
           <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
