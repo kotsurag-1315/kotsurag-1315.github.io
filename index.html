@@ -2603,9 +2603,33 @@ body.map-page-open { overflow: hidden; }
   line-height: 1.4;
 }
 .auth-check-flower { font-size: 19px; animation: auth-check-bloom 1.8s ease-in-out infinite; }
+.google-signin-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(37, 30, 28, 0.38);
+  backdrop-filter: blur(5px);
+}
+.google-signin-transition[hidden] { display: none; }
+.google-signin-card {
+  width: min(100%, 370px);
+  padding: 30px 24px 26px;
+  border: 1px solid #F5DDD9;
+  border-radius: 24px;
+  background: #FAF7F2;
+  box-shadow: 0 18px 55px rgba(37, 30, 28, 0.15);
+  text-align: center;
+}
+.google-signin-flower { display: block; margin-bottom: 14px; font-size: 42px; animation: auth-check-bloom 1.8s ease-in-out infinite; }
+.google-signin-title { margin: 0 0 8px; color: #262421; font-size: 23px; font-weight: 800; line-height: 1.2; }
+.google-signin-sub { margin: 0; color: #706B66; font-size: 14px; line-height: 1.5; }
+.google-signin-dismiss { margin-top: 18px; border: 0; background: transparent; color: #8A7772; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
 @keyframes auth-check-bloom { 50% { transform: rotate(12deg) scale(1.1); } }
 @media (prefers-reduced-motion: reduce) {
-  .auth-check-flower, .auth-check-home-flower { animation: none; }
+  .auth-check-flower, .auth-check-home-flower, .google-signin-flower { animation: none; }
 }
 </style>
 <link rel="stylesheet" href="assets/tours-page.css">
@@ -2667,6 +2691,15 @@ body.map-page-open { overflow: hidden; }
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<div class="google-signin-transition" id="google-signin-transition" role="status" aria-live="polite" hidden>
+  <div class="google-signin-card">
+    <span class="google-signin-flower" aria-hidden="true">🌸</span>
+    <h2 class="google-signin-title" id="google-signin-title">Корея уже рядом</h2>
+    <p class="google-signin-sub" id="google-signin-sub">Подключаем ваш профиль и проверяем доступ</p>
+    <button class="google-signin-dismiss" id="google-signin-dismiss" type="button" onclick="setGoogleSignInTransition(false)">Вернуться на сайт</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
         onerror="var s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';document.head.appendChild(s);"></script>
@@ -6669,6 +6702,18 @@ function setAuthChecking(active) {
   if (!active) note?.remove();
 }
 
+function setGoogleSignInTransition(active) {
+  const overlay = document.getElementById('google-signin-transition');
+  if (!overlay) return;
+  if (active) {
+    const lang = STATE.lang;
+    document.getElementById('google-signin-title').textContent = lang === 'ko' ? '한국이 곧 열려요' : lang === 'en' ? 'Your Korea is almost here' : 'Корея уже рядом';
+    document.getElementById('google-signin-sub').textContent = lang === 'ko' ? '프로필과 이용 권한을 확인하고 있어요' : lang === 'en' ? 'Connecting your profile and checking access' : 'Подключаем ваш профиль и проверяем доступ';
+    document.getElementById('google-signin-dismiss').textContent = lang === 'ko' ? '사이트로 돌아가기' : lang === 'en' ? 'Back to the site' : 'Вернуться на сайт';
+  }
+  overlay.hidden = !active;
+}
+
 function restorePublicCatalog() {
   PLACES.splice(0, PLACES.length, ...PUBLIC_PLACES.map(place => ({ ...place })));
   PRIVATE_PLACE_CACHE.clear();
@@ -6738,6 +6783,7 @@ async function refreshFirebaseAccount(user) {
   closeModal();
   setAuthChecking(false);
   renderPage(STATE.currentTab);
+  if (user) setGoogleSignInTransition(false);
 }
 
 if (KM_AUTH) {
@@ -7067,9 +7113,11 @@ function renderGoogleButton(container) {
 
 async function signInWithGoogle() {
   if (!KM_AUTH) return showAuthError('Не удалось загрузить Firebase. Обновите страницу.');
+  setGoogleSignInTransition(true);
   try {
     await KM_AUTH.signInWithPopup(new firebase.auth.GoogleAuthProvider());
   } catch (error) {
+    setGoogleSignInTransition(false);
     showAuthError(authErrorMessage(error));
   }
 }
