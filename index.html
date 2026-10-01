@@ -2184,6 +2184,9 @@ body.map-page-open { overflow: hidden; }
 .premium-hint-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 3px; line-height: 1.3; }
 .premium-hint-sub { font-size: 11px; color: var(--ink-3); line-height: 1.4; }
 .premium-hint-price { font-size: 16px; font-weight: 800; color: var(--primary); flex-shrink: 0; white-space: nowrap; line-height: 1; }
+.premium-hint.auth-check-home { cursor: default; min-height: 84px; }
+.premium-hint.auth-check-home:active { transform: none; box-shadow: 0 2px 16px rgba(192,57,43,0.08); }
+.auth-check-home-flower { font-size: 27px; flex-shrink: 0; animation: auth-check-bloom 1.8s ease-in-out infinite; }
 
 /* ── Tours page ── */
 .tours-page-wrap { padding-bottom: 20px; }
@@ -2602,7 +2605,7 @@ body.map-page-open { overflow: hidden; }
 .auth-check-flower { font-size: 19px; animation: auth-check-bloom 1.8s ease-in-out infinite; }
 @keyframes auth-check-bloom { 50% { transform: rotate(12deg) scale(1.1); } }
 @media (prefers-reduced-motion: reduce) {
-  .auth-check-flower { animation: none; }
+  .auth-check-flower, .auth-check-home-flower { animation: none; }
 }
 </style>
 <link rel="stylesheet" href="assets/tours-page.css">
@@ -6733,8 +6736,8 @@ async function refreshFirebaseAccount(user) {
   }
   if (revision !== kmAuthRevision) return;
   closeModal();
-  renderPage(STATE.currentTab);
   setAuthChecking(false);
+  renderPage(STATE.currentTab);
 }
 
 if (KM_AUTH) {
@@ -6854,7 +6857,7 @@ function renderPage(name) {
   else if (name === 'tours') renderToursV2(page);
   else if (name === 'food') renderFoodPage(page);
   else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
-  if (authCheckPending) {
+  if (authCheckPending && name !== 'home') {
     const message = STATE.lang === 'ko' ? '잠깐만요, 이용 권한을 확인하고 있어요' : STATE.lang === 'en' ? 'Just a moment — checking your access' : 'Минуточку, проверяем ваш доступ';
     page.insertAdjacentHTML('afterbegin', `<div class="auth-check-note" id="auth-check-note" role="status"><span class="auth-check-flower" aria-hidden="true">🌸</span><span>${message}</span></div>`);
   }
@@ -7196,9 +7199,19 @@ function renderHome(page) {
     });
   }, { passive: true });
 
-  // Premium hint — тихая подсказка под городами
-  const premHint = el('div', { class: 'premium-hint', onclick: () => { if (!STATE.premium) showPaywall(); } });
-  premHint.innerHTML = `
+  // Пока Firebase проверяет подписку, не показываем предложение купить её.
+  if (authCheckPending) {
+    const checkHint = el('div', { class: 'premium-hint auth-check-home', id: 'auth-check-note', role: 'status' });
+    checkHint.innerHTML = `
+      <span class="auth-check-home-flower" aria-hidden="true">🌸</span>
+      <div class="premium-hint-text">
+        <div class="premium-hint-title">${lang === 'ru' ? 'Секундочку, сверяем ваш доступ к гиду' : lang === 'ko' ? '잠깐만요, 가이드 이용 권한을 확인하고 있어요' : 'One moment, checking your guide access'}</div>
+        <div class="premium-hint-sub">${lang === 'ru' ? 'Скоро всё будет готово для вашего путешествия' : lang === 'ko' ? '곧 여행 준비가 완료돼요' : 'Your Korea journey will be ready in a moment'}</div>
+      </div>`;
+    page.appendChild(checkHint);
+  } else if (!STATE.premium) {
+    const premHint = el('div', { class: 'premium-hint', onclick: () => showPaywall() });
+    premHint.innerHTML = `
     <div class="premium-hint-text">
       <div class="premium-hint-title">${lang === 'ru' ? 'Твой личный гид по Южной Корее' : lang === 'ko' ? '나만의 한국 여행 가이드' : 'Your personal South Korea guide'}</div>
       <div class="premium-hint-sub">${lang === 'ru' ? `${PLACES.length} мест, карты, маршруты — всё в одном` : `${PLACES.length} places, maps, routes — all in one`}</div>
@@ -7208,7 +7221,8 @@ function renderHome(page) {
       <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">${lang === 'ru' ? 'в год' : 'per year'}</div>
     </div>
   `;
-  if (!STATE.premium) page.appendChild(premHint);
+    page.appendChild(premHint);
+  }
 
   // Categories (moved up — right after cities, no "For You" gap)
   const sec2Title = el('div', { class: 'section-title' });
