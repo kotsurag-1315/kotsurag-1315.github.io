@@ -12,10 +12,11 @@ function renderToursV2(page) {
   const cards = tours.map((tour, index) => {
     const id = safe(tour.id);
     const title = safe(ru ? tour.title : (tour.titleEn || tour.title));
-    const artist = safe(tour.artist);
+    const artist = safe(ru ? tour.artist : (tour.artistEn || tour.artist));
     const month = safe(ru ? tour.month : (tour.monthEn || tour.month));
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
+    const isDemo = tour.demo === true;
     const detail = (key, fallbackEn) => ru ? tour[key] : (tour[key + 'En'] || fallbackEn);
     const fields = [
       [tr('Даты поездки', 'Trip dates'), detail('dates', 'To be confirmed')],
@@ -28,8 +29,8 @@ function renderToursV2(page) {
     return `
       <article class="tv-tour${index === 0 ? ' is-open' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
-          <span class="tv-date" aria-label="${month}">${month.slice(0, 3)}</span>
-          <span class="tv-tour-heading"><strong>${title}</strong><small>${month} · ${city} · ${tr('групповой тур', 'group tour')}</small></span>
+          <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
+          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small></span>
           <span class="tv-open-label">${index === 0 ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
@@ -45,7 +46,7 @@ function renderToursV2(page) {
           <div class="tv-details" id="tv-details-${id}" hidden>
             <h3>${tr('Подробная информация о туре', 'Tour information')}</h3>
             <div class="tv-fields">${fields.map(([label, value]) => `<div class="tv-field"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`).join('')}</div>
-            <div class="tv-details-footer"><p>${tr('Пока детали готовятся, можно написать нам и уточнить интересующий тур.', 'While details are being prepared, contact us about the tour.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
+            <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : tr('Пока детали готовятся, можно написать нам и уточнить интересующий тур.', 'While details are being prepared, contact us about the tour.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
           </div>
         </div>
       </article>`;
