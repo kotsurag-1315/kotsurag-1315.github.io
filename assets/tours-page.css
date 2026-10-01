@@ -12,7 +12,7 @@
 .tours-v2 .tv-tour-list { display: grid; gap: 10px; }
 .tours-v2 .tv-tour { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
 .tours-v2 .tv-tour.is-open { border-color: #EFC5C0; box-shadow: var(--shadow); }
-.tours-v2 .tv-tour-head { width: 100%; padding: 10px 12px; display: flex; align-items: center; gap: 13px; text-align: left; }
+.tours-v2 .tv-tour-head { width: 100%; padding: 10px 12px; display: flex; align-items: center; gap: 13px; text-align: left; scroll-margin-top: 80px; }
 .tours-v2 .tv-date { flex: 0 0 50px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 13px; background: var(--primary-soft); color: #C64E45; font-size: 12px; font-weight: 800; text-transform: uppercase; }
 .tours-v2 .tv-tour-heading { flex: 1; min-width: 0; }
 .tours-v2 .tv-tour-heading strong { display: block; font-size: 14px; line-height: 1.3; }
