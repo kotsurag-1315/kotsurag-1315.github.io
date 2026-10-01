@@ -16,7 +16,8 @@ window.KM_TOURS = [
     highlightsEn: ['🛏️ Private room', '🎤 The Weeknd', '🚄 3 days in Busan'],
     fromPrice: 'от 195 000 ₽',
     fromPriceEn: 'from ₽195,000',
-    image: 'assets/tours-concert-illustration.webp',
+    image: 'assets/tours-weeknd-poster.png',
+    poster: true,
     dates: '6–15 октября 2026 года. Вылет из Москвы — 5 октября; прибытие в Сеул — 6 октября; вылет из Сеула — 15 октября.',
     datesEn: 'October 6–15, 2026. Depart Moscow October 5; arrive in Seoul October 6; depart Seoul October 15.',
     price: '195 000 ₽ — без билета на концерт\n230 000 ₽ — со standing-билетом',
@@ -99,4 +100,3 @@ window.KM_TOURS = [
     booking: 'Условия опубликуем вместе с ценой'
   }
 ];
-
