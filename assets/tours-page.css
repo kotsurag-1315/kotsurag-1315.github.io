@@ -38,7 +38,7 @@
 .tours-v2 .tv-details-toggle { margin-top: auto; padding: 11px 13px; min-height: 42px; border-radius: 10px; background: var(--primary); color: white; font-size: 12px; font-weight: 800; }
 .tours-v2 .tv-details { border-top: 1px solid var(--line); padding: 18px; background: #FFFCF9; }
 .tours-v2 .tv-details h3 { font-size: 17px; margin-bottom: 13px; }
-.tours-v2 .tv-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.tours-v2 .tv-fields { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 10px; }
 .tours-v2 .tv-field { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: white; }
 .tours-v2 .tv-field span { display: block; color: var(--ink-3); font-size: 11px; margin-bottom: 5px; }
 .tours-v2 .tv-field strong { display: block; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-line; }
