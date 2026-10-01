@@ -41,7 +41,7 @@
 .tours-v2 .tv-details-footer a { flex: 0 0 auto; padding: 11px 13px; border-radius: 10px; background: var(--blue-soft); color: #236698; font-size: 12px; font-weight: 800; }
 .tours-v2 .tv-aside { display: grid; gap: 12px; align-content: start; }
 .tours-v2 .tv-about { background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); }
-.tours-v2 .tv-about img { width: 100%; height: 230px; object-fit: cover; object-position: center 35%; }
+.tours-v2 .tv-about img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: center; }
 .tours-v2 .tv-about > div { padding: 17px; }
 .tours-v2 .tv-about h2, .tours-v2 .tv-individual h2 { font-size: 17px; line-height: 1.3; }
 .tours-v2 .tv-about p, .tours-v2 .tv-individual > p { margin-top: 7px; font-size: 12px; line-height: 1.55; color: var(--ink-2); }
@@ -68,3 +68,4 @@
   .tours-v2 .tv-details-footer { align-items: stretch; flex-direction: column; }
   .tours-v2 .tv-details-footer a { text-align: center; }
 }
+
