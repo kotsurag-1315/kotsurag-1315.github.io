@@ -14,6 +14,7 @@ function renderToursV2(page) {
     const title = safe(ru ? tour.title : (tour.titleEn || tour.title));
     const headerDates = safe((ru ? tour.headerDates : (tour.headerDatesEn || tour.headerDates)) || tr('Даты уточняются', 'Dates to be confirmed'));
     const artist = safe(ru ? tour.artist : (tour.artistEn || tour.artist));
+    const posterAlt = safe(ru ? `Афиша тура на концерт ${tour.artist}` : `Tour poster for ${tour.artistEn || tour.artist}`);
     const month = safe(ru ? tour.month : (tour.monthEn || tour.month));
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
@@ -44,7 +45,7 @@ function renderToursV2(page) {
         </button>
         <div class="tv-preview" id="tv-preview-${id}" hidden>
           <div class="tv-preview-grid">
-            <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? tr('Афиша тура на концерт The Weeknd', 'The Weeknd concert tour poster') : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
+            <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? posterAlt : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
             <div class="tv-preview-copy">
               <div class="tv-preview-summary">
                 <small>${tr('Концерт', 'Concert')} · ${city}</small>
