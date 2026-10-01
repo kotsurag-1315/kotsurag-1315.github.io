@@ -19,6 +19,7 @@ function renderToursV2(page) {
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
     const isDemo = tour.demo === true;
+    const pendingDetails = tour.pendingDetails === true;
     const groupSize = Number.isInteger(tour.groupSize) && tour.groupSize > 0 ? tour.groupSize : 7;
     const remainingSeats = Number.isInteger(tour.remainingSeats) && tour.remainingSeats >= 0 && tour.remainingSeats <= groupSize ? tour.remainingSeats : null;
     const soldOut = !isDemo && remainingSeats === 0;
@@ -55,15 +56,15 @@ function renderToursV2(page) {
               <div class="tv-preview-actions">
                 ${Array.isArray(highlights) ? `<div class="tv-highlights">${highlights.map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
                 ${fromPrice || seatsLabel ? `<div class="tv-price-row">${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</div>` : ''}
-                <button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>
+                ${pendingDetails ? '' : `<button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>`}
               </div>
             </div>
           </div>
-          <div class="tv-details" id="tv-details-${id}" hidden>
+          ${pendingDetails ? '' : `<div class="tv-details" id="tv-details-${id}" hidden>
             <h3>${tr('Подробная информация о туре', 'Tour information')}</h3>
             <div class="tv-fields">${fields.map(([label, value]) => `<div class="tv-field"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`).join('')}</div>
             <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : soldOut ? tr('Места закончились. Напишите нам, чтобы узнать о следующих поездках.', 'This group is full. Contact us about upcoming trips.') : tr('Есть вопросы по поездке? Напишите нам — расскажем об условиях бронирования.', 'Questions about this trip? Contact us for booking details.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
-          </div>
+          </div>`}
         </div>
       </article>`;
   }).join('');
@@ -95,9 +96,11 @@ function renderToursV2(page) {
     head.setAttribute('aria-expanded', String(open));
     head.querySelector('.tv-open-label').textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Подробнее ↓', 'More details ↓');
     if (!open) {
-      details.hidden = true;
-      detailsButton.setAttribute('aria-expanded', 'false');
-      detailsButton.textContent = tr('Узнать о туре ↓', 'Tour details ↓');
+      if (details && detailsButton) {
+        details.hidden = true;
+        detailsButton.setAttribute('aria-expanded', 'false');
+        detailsButton.textContent = tr('Узнать о туре ↓', 'Tour details ↓');
+      }
     }
   };
   tourCards.forEach(card => {
@@ -113,7 +116,7 @@ function renderToursV2(page) {
       setTourOpen(card, open);
       if (open) head.scrollIntoView({ block: 'nearest' });
     });
-    detailsButton.addEventListener('click', () => {
+    if (details && detailsButton) detailsButton.addEventListener('click', () => {
       const open = details.hidden;
       details.hidden = !open;
       detailsButton.setAttribute('aria-expanded', String(open));
