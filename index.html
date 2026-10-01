@@ -1818,10 +1818,16 @@ body.map-page-open { overflow: hidden; }
 .auth-providers .google-btn-wrap { margin: 0 auto 4px; display: flex; justify-content: center; min-height: 42px; }
 .auth-note { margin: 14px 0 0; color: var(--ink-3); font-size: 12px; line-height: 1.5; text-align: center; }
 .km-google-button {
-  width: 100%; min-height: 44px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--card); color: var(--ink); font: inherit; font-weight: 700;
-  cursor: pointer;
+  width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid #DADCE0;
+  background: #fff; color: #1F1F1F; font: inherit; font-size: 14px; font-weight: 600;
+  display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px;
+  align-items: center; gap: 8px; padding: 0 14px; cursor: pointer;
+  transition: background .15s, box-shadow .15s;
 }
+.km-google-button:hover { background: #F8FAFD; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.km-google-button:focus-visible { outline: 2px solid #4285F4; outline-offset: 2px; }
+.auth-google-logo { display: block; width: 20px; height: 20px; object-fit: contain; }
+.auth-google-label { text-align: center; white-space: nowrap; }
 .km-email-form { display: flex; flex-direction: column; gap: 10px; width: 100%; }
 .km-email-form input {
   width: 100%; padding: 12px 14px; border: 1px solid var(--line);
@@ -1854,8 +1860,7 @@ body.map-page-open { overflow: hidden; }
 .auth-mode-tabs button.active { background: var(--card); color: var(--ink); box-shadow: 0 1px 5px rgba(30, 20, 20, .08); }
 .auth-modal .auth-providers { gap: 0; }
 .auth-modal .auth-providers .google-btn-wrap { width: 100%; min-height: 0; margin: 0; }
-.auth-modal .km-google-button { min-height: 48px; border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 14px; }
-.auth-google-mark { font-weight: 900; font-size: 20px; line-height: 1; color: #4285f4; }
+.auth-modal .km-google-button { min-height: 48px; }
 .auth-divider { display: flex; align-items: center; gap: 12px; margin: 19px 0; color: var(--ink-3); font-size: 12px; white-space: nowrap; }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 .auth-modal .km-email-form { gap: 7px; }
@@ -7052,9 +7057,9 @@ function renderRegister(page) {
         ? 'Войдите через Google или почту. Закрытые материалы доступны с подпиской Premium.'
         : 'Sign in with Google or email. Premium content requires a subscription.'}</p>
       <div class="register-perks">
-        <div class="register-perk"><span>📍</span><span>135+ мест</span></div>
-        <div class="register-perk"><span>🗺️</span><span>Карты</span></div>
-        <div class="register-perk"><span>⭐</span><span>Premium</span></div>
+        <div class="register-perk"><span>📍</span><span>${lang==='ru'?'200+ мест':lang==='ko'?'200개 이상의 장소':'200+ places'}</span></div>
+        <div class="register-perk"><span>🗺️</span><span>${lang==='ru'?'Карты':lang==='ko'?'지도':'Maps'}</span></div>
+        <div class="register-perk"><span>✈️</span><span>${lang==='ru'?'Туры':lang==='ko'?'투어':'Tours'}</span></div>
       </div>
       <div class="google-btn-wrap" id="google-btn-container"></div>
       <button class="btn-secondary" style="max-width:320px;width:100%;margin-bottom:16px;" onclick="openAuth('signin')">${lang==='ru'?'Войти или зарегистрироваться с почтой':'Sign in or register with email'}</button>
@@ -7067,7 +7072,8 @@ function renderRegister(page) {
 
 function renderGoogleButton(container) {
   if (!container) return;
-  container.innerHTML = `<button class="km-google-button" type="button" onclick="signInWithGoogle()"><span class="auth-google-mark" aria-hidden="true">G</span>${STATE.lang==='ru'?'Продолжить с Google':'Continue with Google'}</button>`;
+  const label = STATE.lang==='ru'?'Продолжить с Google':STATE.lang==='ko'?'Google로 계속':'Continue with Google';
+  container.innerHTML = `<button class="km-google-button" type="button" onclick="signInWithGoogle()"><img class="auth-google-logo" src="https://developers.google.com/static/identity/images/g-logo.png" alt="" aria-hidden="true"><span class="auth-google-label">${label}</span><span aria-hidden="true"></span></button>`;
 }
 
 async function signInWithGoogle() {
