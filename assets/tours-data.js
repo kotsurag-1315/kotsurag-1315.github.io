@@ -1,11 +1,14 @@
 // Редактируйте анонсы здесь. Не подтверждённые поездки помечайте demo: true.
 // Фото по умолчанию — иллюстрация, а не снимок конкретного концерта.
 // groupSize — максимум участников; remainingSeats: 0 = SOLD OUT, 3 = осталось 3 места, null = число пока неизвестно.
+// headerDates — короткие даты рядом с названием тура; если их нет, показываем «Даты уточняются».
 window.KM_TOURS = [
   {
     id: 'weeknd-seoul-busan',
     title: 'The Weeknd: Сеул и Пусан',
     titleEn: 'The Weeknd: Seoul and Busan',
+    headerDates: '5–15 октября',
+    headerDatesEn: 'October 5–15',
     artist: 'The Weeknd',
     month: 'Октябрь',
     monthEn: 'October',
