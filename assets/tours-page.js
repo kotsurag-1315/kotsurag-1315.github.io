@@ -47,12 +47,16 @@ function renderToursV2(page) {
           <div class="tv-preview-grid">
             <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? tr('Афиша тура на концерт The Weeknd', 'The Weeknd concert tour poster') : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
             <div class="tv-preview-copy">
-              <small>${tr('Концерт', 'Concert')} · ${city}</small>
-              <h3>${artist}</h3>
-              <p>${description}</p>
-              ${Array.isArray(highlights) ? `<div class="tv-highlights">${highlights.map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
-              ${fromPrice || seatsLabel ? `<div class="tv-price-row">${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</div>` : ''}
-              <button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>
+              <div class="tv-preview-summary">
+                <small>${tr('Концерт', 'Concert')} · ${city}</small>
+                <h3>${artist}</h3>
+                <p>${description}</p>
+              </div>
+              <div class="tv-preview-actions">
+                ${Array.isArray(highlights) ? `<div class="tv-highlights">${highlights.map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
+                ${fromPrice || seatsLabel ? `<div class="tv-price-row">${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</div>` : ''}
+                <button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>
+              </div>
             </div>
           </div>
           <div class="tv-details" id="tv-details-${id}" hidden>
