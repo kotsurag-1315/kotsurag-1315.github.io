@@ -7,6 +7,7 @@ function renderToursV2(page) {
   }[ch]));
   const contact = 'https://t.me/qitour_stuff';
   const tours = Array.isArray(window.KM_TOURS) ? window.KM_TOURS : [];
+  const openFirstByDefault = window.innerWidth < 650;
   page.classList.add('tours-v2');
 
   const cards = tours.map((tour, index) => {
@@ -36,13 +37,13 @@ function renderToursV2(page) {
       [tr('Бронирование', 'Booking'), soldOut ? tr('Набор в эту группу завершён. О следующих турах можно узнать у нас.', 'This group is full. Contact us about upcoming trips.') : detail('booking', 'Terms will be published with the price')]
     ];
     return `
-      <article class="tv-tour${index === 0 ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
-        <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
+      <article class="tv-tour${index === 0 && openFirstByDefault ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
+        <button class="tv-tour-head" type="button" aria-expanded="${index === 0 && openFirstByDefault}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
           <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
-          <span class="tv-open-label">${index === 0 ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
+          <span class="tv-open-label">${index === 0 && openFirstByDefault ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
         </button>
-        <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
+        <div class="tv-preview" id="tv-preview-${id}" ${index === 0 && openFirstByDefault ? '' : 'hidden'}>
           <div class="tv-preview-grid">
             <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? tr('Афиша тура на концерт The Weeknd', 'The Weeknd concert tour poster') : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
             <div class="tv-preview-copy">
