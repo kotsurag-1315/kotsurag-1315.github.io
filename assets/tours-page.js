@@ -41,7 +41,7 @@ function renderToursV2(page) {
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0 && openFirstByDefault}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
           <span class="tv-tour-heading"><span class="tv-tour-title-line"><strong>${title}</strong><span class="tv-tour-dates">${headerDates}</span></span><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
-          <span class="tv-open-label">${index === 0 && openFirstByDefault ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
+          <span class="tv-open-label">${index === 0 && openFirstByDefault ? tr('Свернуть ↑', 'Close ↑') : tr('Подробнее ↓', 'More details ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 && openFirstByDefault ? '' : 'hidden'}>
           <div class="tv-preview-grid">
@@ -93,7 +93,7 @@ function renderToursV2(page) {
     preview.hidden = !open;
     card.classList.toggle('is-open', open);
     head.setAttribute('aria-expanded', String(open));
-    head.querySelector('.tv-open-label').textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓');
+    head.querySelector('.tv-open-label').textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Подробнее ↓', 'More details ↓');
     if (!open) {
       details.hidden = true;
       detailsButton.setAttribute('aria-expanded', 'false');
