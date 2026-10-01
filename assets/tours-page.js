@@ -25,10 +25,11 @@ function renderToursV2(page) {
     const highlights = ru ? tour.highlights : (tour.highlightsEn || tour.highlights);
     const fromPrice = safe(ru ? tour.fromPrice : (tour.fromPriceEn || tour.fromPrice));
     const detail = (key, fallbackEn) => ru ? tour[key] : (tour[key + 'En'] || fallbackEn);
+    const groupInfo = tr(`• В группе максимум ${groupSize} человек`, `• Maximum ${groupSize} people in the group`);
     const fields = [
       [tr('Даты поездки', 'Trip dates'), detail('dates', 'To be confirmed')],
       [tr('Стоимость', 'Price'), detail('price', 'To be announced')],
-      [tr('Что включено', 'Included'), detail('included', 'Services will be listed later')],
+      [tr('Что включено', 'Included'), `${groupInfo}\n${detail('included', 'Services will be listed later')}`],
       [tr('Что не включено', 'Not included'), detail('excluded', 'Will be stated before booking')],
       [tr('Программа', 'Program'), detail('program', 'Day-by-day plan coming soon')],
       [tr('Бронирование', 'Booking'), soldOut ? tr('Набор в эту группу завершён. О следующих турах можно узнать у нас.', 'This group is full. Contact us about upcoming trips.') : detail('booking', 'Terms will be published with the price')]
@@ -37,7 +38,7 @@ function renderToursV2(page) {
       <article class="tv-tour${index === 0 ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
-          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr(`до ${groupSize} человек в группе`, `up to ${groupSize} people in the group`)}</small>${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
+          <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small>${seatsLabel ? `<span class="tv-seat-status tv-seat-status--header${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</span>
           <span class="tv-open-label">${index === 0 ? tr('Свернуть ↑', 'Close ↑') : tr('Превью ↓', 'Preview ↓')}</span>
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
@@ -48,7 +49,7 @@ function renderToursV2(page) {
               <h3>${artist}</h3>
               <p>${description}</p>
               ${Array.isArray(highlights) ? `<div class="tv-highlights">${highlights.map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
-              ${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}
+              ${fromPrice || seatsLabel ? `<div class="tv-price-row">${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}${seatsLabel ? `<span class="tv-seat-status${soldOut ? ' tv-seat-status--sold-out' : ''}">${safe(seatsLabel)}</span>` : ''}</div>` : ''}
               <button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>
             </div>
           </div>
