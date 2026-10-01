@@ -29,7 +29,7 @@ function renderToursV2(page) {
       [tr('Бронирование', 'Booking'), detail('booking', 'Terms will be published with the price')]
     ];
     return `
-      <article class="tv-tour${index === 0 ? ' is-open' : ''}" data-tour="${id}">
+      <article class="tv-tour${index === 0 ? ' is-open' : ''}${tour.poster ? ' tv-tour--poster' : ''}" data-tour="${id}">
         <button class="tv-tour-head" type="button" aria-expanded="${index === 0}" aria-controls="tv-preview-${id}">
           <span class="tv-date" aria-label="${isDemo ? tr('Пример оформления', 'Layout preview') : month}">${isDemo ? tr('ДЕМО', 'DEMO') : month.slice(0, 3)}</span>
           <span class="tv-tour-heading"><strong>${title}</strong><small>${isDemo ? tr('Пример оформления', 'Layout preview') : month} · ${city} · ${tr('групповой тур', 'group tour')}</small></span>
@@ -37,7 +37,7 @@ function renderToursV2(page) {
         </button>
         <div class="tv-preview" id="tv-preview-${id}" ${index === 0 ? '' : 'hidden'}>
           <div class="tv-preview-grid">
-            <div class="tv-tour-photo"><img src="${safe(tour.image)}" alt="${tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy"><span>${tr('Иллюстративное фото', 'Illustrative photo')}</span></div>
+            <div class="tv-tour-photo${tour.poster ? ' tv-tour-photo--poster' : ''}"><img src="${safe(tour.image)}" alt="${tour.poster ? tr('Афиша тура на концерт The Weeknd', 'The Weeknd concert tour poster') : tr('Иллюстративное фото концерта', 'Illustrative concert photo')}" loading="lazy">${tour.poster ? '' : `<span>${tr('Иллюстративное фото', 'Illustrative photo')}</span>`}</div>
             <div class="tv-preview-copy">
               <small>${tr('Концерт', 'Concert')} · ${city}</small>
               <h3>${artist}</h3>
@@ -105,4 +105,3 @@ function renderToursV2(page) {
     individualButton.textContent = open ? tr('Свернуть ↑', 'Close ↑') : tr('Что входит ↓', 'What is included ↓');
   });
 }
-
