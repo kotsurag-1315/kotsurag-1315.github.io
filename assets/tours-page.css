@@ -29,13 +29,17 @@
 .tours-v2 .tv-preview-copy small { color: var(--primary); font-size: 11px; font-weight: 800; }
 .tours-v2 .tv-preview-copy h3 { font-size: 20px; margin-top: 6px; }
 .tours-v2 .tv-preview-copy p { color: var(--ink-2); font-size: 13px; line-height: 1.55; margin: 8px 0 16px; }
+.tours-v2 .tv-highlights { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.tours-v2 .tv-highlights span { padding: 6px 9px; border-radius: 999px; background: #FFF0EC; color: #9F4741; font-size: 11px; font-weight: 700; }
+.tours-v2 .tv-from-price { margin: 0 0 12px; color: var(--primary); font-size: 17px; font-weight: 800; }
 .tours-v2 .tv-details-toggle { margin-top: auto; padding: 11px 13px; min-height: 42px; border-radius: 10px; background: var(--primary); color: white; font-size: 12px; font-weight: 800; }
 .tours-v2 .tv-details { border-top: 1px solid var(--line); padding: 18px; background: #FFFCF9; }
 .tours-v2 .tv-details h3 { font-size: 17px; margin-bottom: 13px; }
 .tours-v2 .tv-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
 .tours-v2 .tv-field { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: white; }
 .tours-v2 .tv-field span { display: block; color: var(--ink-3); font-size: 11px; margin-bottom: 5px; }
-.tours-v2 .tv-field strong { display: block; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.tours-v2 .tv-field strong { display: block; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-line; }
+.tours-v2 .tv-field:nth-child(3), .tours-v2 .tv-field:nth-child(5) { grid-column: 1 / -1; }
 .tours-v2 .tv-details-footer { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .tours-v2 .tv-details-footer p { color: var(--ink-3); font-size: 11px; line-height: 1.45; }
 .tours-v2 .tv-details-footer a { flex: 0 0 auto; padding: 11px 13px; border-radius: 10px; background: var(--blue-soft); color: #236698; font-size: 12px; font-weight: 800; }
