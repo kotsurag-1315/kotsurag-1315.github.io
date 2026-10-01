@@ -17,6 +17,8 @@ function renderToursV2(page) {
     const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
     const description = safe(ru ? tour.description : (tour.descriptionEn || tour.description));
     const isDemo = tour.demo === true;
+    const highlights = ru ? tour.highlights : (tour.highlightsEn || tour.highlights);
+    const fromPrice = safe(ru ? tour.fromPrice : (tour.fromPriceEn || tour.fromPrice));
     const detail = (key, fallbackEn) => ru ? tour[key] : (tour[key + 'En'] || fallbackEn);
     const fields = [
       [tr('Даты поездки', 'Trip dates'), detail('dates', 'To be confirmed')],
@@ -40,13 +42,15 @@ function renderToursV2(page) {
               <small>${tr('Концерт', 'Concert')} · ${city}</small>
               <h3>${artist}</h3>
               <p>${description}</p>
+              ${Array.isArray(highlights) ? `<div class="tv-highlights">${highlights.map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
+              ${fromPrice ? `<div class="tv-from-price">${fromPrice}</div>` : ''}
               <button class="tv-details-toggle" type="button" aria-expanded="false" aria-controls="tv-details-${id}">${tr('Узнать о туре ↓', 'Tour details ↓')}</button>
             </div>
           </div>
           <div class="tv-details" id="tv-details-${id}" hidden>
             <h3>${tr('Подробная информация о туре', 'Tour information')}</h3>
             <div class="tv-fields">${fields.map(([label, value]) => `<div class="tv-field"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`).join('')}</div>
-            <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : tr('Пока детали готовятся, можно написать нам и уточнить интересующий тур.', 'While details are being prepared, contact us about the tour.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
+            <div class="tv-details-footer"><p>${isDemo ? tr('Это пример оформления: бронь не открыта. О реальных поездках расскажем после подтверждения деталей.', 'This is a layout preview, not a bookable trip. Real trip details will follow after confirmation.') : tr('Есть вопросы по поездке? Напишите нам — расскажем об условиях бронирования.', 'Questions about this trip? Contact us for booking details.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></div>
           </div>
         </div>
       </article>`;
@@ -54,7 +58,7 @@ function renderToursV2(page) {
 
   page.innerHTML = `
     <div class="tv-shell">
-      <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Пример анонсов · даты и детали будут уточняться', 'Sample announcements · dates and details to be confirmed')}</small></header>
+      <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Другие анонсы пока примерные · даты и детали уточняются', 'Other announcements are previews · dates and details to be confirmed')}</small></header>
       <div class="tv-layout">
         <section class="tv-main" aria-label="${tr('Предстоящие туры', 'Upcoming tours')}">
           <div class="tv-section-title"><h2>${tr('Предстоящие туры', 'Upcoming tours')}</h2><span>${tr('Выберите, что интересно', 'Choose what interests you')}</span></div>
