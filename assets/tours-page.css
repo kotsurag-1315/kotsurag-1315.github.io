@@ -17,6 +17,8 @@
 .tours-v2 .tv-tour-heading { flex: 1; min-width: 0; }
 .tours-v2 .tv-tour-heading strong { display: block; font-size: 14px; line-height: 1.3; }
 .tours-v2 .tv-tour-heading small { display: block; margin-top: 4px; color: var(--ink-3); font-size: 11px; line-height: 1.35; }
+.tours-v2 .tv-seat-status { display: inline-flex; align-items: center; margin-top: 7px; padding: 4px 8px; border-radius: 999px; background: #EAF6EE; color: #28734A; font-size: 10px; font-weight: 800; line-height: 1.2; }
+.tours-v2 .tv-seat-status--sold-out { background: #FBEAE8; color: #B3453F; letter-spacing: .08em; }
 .tours-v2 .tv-open-label { flex: 0 0 auto; color: var(--primary); font-size: 11px; font-weight: 700; }
 .tours-v2 .tv-preview[hidden], .tours-v2 .tv-details[hidden], .tours-v2 .tv-individual-details[hidden] { display: none; }
 .tours-v2 .tv-preview { border-top: 1px solid var(--line); }
@@ -73,7 +75,6 @@
 }
 @media (max-width: 399px) {
   .tours-v2 .tv-section-title span { display: none; }
-  .tours-v2 .tv-fields { grid-template-columns: 1fr; }
   .tours-v2 .tv-details-footer { align-items: stretch; flex-direction: column; }
   .tours-v2 .tv-details-footer a { text-align: center; }
 }
