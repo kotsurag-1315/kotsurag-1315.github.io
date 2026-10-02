@@ -121,7 +121,7 @@ window.KM_TOURS = [
     city: 'Куала-Лумпур',
     cityEn: 'Kuala Lumpur',
     groupSize: 7,
-    remainingSeats: null,
+    remainingSeats: 2,
     description: 'Поездка в Куала-Лумпур 9–15 декабря на концерт Limp Bizkit. Подробную программу, стоимость и условия участия добавим позже.',
     descriptionEn: 'A Kuala Lumpur trip on December 9–15 for the Limp Bizkit concert. The full itinerary, price and booking terms are coming later.',
     image: 'assets/tours-limp-bizkit-poster.jpg',
