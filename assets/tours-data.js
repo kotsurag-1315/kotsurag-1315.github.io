@@ -143,7 +143,7 @@ window.KM_TOURS = [
     city: 'Куала-Лумпур',
     cityEn: 'Kuala Lumpur',
     groupSize: 7,
-    remainingSeats: null,
+    remainingSeats: 0,
     description: '9–15 декабря: BTS WORLD TOUR ARIRANG в Куала-Лумпуре. Перелёт Etihad, отдельный номер в отеле с бассейном и экскурсии в свободные дни. Группа до 7 человек.',
     descriptionEn: 'December 9–15: BTS WORLD TOUR ARIRANG in Kuala Lumpur. Etihad return flights, a private room in a hotel with a pool, and excursions on free days. Up to 7 travellers.',
     highlights: ['🛏️ Отдельный номер', '✈️ Etihad', '🎤 BTS'],
