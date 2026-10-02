@@ -2421,7 +2421,7 @@ body.map-page-open { overflow: hidden; }
 /* Calmer, more useful account overview */
 .register-page.profile-logged-in { display: block; max-width: none; padding: 32px 20px 88px; text-align: left; }
 .profile-logged-in .profile-user-card { padding: 20px; text-align: left; }
-.profile-logged-in .profile-user-card::before { height: 4px; background: linear-gradient(90deg, #E8635A, #C79AE3); }
+.profile-logged-in .profile-user-card::before { display: none; }
 .profile-user-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .profile-logged-in .profile-avatar-wrap { margin: 0; flex-shrink: 0; }
 .profile-logged-in .profile-avatar-ring { width: 54px; height: 54px; animation: none; }
@@ -2445,12 +2445,22 @@ body.map-page-open { overflow: hidden; }
 .profile-saved-remove:hover { background: var(--primary-soft); color: var(--primary); }
 .profile-saved-empty { flex-wrap: wrap; }
 .profile-saved-empty button { border: 0; background: none; color: var(--primary); font: inherit; font-weight: 700; padding: 0; cursor: pointer; }
-.profile-tours-mini { gap: 10px; }
-.profile-tour-mini { min-height: 96px; border: 0; text-align: left; cursor: pointer; width: 100%; font: inherit; color: inherit; transition: transform .15s ease, box-shadow .15s ease; }
-.profile-tour-mini:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,.06); }
-.profile-tour-mini:focus-visible, .profile-saved-open:focus-visible, .profile-saved-remove:focus-visible, .profile-block-action:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.ptm-name { font-size: 12px; }
-.ptm-meta { margin-bottom: 0; }
+.profile-logged-in .profile-tours-block { padding: 0; background: linear-gradient(110deg, #FFF7F4, #FFF0F6); }
+.profile-tours-feature { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 108px; padding: 20px; border: 0; background: none; color: var(--ink); text-align: left; font: inherit; cursor: pointer; }
+.profile-tours-feature:hover { background: rgba(255,255,255,.38); }
+.profile-tours-feature-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: #fff; font-size: 22px; flex: 0 0 auto; }
+.profile-tours-feature-copy { display: grid; gap: 6px; min-width: 0; flex: 1; }
+.profile-tours-feature-copy strong { font-size: 15px; line-height: 1.25; }
+.profile-tours-feature-copy small { color: var(--ink-3); font-size: 12px; line-height: 1.4; }
+.profile-tours-feature-cta { color: var(--primary); font-size: 12px; font-weight: 750; white-space: nowrap; }
+.profile-contact-item + .profile-contact-item { border-top: 1px solid var(--line); }
+.profile-contact-text { display: grid; gap: 2px; min-width: 0; }
+.profile-review-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #FFF2D7; font-size: 18px; flex: 0 0 auto; }
+.profile-tours-feature:focus-visible, .profile-contact-item:focus-visible, .profile-saved-open:focus-visible, .profile-saved-remove:focus-visible, .profile-block-action:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (max-width: 520px) {
+  .profile-tours-feature { flex-wrap: wrap; gap: 10px 12px; padding: 18px; }
+  .profile-tours-feature-cta { margin-left: 54px; }
+}
 @media (max-width: 860px) {
   .register-page.profile-logged-in { padding: 24px 16px 88px; }
   .profile-grid { grid-template-columns: 1fr; }
@@ -6926,12 +6936,15 @@ function renderRegister(page) {
       ? `<img src="${user.picture}" alt="">`
       : initials;
 
-    const toursData = [
-      { cls:'ptm-bts', emoji:'💜', name: lang==='ru'?'По местам BTS':'BTS Location Tour', meta: lang==='ru'?'Музыка и места группы':'Music and iconic locations' },
-      { cls:'ptm-weeknd', emoji:'🎶', name: lang==='ru'?'Тур на The Weeknd':'The Weeknd Tour', meta: lang==='ru'?'Концерт и города':'Concert and cities' },
-      { cls:'ptm-hiking', emoji:'🥾', name: lang==='ru'?'Хайкинг-тур':'Hiking Tour', meta: lang==='ru'?'Сеул, Сокчо':'Seoul, Sokcho' },
-      { cls:'ptm-custom', emoji:'📋', name: lang==='ru'?'Индивидуальный план':'Custom Plan', meta: lang==='ru'?'Маршрут под вас':'Tailored itinerary' },
-    ];
+    const availableToursCount = (Array.isArray(window.KM_TOURS) ? window.KM_TOURS : [])
+      .filter(tour => !tour.demo && Number.isInteger(tour.remainingSeats) && tour.remainingSeats > 0).length;
+    const toursSummary = lang === 'ru'
+      ? availableToursCount
+        ? `Сейчас есть места в ${availableToursCount} ${availableToursCount === 1 ? 'поездке' : 'поездках'} · группы до 7 человек`
+        : 'Сейчас свободных мест нет · загляните позже'
+      : lang === 'ko'
+        ? availableToursCount ? `현재 ${availableToursCount}개 여행 예약 가능 · 최대 7명 소규모 그룹` : '현재 예약 가능한 자리가 없습니다'
+        : availableToursCount ? `${availableToursCount} trips with places available · groups of up to 7` : 'No places available right now · check back later';
 
     const savedItems = saved.map(id => {
       if (id.startsWith('city:')) {
@@ -7045,25 +7058,28 @@ function renderRegister(page) {
                 </div>`}
             </div>
 
-            <!-- Tours mini -->
+            <!-- Tours shortcut -->
             <div class="profile-tours-block">
-              <div class="profile-block-title">
-                ${lang==='ru'?'Туры в Корею':'Tours to Korea'}
-                <button type="button" class="profile-block-action" onclick="showPage('tours')">${lang==='ru'?'Все туры':'View tours'} →</button>
-              </div>
-              <div class="profile-tours-mini">
-                ${toursData.map(t=>`
-                  <button type="button" class="profile-tour-mini ${t.cls}" onclick="showPage('tours')">
-                      <div class="ptm-emoji">${t.emoji}</div>
-                      <div class="ptm-name">${t.name}</div>
-                      <div class="ptm-meta">${t.meta}</div>
-                  </button>
-                `).join('')}
-              </div>
+              <button type="button" class="profile-tours-feature" onclick="showPage('tours')">
+                <span class="profile-tours-feature-icon" aria-hidden="true">✨</span>
+                <span class="profile-tours-feature-copy">
+                  <strong>${lang==='ru'?'Поездки с KoreaMate':lang==='ko'?'KoreaMate와 함께 여행':'Travel with KoreaMate'}</strong>
+                  <small>${toursSummary}</small>
+                </span>
+                <span class="profile-tours-feature-cta">${lang==='ru'?'Смотреть туры':lang==='ko'?'여행 보기':'View trips'} →</span>
+              </button>
             </div>
 
-            <!-- Contact -->
+            <!-- Reviews and contact -->
             <div class="profile-contact-block">
+              <a href="https://t.me/anion_itsme_otzivi" target="_blank" rel="noopener noreferrer" class="profile-contact-item">
+                <span class="profile-review-icon" aria-hidden="true">💬</span>
+                <span class="profile-contact-text">
+                  <span class="profile-contact-name">${lang==='ru'?'Отзывы путешественников':lang==='ko'?'여행 후기':'Traveller reviews'}</span>
+                  <span class="profile-contact-handle">@anion_itsme_otzivi · Telegram</span>
+                </span>
+                <span style="margin-left:auto;color:var(--ink-3);font-size:16px;" aria-hidden="true">›</span>
+              </a>
               <a href="https://t.me/qitour_stuff" target="_blank" rel="noopener noreferrer" class="profile-contact-item">
                 <div class="profile-tg-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="white"/></svg>
@@ -9802,4 +9818,3 @@ window.addEventListener('DOMContentLoaded', () => setTimeout(kmaCheckHash, 500))
 
 </body>
 </html>
-
