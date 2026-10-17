@@ -4549,6 +4549,23 @@ const PLACES = [
     "desc": []
   },
   {
+    "id": "pbts23",
+    "city": "seoul",
+    "cat": "bts",
+    "premium": true,
+    "name": "Место Premium",
+    "han": "",
+    "emoji": "🔒",
+    "lat": 0,
+    "lng": 0,
+    "img": "",
+    "transit": "",
+    "entry": "",
+    "best_time": "",
+    "duration": "",
+    "desc": []
+  },
+  {
     "id": "pseo_kpop01",
     "city": "seoul",
     "cat": "kpop",
@@ -7309,7 +7326,7 @@ function renderHome(page) {
     {
       id: 'bts', emoji: '💜', cls: 'cat-bts', locked: true,
       label: { ru: 'BTS-места', en: 'BTS Places', ko: 'BTS 장소' },
-      desc: { ru: '20 локаций связанных с BTS', en: '20 BTS-related locations', ko: 'BTS 관련 장소 20곳' },
+      desc: { ru: '23 места, связанных с BTS', en: '23 BTS-related locations', ko: 'BTS 관련 장소 23곳' },
       cats: ['bts']
     },
     {
@@ -8267,6 +8284,7 @@ function renderDetail(page) {
       <div class="quick-stats">
         <div class="quick-stat"><div class="ic">📍</div><div class="lbl">${escapeHtml((p.transit||'').slice(0,40))}</div></div>
         ${p.entry ? `<div class="quick-stat"><div class="ic">🎟</div><div class="lbl">${escapeHtml(p.entry)}</div></div>` : ''}
+        ${p.hours ? `<div class="quick-stat"><div class="ic">🕘</div><div class="lbl">${escapeHtml(p.hours)}</div></div>` : ''}
         ${p.best_time ? `<div class="quick-stat"><div class="ic">🕒</div><div class="lbl">${escapeHtml(p.best_time)}</div></div>` : ''}
         ${p.duration ? `<div class="quick-stat"><div class="ic">🌿</div><div class="lbl">${escapeHtml(p.duration)}</div></div>` : ''}
       </div>
