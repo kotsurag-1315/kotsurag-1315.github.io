@@ -6764,7 +6764,7 @@ async function refreshFirebaseAccount(user) {
         const tips = tipsSnapshot.exists ? tipsSnapshot.data() : null;
         if (!Array.isArray(tips?.apps) || tips.apps.length < 6 || !Array.isArray(tips?.hacks) || tips.hacks.length < 4) throw new Error('Premium tips are incomplete');
         const byId = new Map(catalog.docs.map(doc => [doc.id, doc.data()]));
-        if (byId.size !== PRIVATE_PLACE_IDS.length || PRIVATE_PLACE_IDS.some(id => !byId.has(id))) {
+        if (PRIVATE_PLACE_IDS.some(id => !byId.has(id))) {
           throw new Error('Premium catalogue is incomplete');
         }
         const fullPlaces = PUBLIC_PLACES.map(place => {
