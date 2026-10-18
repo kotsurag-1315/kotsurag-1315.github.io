@@ -1,0 +1,6 @@
+# Keep Firestore Premium content and credentials out of public GitHub Pages.
+firebase/private-data/
+node_modules/
+.pnpm-store/
+*firebase-adminsdk*.json
+service-account*.json
