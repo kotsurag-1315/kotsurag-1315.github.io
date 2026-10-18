@@ -806,6 +806,7 @@ body.map-page-open { overflow: hidden; }
 .cat-shopping { background: #FCEFC8; }
 .cat-culture { background: #FAD8D5; }
 .cat-bts { background: #E6D7F0; }
+.cat-drama { background: #E8DDF7; }
 .cat-sight { background: #FCE5DA; }
 .cat-hidden { background: #DCEAF7; }
 .cat-cherry { background: #FBE0E5; }
@@ -1311,6 +1312,14 @@ body.map-page-open { overflow: hidden; }
   object-fit: cover;
   display: block;
 }
+.detail-hero.drama-no-photo { background: linear-gradient(145deg, #33254d, #765f9c 62%, #c9a4c8); }
+.drama-hero-placeholder {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 12px; min-height: 52vh; padding: 64px 24px; text-align: center; color: #fff;
+}
+.drama-hero-placeholder .scene-emoji { font-size: 76px; line-height: 1; }
+.drama-hero-placeholder .scene-label { font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
+.drama-hero-placeholder .scene-name { font-size: clamp(20px, 3vw, 30px); font-weight: 800; max-width: 560px; line-height: 1.25; }
 /* Gradient overlay снизу фото */
 .detail-hero::after {
   content: '';
@@ -2004,6 +2013,7 @@ body.map-page-open { overflow: hidden; }
 .km-pin.cat-food { background: #F4A460; }
 .km-pin.cat-cafe { background: var(--blue); }
 .km-pin.cat-bts { background: var(--purple); }
+.km-pin.cat-drama { background: #765f9c; }
 .km-pin.cat-hiking { background: var(--green); }
 .km-pin.cat-cherry { background: var(--pink); }
 
@@ -2612,6 +2622,7 @@ body.map-page-open { overflow: hidden; }
     object-position: center;
   }
   .detail-hero::after { display: none; }
+  .drama-hero-placeholder { height: 100%; min-height: 0; }
   .detail-hero .back-btn,
   .detail-hero .share-btn,
   .detail-hero .fav-btn { background: rgba(28, 28, 28, 0.65); }
@@ -2760,7 +2771,7 @@ const I18N = {
     'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Кафе',
     'cat.shopping': 'Шоппинг', 'cat.culture': 'Культура',
     'cat.outlet': 'Аутлеты и ТЦ', 'cat.kbrand': 'К-бренды',
-    'cat.sight': 'Достопримечательности', 'cat.bts': 'BTS-места', 'cat.hidden': 'Скрытые места',
+    'cat.sight': 'Достопримечательности', 'cat.bts': 'BTS-места', 'cat.drama': 'K-драмы', 'cat.hidden': 'Скрытые места',
     'cat.cherry': 'Сакура', 'cat.tips': 'Полезное',
     'cat.food_cafe': 'Еда и кафе',
     'map.all': 'Все', 'map.all_cities': 'Все города', 'map.title': 'Карта мест',
@@ -2844,7 +2855,7 @@ const I18N = {
     'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Cafés',
     'cat.shopping': 'Shopping', 'cat.culture': 'Culture',
     'cat.outlet': 'Malls & Outlets', 'cat.kbrand': 'K-Brands',
-    'cat.sight': 'Sights', 'cat.bts': 'BTS Spots', 'cat.hidden': 'Hidden gems',
+    'cat.sight': 'Sights', 'cat.bts': 'BTS Spots', 'cat.drama': 'K-Drama', 'cat.hidden': 'Hidden gems',
     'cat.cherry': 'Cherry blossom', 'cat.tips': 'Useful',
     'cat.food_cafe': 'Food & Cafés',
     'map.all': 'All', 'map.all_cities': 'All cities',
@@ -2928,7 +2939,7 @@ const I18N = {
     'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': '카페',
     'cat.shopping': '쇼핑', 'cat.culture': '문화',
     'cat.outlet': '쇼핑몰 & 아울렛', 'cat.kbrand': '한국 브랜드',
-    'cat.sight': '명소', 'cat.bts': 'BTS 장소', 'cat.hidden': '숨은 명소',
+    'cat.sight': '명소', 'cat.bts': 'BTS 장소', 'cat.drama': 'K-드라마', 'cat.hidden': '숨은 명소',
     'cat.cherry': '벚꽃', 'cat.tips': '유용한 정보',
     'cat.food_cafe': '음식 & 카페',
     'map.all': '전체', 'map.all_cities': '전체 도시', 'map.title': '지도',
@@ -6811,6 +6822,20 @@ const PLACES = [
 ];
 
 // Free places (one per category — accessible without subscription)
+const DRAMA_PLACES = [
+  { id: 'pdrama_tapgol', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_yangjae', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_eden', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_noksapyeong', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_danbam', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_sewoon', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_yongdap', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_hyundai', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_mongted', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+  { id: 'pdrama_wooyoungwoo', city: 'seoul', cat: 'drama', premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] },
+];
+PLACES.push(...DRAMA_PLACES);
+
 const FREE_PLACE_IDS = ["pkyoja", "pseoul1", "pbts01", "pkp33", "ph30", "pgwangjang", "pjeju13", "pch01", "psh01", "psh09", "pbusan9"];
 const PUBLIC_PLACES = PLACES.map(place => ({ ...place }));
 const PRIVATE_PLACE_IDS = PUBLIC_PLACES.filter(place => !FREE_PLACE_IDS.includes(place.id)).map(place => place.id);
@@ -6922,7 +6947,9 @@ async function refreshFirebaseAccount(user) {
         }
         const fullPlaces = PUBLIC_PLACES.map(place => {
           if (FREE_PLACE_IDS.includes(place.id)) return { ...place };
-          const data = byId.get(place.id);
+          const stored = byId.get(place.id);
+          const data = place.cat === 'drama' && typeof stored.payload === 'string'
+            ? JSON.parse(stored.payload) : stored;
           if (data.id !== place.id || !data.name || !Array.isArray(data.desc)) {
             throw new Error('Invalid premium place: ' + place.id);
           }
@@ -7466,6 +7493,12 @@ function renderHome(page) {
       cats: ['bts']
     },
     {
+      id: 'drama', emoji: '🎬', cls: 'cat-drama', locked: true,
+      label: { ru: 'K-драмы', en: 'K-Drama', ko: 'K-드라마' },
+      desc: { ru: '10 узнаваемых мест съёмок в Сеуле и рядом', en: '10 iconic filming spots in and around Seoul', ko: '서울과 근교의 드라마 촬영 명소 10곳' },
+      cats: ['drama']
+    },
+    {
       id: 'kpop', emoji: '⭐', cls: 'cat-kpop', locked: true,
       label: { ru: 'K-Pop мерч', en: 'K-Pop Merch', ko: 'K-POP 굿즈' },
       desc: { ru: 'Магазины мерча и фансайны', en: 'Merch stores and fan signs', ko: 'K-POP 굿즈 매장' },
@@ -7617,7 +7650,7 @@ function initMap(attempt = 0) {
   if (STATE.currentCity) {
     const c = CITIES.find(x => x.id === STATE.currentCity);
     if (c) {
-      const places = PLACES.filter(p => p.city === c.id);
+      const places = PLACES.filter(p => p.city === c.id && p.lat && p.lng);
       if (places.length) {
         const lat = places.reduce((s,p)=>s+p.lat,0)/places.length;
         const lng = places.reduce((s,p)=>s+p.lng,0)/places.length;
@@ -7731,6 +7764,7 @@ const MAP_CAT_DEFS = [
   { id: 'all',       cats: [] },
   { id: 'sight',     cats: ['sight'] },
   { id: 'bts',       cats: ['bts'] },
+  { id: 'drama',     cats: ['drama'] },
   { id: 'food_cafe', cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol','food-bbq','cafe-regular'] },
   { id: 'kpop',      cats: ['kpop'] },
   { id: 'shopping',  cats: ['shopping'] },
@@ -8130,7 +8164,7 @@ function showMapCard(p, opts = {}) {
   card.classList.add('active');
   document.querySelector('.map-page-inner')?.classList.add('map-has-card');
 
-  if (mapInstance && opts.pan !== false) mapInstance.panTo([p.lat, p.lng]);
+  if (mapInstance && opts.pan !== false && p.lat && p.lng) mapInstance.panTo([p.lat, p.lng]);
 }
 
 // Kakao Map deep link
@@ -8368,7 +8402,7 @@ function renderDetail(page) {
 
   page.innerHTML = `
     <div class="detail-wrap">
-      <div class="detail-hero ${getImg(p).startsWith('assets/photos/') ? 'local-photo' : ''}">
+      <div class="detail-hero ${getImg(p).startsWith('assets/photos/') ? 'local-photo' : p.cat === 'drama' && !getImg(p) ? 'drama-no-photo' : ''}">
         <button class="back-btn" onclick="navigateBack()">
           <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
@@ -8380,7 +8414,9 @@ function renderDetail(page) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </button>
-        <img src="${getImg(p)}" alt="${escapeHtml(p.name)}" decoding="async" onerror="this.style.display='none'" />
+        ${p.cat === 'drama' && !getImg(p)
+          ? `<div class="drama-hero-placeholder"><span class="scene-emoji">${p.emoji || '🎬'}</span><span class="scene-label">KoreaMate · K-Drama</span><span class="scene-name">${escapeHtml(p.name)}</span><span>Фото локации пока не добавлено</span></div>`
+          : `<img src="${getImg(p)}" alt="${escapeHtml(p.name)}" decoding="async" onerror="this.style.display='none'" />`}
       </div>
 
       <div class="detail-summary">
@@ -9683,6 +9719,7 @@ window.addEventListener('popstate', function(e) {
     'cat-sight':   20,
     'cat-food':    140,
     'cat-bts':     270,
+    'cat-drama':   285,
     'cat-kpop':    340,
     'cat-shopping':200,
     'cat-hiking':  100,
