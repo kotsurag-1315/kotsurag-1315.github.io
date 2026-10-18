@@ -7382,6 +7382,15 @@ function isFreePlace(id) {
   return STATE.premium || FREE_PLACE_IDS.includes(id);
 }
 
+const DRAMA_AREA_NAMES = {
+  pdrama_eden: { ru: 'Соннам', en: 'Seongnam', ko: '성남' },
+  pdrama_mongted: { ru: 'Сувон', en: 'Suwon', ko: '수원' },
+  pdrama_wooyoungwoo: { ru: 'Сувон', en: 'Suwon', ko: '수원' },
+};
+function placeCityName(place, lang) {
+  return DRAMA_AREA_NAMES[place.id]?.[lang] || CITIES.find(c => c.id === place.city)?.name[lang] || place.city;
+}
+
 function renderHome(page) {
   const lang = STATE.lang;
   const greetHan = lang === 'ko' ? '안녕' : '안녕';
@@ -7897,7 +7906,7 @@ function renderMapList() {
 
     let lastCity = null;
     subItems.forEach(p => {
-      const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+      const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
       const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '🍜');
       if (isMultiCity && p.city !== lastCity) {
@@ -7963,11 +7972,11 @@ function renderMapList() {
     const visibleItems = sv === 'tourist' ? touristItems : nonTouristItems;
     let lastCity2 = null;
     visibleItems.forEach(p => {
-      const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+      const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
       const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
       if (isMultiCity && p.city !== lastCity2) {
-        const cLabel = cityLabels[p.city]?.[lang] || p.city;
+        const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
         html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
         lastCity2 = p.city;
       }
@@ -8029,11 +8038,11 @@ function renderMapList() {
     const visibleItems = sv === 'outlet' ? outletItems : [...kbrandItems, ...otherItems];
     let lastCity2 = null;
     visibleItems.forEach(p => {
-      const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+      const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
       const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
       if (isMultiCity && p.city !== lastCity2) {
-        const cLabel = cityLabels[p.city]?.[lang] || p.city;
+        const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
         html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
         lastCity2 = p.city;
       }
@@ -8067,12 +8076,12 @@ function renderMapList() {
   let lastPremiumGroup = null;
 
   items.forEach(p => {
-    const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+    const cityName = placeCityName(p, lang);
     const isLocked = p.premium && !STATE.premium;
     const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
 
     if (isMultiCity && p.city !== lastCity) {
-      const cLabel = cityLabels[p.city]?.[lang] || p.city;
+      const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
       html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
       lastCity = p.city;
       lastPremiumGroup = null;
@@ -8140,7 +8149,7 @@ function showMapCard(p, opts = {}) {
   const isLocked = p.premium && !STATE.premium;
   const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji||'📍');
   const lang = STATE.lang;
-  const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+  const cityName = placeCityName(p, lang);
   const previewText = (p.desc && p.desc[0]) ? p.desc[0] : '';
   card.innerHTML = `
     <div class="thumb">${thumb}</div>
@@ -8302,7 +8311,7 @@ function openPlaceDetail(placeId) {
    to the place's own category in the same city (or city-only). */
 function getDetailCohort(p) {
   const useMapFilters = STATE.currentMapCat && STATE.currentMapCat !== 'all';
-  let pool = PLACES.filter(x => x.lat && x.lng);
+  let pool = PLACES.filter(x => (x.lat && x.lng) || (x.cat === 'drama' && x.kakaoUrl));
   let labelParts = [];
 
   // If a city is active in map state — restrict to it
@@ -8315,6 +8324,9 @@ function getDetailCohort(p) {
     pool = pool.filter(x => x.city === p.city);
     const c = CITIES.find(c => c.id === p.city);
     if (c) labelParts.push(c.name[STATE.lang]);
+  }
+  if (p.cat === 'drama' && labelParts.length) {
+    labelParts[0] = { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[STATE.lang];
   }
 
   // Category: from map filter if set, otherwise place's own.
@@ -8378,7 +8390,7 @@ function renderDetail(page) {
   const fullDescription = FREE_PLACE_IDS.includes(p.id) ? p.desc : privateEntry?.desc;
   const isSaved = STATE.saved.includes(p.id);
   const previewText = (p.desc && p.desc[0]) || '';
-  const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+  const cityName = placeCityName(p, lang);
   const reviews = STATE.reviews[p.id] || [];
   const avgRating = reviews.length ? reviews.reduce((s,r) => s + r.rating, 0) / reviews.length : 0;
   const bookingText = p.bookingText || (lang === 'ru' ? 'Забронировать посещение ↗' : lang === 'ko' ? '방문 예약하기 ↗' : 'Book a visit ↗');
@@ -9108,7 +9120,7 @@ function renderSuggest(query) {
     drop.innerHTML = `<div class="empty">${t('search.empty') || 'Ничего не найдено'}</div>`;
   } else {
     drop.innerHTML = _searchResults.map((p, i) => {
-      const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+      const cityName = placeCityName(p, lang);
       const catLabel = t('cat.' + p.cat);
       const isLocked = p.premium && !STATE.premium;
       const thumb = getImg(p)
@@ -9220,7 +9232,7 @@ function openMobileSearch() {
         return;
       }
       res.innerHTML = results.map((p, i) => {
-        const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
+        const cityName = placeCityName(p, lang);
         const thumb = getImg(p)
           ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
           : (p.emoji || '📍');
