@@ -1376,6 +1376,14 @@ body.map-page-open { overflow: hidden; }
   font-size: 14px; font-weight: 700; text-decoration: none;
 }
 .detail-actions .booking-link:hover { background: var(--primary-dark); }
+.detail-actions .info-link {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 11px 16px; border-radius: 12px;
+  background: var(--primary-soft); color: var(--primary-dark);
+  border: 1px solid rgba(232, 99, 90, 0.22);
+  font-size: 14px; font-weight: 700; text-decoration: none;
+}
+.detail-actions .info-link:hover { filter: brightness(0.98); }
 .detail-actions .open-route {
   width: 100%;
   background: #FEE500;          /* Kakao brand yellow */
@@ -4646,6 +4654,40 @@ const PLACES = [
     "id": "psh32",
     "city": "seoul",
     "cat": "shopping",
+    "premium": true,
+    "name": "Место Premium",
+    "han": "",
+    "emoji": "🔒",
+    "lat": 0,
+    "lng": 0,
+    "img": "",
+    "transit": "",
+    "entry": "",
+    "best_time": "",
+    "duration": "",
+    "desc": []
+  },
+  {
+    "id": "pmani_dalo",
+    "city": "seoul",
+    "cat": "cafe-idol",
+    "premium": true,
+    "name": "Место Premium",
+    "han": "",
+    "emoji": "🔒",
+    "lat": 0,
+    "lng": 0,
+    "img": "",
+    "transit": "",
+    "entry": "",
+    "best_time": "",
+    "duration": "",
+    "desc": []
+  },
+  {
+    "id": "pnt22",
+    "city": "seoul",
+    "cat": "sight",
     "premium": true,
     "name": "Место Premium",
     "han": "",
@@ -8305,6 +8347,8 @@ function renderDetail(page) {
   const cityName = CITIES.find(c => c.id === p.city)?.name[lang] || p.city;
   const reviews = STATE.reviews[p.id] || [];
   const avgRating = reviews.length ? reviews.reduce((s,r) => s + r.rating, 0) / reviews.length : 0;
+  const bookingText = p.bookingText || (lang === 'ru' ? 'Забронировать посещение ↗' : lang === 'ko' ? '방문 예약하기 ↗' : 'Book a visit ↗');
+  const infoText = p.infoText || (lang === 'ru' ? 'Подробнее ↗' : lang === 'ko' ? '자세히 보기 ↗' : 'More information ↗');
 
   // Compute prev/next within current category cohort
   const { pool, label } = getDetailCohort(p);
@@ -8356,7 +8400,8 @@ function renderDetail(page) {
                  <span>${t('detail.open_route')}</span>`
             }
           </button>
-          ${STATE.premium && /^https:\/\//.test(p.bookingUrl || '') ? `<a class="booking-link" href="${escapeHtml(p.bookingUrl)}" target="_blank" rel="noopener noreferrer">${lang === 'ru' ? 'Забронировать посещение ↗' : lang === 'ko' ? '방문 예약하기 ↗' : 'Book a visit ↗'}</a>` : ''}
+          ${STATE.premium && /^https:\/\//.test(p.bookingUrl || '') ? `<a class="booking-link" href="${escapeHtml(p.bookingUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bookingText)}</a>` : ''}
+          ${STATE.premium && /^https:\/\//.test(p.infoUrl || '') ? `<a class="info-link" href="${escapeHtml(p.infoUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(infoText)}</a>` : ''}
         </div>
         ${navContext.total > 1 ? `
           <div class="detail-context">
