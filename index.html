@@ -8507,7 +8507,7 @@ function renderDetail(page) {
       </div>
 
       <div class="quick-stats">
-        <div class="quick-stat"><div class="ic">📍</div><div class="lbl">${escapeHtml((p.transit||'').slice(0,40))}</div></div>
+        <div class="quick-stat"><div class="ic">📍</div><div class="lbl">${escapeHtml(p.transit || '')}</div></div>
         ${p.entry ? `<div class="quick-stat"><div class="ic">🎟</div><div class="lbl">${escapeHtml(p.entry)}</div></div>` : ''}
         ${p.hours ? `<div class="quick-stat"><div class="ic">🕘</div><div class="lbl">${escapeHtml(p.hours)}</div></div>` : ''}
         ${p.best_time ? `<div class="quick-stat"><div class="ic">🕒</div><div class="lbl">${escapeHtml(p.best_time)}</div></div>` : ''}
