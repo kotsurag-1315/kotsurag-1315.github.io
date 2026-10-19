@@ -6865,6 +6865,10 @@ const BUSAN_FOOD_PLACES = [
   { id: 'pbusan_gayamilmyeon', city: 'busan', cat: 'food' },
   { id: 'pbusan_galmegi', city: 'busan', cat: 'food' },
   { id: 'pbusan_dailybeer', city: 'busan', cat: 'food' },
+  { id: 'pbusan_donggyeong', city: 'busan', cat: 'food-michelin' },
+  { id: 'pbusan_bibijae', city: 'busan', cat: 'food-michelin' },
+  { id: 'pbusan_moemiljip', city: 'busan', cat: 'food-michelin' },
+  { id: 'pbusan_songheonjip', city: 'busan', cat: 'food-michelin' },
 ].map(place => ({ ...place, premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] }));
 PLACES.push(...BUSAN_FOOD_PLACES);
 
@@ -8378,7 +8382,7 @@ function getDetailCohort(p) {
     labelParts.push(t('cat.' + cat));
   }
 
-  if (cat === 'food_cafe' && ['food-seafood', 'cafe-regular'].includes(STATE._foodSub)) {
+  if (cat === 'food_cafe' && ['food-seafood', 'cafe-regular', 'food-michelin'].includes(STATE._foodSub)) {
     pool = pool.filter(x => x.cat === STATE._foodSub);
     labelParts[labelParts.length - 1] = t('cat.' + STATE._foodSub);
   }
