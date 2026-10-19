@@ -1313,6 +1313,7 @@ body.map-page-open { overflow: hidden; }
   display: block;
 }
 .detail-hero.drama-no-photo { background: linear-gradient(145deg, #33254d, #765f9c 62%, #c9a4c8); }
+.detail-hero.food-no-photo { background: linear-gradient(145deg, #0e475a, #268292 62%, #7bc8c2); }
 .drama-hero-placeholder {
   display: flex; flex-direction: column; justify-content: center; align-items: center;
   gap: 12px; min-height: 52vh; padding: 64px 24px; text-align: center; color: #fff;
@@ -2553,6 +2554,7 @@ body.map-page-open { overflow: hidden; }
 .food-subcat.fc-burger  { background: linear-gradient(135deg, #FBE9E7, #FFCCBC); }
 .food-subcat.fc-bbq     { background: linear-gradient(135deg, #FFF3E0, #FFCC80); }
 .food-subcat.fc-cafe    { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); }
+.food-subcat.fc-seafood { background: linear-gradient(135deg, #E0F7FA, #A7E7E8); }
 .food-subcat-emoji { font-size: 32px; margin-bottom: 8px; }
 .food-subcat-name { font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.3; margin-bottom: 3px; }
 .food-subcat-desc { font-size: 11px; color: var(--ink-2); line-height: 1.4; }
@@ -2768,7 +2770,7 @@ const I18N = {
     'cat.food-market': 'Рынки и уличная еда', 'cat.food-street': 'Уличная еда',
     'cat.food-michelin': 'Michelin Bib Gourmand', 'cat.cafe-idol': 'Кафе айдолов',
     'cat.food-burger': 'Бургеры и стритфуд',
-    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Кафе',
+    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Кафе', 'cat.food-seafood': 'Морепродукты',
     'cat.shopping': 'Шоппинг', 'cat.culture': 'Культура',
     'cat.outlet': 'Аутлеты и ТЦ', 'cat.kbrand': 'К-бренды',
     'cat.sight': 'Достопримечательности', 'cat.bts': 'BTS-места', 'cat.drama': 'K-драмы', 'cat.hidden': 'Скрытые места',
@@ -2852,7 +2854,7 @@ const I18N = {
     'cat.food-market': 'Markets & Street Food', 'cat.food-street': 'Street Food',
     'cat.food-michelin': 'Michelin Bib Gourmand', 'cat.cafe-idol': 'Idol Cafés',
     'cat.food-burger': 'Burgers & Fast Bites',
-    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Cafés',
+    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': 'Cafés', 'cat.food-seafood': 'Seafood',
     'cat.shopping': 'Shopping', 'cat.culture': 'Culture',
     'cat.outlet': 'Malls & Outlets', 'cat.kbrand': 'K-Brands',
     'cat.sight': 'Sights', 'cat.bts': 'BTS Spots', 'cat.drama': 'K-Drama', 'cat.hidden': 'Hidden gems',
@@ -2936,7 +2938,7 @@ const I18N = {
     'cat.food-market': '시장 & 길거리 음식', 'cat.food-street': '길거리 음식',
     'cat.food-michelin': '미슐랭 빕 구르망', 'cat.cafe-idol': '아이돌 카페',
     'cat.food-burger': '버거 & 분식',
-    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': '카페',
+    'cat.food-bbq': 'K-BBQ', 'cat.cafe-regular': '카페', 'cat.food-seafood': '해산물',
     'cat.shopping': '쇼핑', 'cat.culture': '문화',
     'cat.outlet': '쇼핑몰 & 아울렛', 'cat.kbrand': '한국 브랜드',
     'cat.sight': '명소', 'cat.bts': 'BTS 장소', 'cat.drama': 'K-드라마', 'cat.hidden': '숨은 명소',
@@ -6853,6 +6855,19 @@ const DRAMA_PLACES = [
 ];
 PLACES.push(...DRAMA_PLACES);
 
+// Public Premium placeholders. The full records live in Firestore only.
+const BUSAN_FOOD_PLACES = [
+  { id: 'pbusan_cafe385', city: 'busan', cat: 'cafe-regular' },
+  { id: 'pbusan_aether', city: 'busan', cat: 'cafe-regular' },
+  { id: 'pbusan_mipojip', city: 'busan', cat: 'food-seafood' },
+  { id: 'pbusan_haemok', city: 'busan', cat: 'food-seafood' },
+  { id: 'pbusan_josaeho', city: 'busan', cat: 'food-seafood' },
+  { id: 'pbusan_gayamilmyeon', city: 'busan', cat: 'food' },
+  { id: 'pbusan_galmegi', city: 'busan', cat: 'food' },
+  { id: 'pbusan_dailybeer', city: 'busan', cat: 'food' },
+].map(place => ({ ...place, premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] }));
+PLACES.push(...BUSAN_FOOD_PLACES);
+
 const FREE_PLACE_IDS = ["pkyoja", "pseoul1", "pbts01", "pkp33", "ph30", "pgwangjang", "pjeju13", "pch01", "psh01", "psh09", "pbusan9"];
 const PUBLIC_PLACES = PLACES.map(place => ({ ...place }));
 const PRIVATE_PLACE_IDS = PUBLIC_PLACES.filter(place => !FREE_PLACE_IDS.includes(place.id)).map(place => place.id);
@@ -6965,7 +6980,7 @@ async function refreshFirebaseAccount(user) {
         const fullPlaces = PUBLIC_PLACES.map(place => {
           if (FREE_PLACE_IDS.includes(place.id)) return { ...place };
           const stored = byId.get(place.id);
-          const parsedData = place.cat === 'drama' && typeof stored.payload === 'string'
+          const parsedData = typeof stored.payload === 'string'
             ? JSON.parse(stored.payload) : stored;
           const data = DRAMA_KAKAO_URL_OVERRIDES[place.id]
             ? { ...parsedData, kakaoUrl: DRAMA_KAKAO_URL_OVERRIDES[place.id] }
@@ -7794,7 +7809,8 @@ const MAP_CAT_DEFS = [
   { id: 'sight',     cats: ['sight'] },
   { id: 'bts',       cats: ['bts'] },
   { id: 'drama',     cats: ['drama'] },
-  { id: 'food_cafe', cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol','food-bbq','cafe-regular'] },
+  { id: 'food_cafe', cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol','food-bbq','cafe-regular','food-seafood'] },
+  { id: 'food-seafood', cats: ['food-seafood'] },
   { id: 'kpop',      cats: ['kpop'] },
   { id: 'shopping',  cats: ['shopping'] },
   { id: 'cherry',    cats: ['cherry'] },
@@ -7897,7 +7913,7 @@ function renderMapList() {
   const isMultiCity = !STATE.currentCity;
   const isSightGroup = mergedCats.includes('sight') && mergedCats.length > 1 || STATE.currentMapCat === 'sight';
   const isShoppingGroup = STATE.currentMapCat === 'shopping';
-  const isFoodGroup = STATE.currentMapCat === 'food' || mergedCats.some(c => ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger','food-bbq','cafe-regular'].includes(c)) && mergedCats.length > 3;
+  const isFoodGroup = STATE.currentMapCat === 'food' || mergedCats.some(c => ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger','food-bbq','cafe-regular','food-seafood'].includes(c)) && mergedCats.length > 3;
 
   const cityLabels = { seoul: { ru: 'Сеул', en: 'Seoul', ko: '서울' }, busan: { ru: 'Пусан', en: 'Busan', ko: '부산' }, jeju: { ru: 'Чеджу', en: 'Jeju', ko: '제주' } };
 
@@ -7905,12 +7921,13 @@ function renderMapList() {
   // ── Food subcategory tabs ──
   if (isFoodGroup) {
     const foodSubs = [
-      { id: 'food-all',     cats: ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger','food-bbq','cafe-regular'], emoji: '🍽', label: { ru: 'Все', en: 'All', ko: '전체' } },
+      { id: 'food-all',     cats: ['food','cafe','food-market','food-street','food-michelin','cafe-idol','food-burger','food-bbq','cafe-regular','food-seafood'], emoji: '🍽', label: { ru: 'Все', en: 'All', ko: '전체' } },
       { id: 'food-market',  cats: ['food-market','food-street'], emoji: '🏪', label: { ru: 'Рынки', en: 'Markets', ko: '시장' } },
       { id: 'food-michelin',cats: ['food-michelin'],              emoji: '⭐', label: { ru: 'Michelin', en: 'Michelin', ko: '미슐랭' } },
       { id: 'food-idol',    cats: ['cafe-idol','cafe'],           emoji: '🎤', label: { ru: 'Айдолы', en: 'Idol Cafés', ko: '아이돌' } },
       { id: 'food-burger',  cats: ['food-burger'],                emoji: '🍔', label: { ru: 'Стритфуд', en: 'Street', ko: '분식' } },
       { id: 'food-bbq',     cats: ['food-bbq'],                   emoji: '🔥', label: { ru: 'K-BBQ', en: 'K-BBQ', ko: 'K-BBQ' } },
+      { id: 'food-seafood', cats: ['food-seafood'],               emoji: '🦐', label: { ru: 'Морепродукты', en: 'Seafood', ko: '해산물' } },
       { id: 'cafe-regular',  cats: ['cafe-regular'],               emoji: '☕', label: { ru: 'Кафе', en: 'Cafés', ko: '카페' } },
     ];
     if (!STATE._foodSub) STATE._foodSub = 'food-all';
@@ -8331,7 +8348,7 @@ function openPlaceDetail(placeId) {
    to the place's own category in the same city (or city-only). */
 function getDetailCohort(p) {
   const useMapFilters = STATE.currentMapCat && STATE.currentMapCat !== 'all';
-  let pool = PLACES.filter(x => (x.lat && x.lng) || (x.cat === 'drama' && x.kakaoUrl));
+  let pool = PLACES.filter(x => (x.lat && x.lng) || x.kakaoUrl);
   let labelParts = [];
 
   // If a city is active in map state — restrict to it
@@ -8434,7 +8451,7 @@ function renderDetail(page) {
 
   page.innerHTML = `
     <div class="detail-wrap">
-      <div class="detail-hero ${getImg(p).startsWith('assets/photos/') ? 'local-photo' : p.cat === 'drama' && !getImg(p) ? 'drama-no-photo' : ''}">
+      <div class="detail-hero ${getImg(p).startsWith('assets/photos/') ? 'local-photo' : !getImg(p) ? p.cat === 'drama' ? 'drama-no-photo' : 'food-no-photo' : ''}">
         <button class="back-btn" onclick="navigateBack()">
           <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
@@ -8446,8 +8463,8 @@ function renderDetail(page) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </button>
-        ${p.cat === 'drama' && !getImg(p)
-          ? `<div class="drama-hero-placeholder"><span class="scene-emoji">${p.emoji || '🎬'}</span><span class="scene-label">KoreaMate · K-Drama</span><span class="scene-name">${escapeHtml(p.name)}</span><span>Фото локации пока не добавлено</span></div>`
+        ${!getImg(p)
+          ? `<div class="drama-hero-placeholder"><span class="scene-emoji">${p.emoji || '📍'}</span><span class="scene-label">KoreaMate · ${p.cat === 'drama' ? 'K-Drama' : 'Food & Cafés'}</span><span class="scene-name">${escapeHtml(p.name)}</span><span>${lang === 'ru' ? 'Фото пока не добавлено' : lang === 'ko' ? '사진은 추후 추가됩니다' : 'Photo coming soon'}</span></div>`
           : `<img src="${getImg(p)}" alt="${escapeHtml(p.name)}" decoding="async" onerror="this.style.display='none'" />`}
       </div>
 
@@ -9608,8 +9625,16 @@ function renderFoodPage(page) {
       cls: 'fc-cafe',
       emoji: '☕',
       name: { ru: 'Кафе', en: 'Cafés', ko: '카페' },
-      desc: { ru: 'Уютные кофейни, десертные кафе и трендовые заведения Сеула', en: 'Cozy coffee shops, dessert cafés and trendy spots in Seoul', ko: '감성 카페, 디저트 카페, 트렌디한 카페' },
+      desc: { ru: 'Кофейни с видом, десертные кафе и красивые места по всей Корее', en: 'Scenic coffee shops, dessert cafés and beautiful spots across Korea', ko: '전국의 전망 좋은 카페와 디저트 카페' },
       cats: ['cafe-regular'],
+    },
+    {
+      id: 'food-seafood',
+      cls: 'fc-seafood',
+      emoji: '🦐',
+      name: { ru: 'Морепродукты', en: 'Seafood', ko: '해산물' },
+      desc: { ru: 'Рыба, моллюски и морские блюда Сеула, Пусана и Чеджу', en: 'Fish, shellfish and seafood in Seoul, Busan and Jeju', ko: '서울·부산·제주의 해산물 맛집' },
+      cats: ['food-seafood'],
     },
   ];
 
