@@ -3070,6 +3070,12 @@ const FOOD_SEAFOOD_IMG_MAP = {
   "pbusan_haemok": "assets/photos/food-seafood/pbusan_haemok.jpg"
 };
 
+const BUSAN_FOOD_IMG_MAP = {
+  "pbusan_gayamilmyeon": "assets/photos/food-busan/pbusan_gayamilmyeon.jpg",
+  "pbusan_dailybeer": "assets/photos/food-busan/pbusan_dailybeer.jpg",
+  "pbusan_galmegi": "assets/photos/food-busan/pbusan_galmegi.jpg"
+};
+
 const MICHELIN_IMG_MAP = {
   "pkyoja": "assets/photos/food-michelin/pmi05.webp",
   "pbusan_bibijae": "assets/photos/food-michelin/pbusan_bibijae.jpg",
@@ -3106,7 +3112,7 @@ const DRAMA_KAKAO_URL_OVERRIDES = {
 function getImg(p) {
   // Local photos take priority over legacy IMG_MAP entries.
   if (p.image) return p.image;
-  const src = FOOD_MARKET_IMG_MAP[p.id] || FOOD_SEAFOOD_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || STREET_FOOD_IMG_MAP[p.id] || KBBQ_IMG_MAP[p.id] || CAFE_IMG_MAP[p.id] || DRAMA_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
+  const src = FOOD_MARKET_IMG_MAP[p.id] || FOOD_SEAFOOD_IMG_MAP[p.id] || BUSAN_FOOD_IMG_MAP[p.id] || MICHELIN_IMG_MAP[p.id] || IDOL_FOOD_IMG_MAP[p.id] || STREET_FOOD_IMG_MAP[p.id] || KBBQ_IMG_MAP[p.id] || CAFE_IMG_MAP[p.id] || DRAMA_IMG_MAP[p.id] || IMG_MAP[p.id] || '';
   if (src) return src;
   return p.img || '';
 }
