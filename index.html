@@ -9756,10 +9756,12 @@ function renderTips(page) {
     const tipLinks = Array.isArray(item.links) ? item.links.filter(link => {
       try {
         const url = new URL(link.url);
-        return url.protocol === 'https:' && ['trip.com', 'www.trip.com'].includes(url.hostname);
+        return url.protocol === 'https:' && ['trip.com', 'www.trip.com', 'map.kakao.com', 'apps.apple.com', 'play.google.com'].includes(url.hostname);
       } catch { return false; }
     }) : [];
-    const linkHeading = lang === 'ko' ? 'Trip.com 바로가기' : lang === 'en' ? 'My Trip.com links' : 'Мои ссылки Trip.com';
+    const linkHeading = item.id === 'trip-com'
+      ? (lang === 'ko' ? 'Trip.com 바로가기' : lang === 'en' ? 'My Trip.com links' : 'Мои ссылки Trip.com')
+      : (lang === 'ko' ? '앱 다운로드 및 웹 지도' : lang === 'en' ? 'Get the app or open the map' : 'Скачать приложение или открыть карту');
     page.innerHTML = `
       <div class="tips-header">
         <button class="back-btn" onclick="renderTips(document.querySelector('.page.active'))">
@@ -9774,7 +9776,7 @@ function renderTips(page) {
         <div class="tip-detail-icon" style="background:${item.color}22;">${item.emoji}</div>
         <div class="tip-detail-body">
           ${(item.desc[lang] || item.desc.ru).split('\n\n').map(p =>
-            `<p class="tip-detail-para">${safeTipText(p).replace(/\n/g,'<br>')}</p>`
+            `<p class="tip-detail-para">${safeTipText(p).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</p>`
           ).join('')}
           ${tipLinks.length ? `
             <section class="tip-links-section" aria-label="${safeTipText(linkHeading)}">
