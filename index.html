@@ -7527,8 +7527,8 @@ function renderHome(page) {
     {
       id: 'food', emoji: '🍜', cls: 'cat-food',
       label: { ru: 'Еда и кафе', en: 'Food & Cafés', ko: '음식 & 카페' },
-      desc: { ru: 'Мишлен, BBQ, курочка, кафе айдолов и стритфуд', en: 'Michelin, BBQ, chicken, idol cafés & street food', ko: '미슐랭, BBQ, 치킨, 아이돌 카페' },
-      cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol']
+      desc: { ru: 'Морепродукты, кафе, Michelin, BBQ и стритфуд', en: 'Seafood, cafés, Michelin, BBQ and street food', ko: '해산물, 카페, 미슐랭, BBQ와 길거리 음식' },
+      cats: ['food','cafe','food-market','food-street','food-michelin','food-burger','cafe-idol','food-bbq','cafe-regular','food-seafood']
     },
     {
       id: 'bts', emoji: '💜', cls: 'cat-bts', locked: true,
@@ -8376,6 +8376,11 @@ function getDetailCohort(p) {
   } else if (cat && cat !== 'all') {
     pool = pool.filter(x => x.cat === cat);
     labelParts.push(t('cat.' + cat));
+  }
+
+  if (cat === 'food_cafe' && ['food-seafood', 'cafe-regular'].includes(STATE._foodSub)) {
+    pool = pool.filter(x => x.cat === STATE._foodSub);
+    labelParts[labelParts.length - 1] = t('cat.' + STATE._foodSub);
   }
 
   // Within "sights" cat we have two subgroups: tourist (premium=false) and
@@ -9645,7 +9650,7 @@ function renderFoodPage(page) {
   hero.innerHTML = `
     <div class="food-hero-eyebrow">${lang === 'ru' ? 'Еда и кафе' : 'Food & Cafés'}</div>
     <div class="food-hero-title">${lang === 'ru' ? 'Где поесть в Корее 🍜' : 'Where to eat in Korea 🍜'}</div>
-    <div class="food-hero-sub">${lang === 'ru' ? 'Рынки, рестораны Michelin, кафе айдолов и стритфуд' : 'Markets, Michelin spots, idol cafés and street food'}</div>
+    <div class="food-hero-sub">${lang === 'ru' ? 'Морепродукты, рынки, Michelin, кафе и стритфуд' : lang === 'ko' ? '해산물, 시장, 미슐랭, 카페와 길거리 음식' : 'Seafood, markets, Michelin spots, cafés and street food'}</div>
   `;
   wrap.appendChild(hero);
 
