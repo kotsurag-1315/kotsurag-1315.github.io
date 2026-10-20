@@ -3158,7 +3158,10 @@ const FOOD_MARKET_IMG_MAP = {
 const FOOD_SEAFOOD_IMG_MAP = {
   "pbusan_josaeho": "assets/photos/food-seafood/pbusan_josaeho.jpg",
   "pbusan_mipojip": "assets/photos/food-seafood/pbusan_mipojip.jpg",
-  "pbusan_haemok": "assets/photos/food-seafood/pbusan_haemok.jpg"
+  "pbusan_haemok": "assets/photos/food-seafood/pbusan_haemok.jpg",
+  "pjeju_aewol_salmon": "assets/photos/food-jeju/pjeju_aewol_salmon.jpg",
+  "pjeju_gozip_dol_ureok": "assets/photos/food-jeju/pjeju_gozip_dol_ureok.jpg",
+  "pjeju_hoonnam_hwoetjip": "assets/photos/food-jeju/pjeju_hoonnam_hwoetjip.jpg"
 };
 
 const BUSAN_FOOD_IMG_MAP = {
@@ -3177,9 +3180,13 @@ const MICHELIN_IMG_MAP = {
 
 const IDOL_FOOD_IMG_MAP = {};
 
-const STREET_FOOD_IMG_MAP = {};
+const STREET_FOOD_IMG_MAP = {
+  "pjeju_roll_tide": "assets/photos/food-jeju/pjeju_roll_tide.jpg"
+};
 
-const KBBQ_IMG_MAP = {};
+const KBBQ_IMG_MAP = {
+  "pjeju_wangpyogi": "assets/photos/food-jeju/pjeju_wangpyogi.jpg"
+};
 
 const CAFE_IMG_MAP = {
   "pbusan_cafe385": "assets/photos/food-cafes/pbusan_cafe385.jpg",
@@ -6987,6 +6994,15 @@ const BUSAN_FOOD_PLACES = [
   { id: 'pbusan_songheonjip', city: 'busan', cat: 'food-michelin' },
 ].map(place => ({ ...place, premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] }));
 PLACES.push(...BUSAN_FOOD_PLACES);
+
+const JEJU_FOOD_PLACES = [
+  { id: 'pjeju_aewol_salmon', city: 'jeju', cat: 'food-seafood' },
+  { id: 'pjeju_gozip_dol_ureok', city: 'jeju', cat: 'food-seafood' },
+  { id: 'pjeju_hoonnam_hwoetjip', city: 'jeju', cat: 'food-seafood' },
+  { id: 'pjeju_roll_tide', city: 'jeju', cat: 'food-street' },
+  { id: 'pjeju_wangpyogi', city: 'jeju', cat: 'food-bbq' },
+].map(place => ({ ...place, premium: true, name: 'Место Premium', han: '', emoji: '🔒', lat: 0, lng: 0, img: '', transit: '', entry: '', best_time: '', duration: '', desc: [] }));
+PLACES.push(...JEJU_FOOD_PLACES);
 
 const FREE_PLACE_IDS = ["pkyoja", "pseoul1", "pbts01", "pkp33", "ph30", "pgwangjang", "pjeju13", "pch01", "psh01", "psh09", "pbusan9"];
 const PUBLIC_PLACES = PLACES.map(place => ({ ...place }));
