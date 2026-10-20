@@ -908,7 +908,7 @@ body.map-page-open { overflow: hidden; }
 .tip-link-arrow { flex: 0 0 auto; color: #287DFA; font-size: 20px; font-weight: 700; }
 .connection-guide { margin-top: 2px; }
 .connection-guide-intro { margin: -2px 0 18px; color: var(--ink-2); font-size: 14px; line-height: 1.65; }
-.connection-guide-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.connection-guide-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 14px; }
 .connection-guide-tab {
   min-height: 66px; padding: 10px 8px; border: 1px solid rgba(91, 155, 213, .18);
   border-radius: 14px; background: rgba(91, 155, 213, .07); color: var(--ink-2);
@@ -941,6 +941,10 @@ body.map-page-open { overflow: hidden; }
   font-size: 12px; font-weight: 800; box-shadow: 0 3px 10px rgba(38, 87, 130, .09);
 }
 .connection-guide-note { margin-top: 14px; padding: 11px 13px; border-radius: 12px; background: rgba(255, 255, 255, .78); color: var(--ink-2); font-size: 12px; line-height: 1.5; }
+.connection-guide-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.connection-guide-fact { padding: 11px 12px; border-radius: 12px; background: rgba(255, 255, 255, .82); }
+.connection-guide-fact-label { display: block; color: #397cad; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.connection-guide-fact-value { display: block; margin-top: 4px; color: var(--ink-2); font-size: 12px; line-height: 1.45; }
 .connection-guide-links { display: grid; gap: 8px; margin-top: 14px; }
 .connection-guide-link {
   display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 13px;
@@ -957,6 +961,7 @@ body.map-page-open { overflow: hidden; }
   .connection-guide-tab { min-height: 48px; display: flex; align-items: center; gap: 9px; text-align: left; padding: 9px 12px; }
   .connection-guide-tab span { display: inline; margin: 0; }
   .connection-slide { padding: 16px; }
+  .connection-guide-facts { grid-template-columns: 1fr; }
 }
 @media (min-width: 900px) {
   .tip-detail-card { margin: 0 40px; }
@@ -9852,6 +9857,9 @@ function renderTips(page) {
                 <ol class="connection-guide-steps">
                   ${(slide.steps || []).map(step => `<li>${safeTipText(localText(step))}</li>`).join('')}
                 </ol>
+                ${Array.isArray(slide.facts) && slide.facts.length ? `<div class="connection-guide-facts">
+                  ${slide.facts.map(fact => `<div class="connection-guide-fact"><span class="connection-guide-fact-label">${safeTipText(fact.emoji || '•')} ${safeTipText(localText(fact.label))}</span><span class="connection-guide-fact-value">${safeTipText(localText(fact.value))}</span></div>`).join('')}
+                </div>` : ''}
                 ${localText(slide.note) ? `<div class="connection-guide-note">💡 ${safeTipText(localText(slide.note))}</div>` : ''}
                 ${Array.isArray(slide.links) && slide.links.length ? `<div class="connection-guide-links">
                   ${slide.links.map(link => `<a class="connection-guide-link" href="${safeTipText(safeGuideUrl(link.url))}" target="_blank" rel="noopener noreferrer"><span>${safeTipText(localText(link.label))}</span><span aria-hidden="true">↗</span></a>`).join('')}
