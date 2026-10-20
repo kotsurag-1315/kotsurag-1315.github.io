@@ -7127,6 +7127,7 @@ async function refreshFirebaseAccount(user) {
   if (revision !== kmAuthRevision) return;
   closeModal();
   setAuthChecking(false);
+  if (STATE.premium) closePaywall();
   renderPage(STATE.currentTab);
   if (user) setGoogleSignInTransition(false);
 }
