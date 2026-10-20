@@ -7663,7 +7663,7 @@ function renderHome(page) {
         <h4>${shortLabel}</h4>
         <div class="tile-desc">${descText}</div>
       </div>
-      <div class="tile-count">${count} places</div>
+      ${c.id === 'tips' ? '' : `<div class="tile-count">${count} places</div>`}
     `;
     grid.appendChild(tile);
   });
