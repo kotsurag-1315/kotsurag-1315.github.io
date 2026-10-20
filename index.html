@@ -9833,7 +9833,7 @@ function renderTips(page) {
     const safeGuideUrl = value => {
       try {
         const url = new URL(value);
-        return url.protocol === 'https:' && ['trip.com', 'www.trip.com', 'ru.trip.com', 'wilda.ru', 'www.wilda.ru', 't.me', 'k-eta.go.kr', 'www.k-eta.go.kr', 'map.kakao.com'].includes(url.hostname) ? url.href : '#';
+        return url.protocol === 'https:' && ['trip.com', 'www.trip.com', 'ru.trip.com', 'wilda.ru', 'www.wilda.ru', 't.me', 'k-eta.go.kr', 'www.k-eta.go.kr', 'map.kakao.com', 'www.kobus.co.kr'].includes(url.hostname) ? url.href : '#';
       } catch { return '#'; }
     };
     const guideHtml = guideSlides.length ? `
