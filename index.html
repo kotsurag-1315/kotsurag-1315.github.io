@@ -9902,6 +9902,8 @@ function renderTips(page) {
       </div>
       <div style="height:40px;"></div>
     `;
+    page.scrollTop = 0;
+    window.scrollTo(0, 0);
     if (guideSlides.length) {
       let guideIndex = 0;
       const track = page.querySelector('.connection-guide-track');
