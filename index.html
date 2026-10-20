@@ -9832,7 +9832,7 @@ function renderTips(page) {
     const safeGuideUrl = value => {
       try {
         const url = new URL(value);
-        return url.protocol === 'https:' && ['trip.com', 'www.trip.com', 'ru.trip.com'].includes(url.hostname) ? url.href : '#';
+        return url.protocol === 'https:' && ['trip.com', 'www.trip.com', 'ru.trip.com', 'wilda.ru', 'www.wilda.ru', 't.me'].includes(url.hostname) ? url.href : '#';
       } catch { return '#'; }
     };
     const guideHtml = guideSlides.length ? `
