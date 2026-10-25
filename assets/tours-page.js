@@ -7,6 +7,7 @@ function renderToursV2(page) {
   }[ch]));
   const contact = 'https://t.me/qitour_stuff';
   const tours = Array.isArray(window.KM_TOURS) ? window.KM_TOURS : [];
+  const gallery = window.KM_TOUR_GALLERY?.render(STATE.lang, safe);
   page.classList.add('tours-v2');
 
   const cards = tours.map(tour => {
@@ -74,6 +75,7 @@ function renderToursV2(page) {
   page.innerHTML = `
     <div class="tv-shell">
       <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Выберите тур по душе — и поехали за впечатлениями ✨', 'Find a trip you love — and let’s go make memories ✨')}</small></header>
+      ${gallery ? gallery.hero : ''}
       <div class="tv-layout">
         <section class="tv-main" aria-label="${tr('Предстоящие туры', 'Upcoming tours')}">
           <div class="tv-section-title"><h2>${tr('Предстоящие туры', 'Upcoming tours')}</h2><span>${tr('Выберите, что интересно', 'Choose what interests you')}</span></div>
@@ -85,7 +87,10 @@ function renderToursV2(page) {
           <section class="tv-contact"><h2>${tr('Есть вопрос по поездке?', 'Have a trip question?')}</h2><p>${tr('Напишите нам напрямую — откроется личный чат в Telegram.', 'Write to us directly in Telegram.')}</p><a href="${contact}" target="_blank" rel="noopener noreferrer">${tr('Написать нам ↗', 'Contact us ↗')}</a></section>
         </aside>
       </div>
-    </div>`;
+    </div>
+    ${gallery ? gallery.story : ''}`;
+
+  if (gallery) window.KM_TOUR_GALLERY.init(page);
 
   const tourCards = Array.from(page.querySelectorAll('.tv-tour'));
   const setTourOpen = (card, open) => {
