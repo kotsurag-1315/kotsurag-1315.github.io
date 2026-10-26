@@ -8,9 +8,8 @@
       title: ['Собрались и поехали', 'We got together and went'],
       lead: ['Сначала все знакомятся, а через пару дней уже зовут друг друга на кофе и фоткаются вместе.', 'At first everyone is new. A couple of days later, we are getting coffee and taking photos together.'],
       photos: [
-        photo('2366-2', 'Вот наша группа. Почти все влезли в кадр.', 'Here is our group. Almost everyone made it into the frame.', 'hero'),
         photo('3741', 'Сфоткались у дворца.', 'A group photo by the palace.', 'tall'),
-        photo('5030', 'Ещё одно фото всей компанией.', 'Another photo with the whole group.', 'small'),
+        photo('5030', 'Ещё одно фото всей компанией.', 'Another photo with the whole group.', 'tall'),
         photo('2689', 'Такие фото потом приятно пересматривать.', 'This is one to look back at later.', 'small'),
         photo('6550', 'Сходили к HYBE, сделали фото у входа.', 'Stopped by HYBE and took a photo outside.', 'wide'),
         photo('9528', 'Ну и без покупок не обошлось.', 'And yes, we did some shopping.', 'small')
@@ -21,8 +20,7 @@
       title: ['Пошли смотреть сакуру', 'Out to see the blossoms'],
       lead: ['Весной тут сложно идти без остановок. То кофе возьмём, то опять хочется сфоткаться.', 'In spring we keep stopping: coffee, another photo, then another photo.'],
       photos: [
-        photo('1447', 'Вот ради таких улиц и идём смотреть цветение.', 'This is why we came to see the blossoms.', 'hero'),
-        photo('0654', 'Взяли кофе и пошли дальше.', 'Grabbed coffee and kept walking.', 'small'),
+        photo('0654', 'Взяли кофе и пошли дальше.', 'Grabbed coffee and kept walking.', 'tall'),
         photo('0840', 'Фото под сакурой — куда без него.', 'Of course we took a photo under the blossoms.', 'tall'),
         photo('1304', 'Цветёт буквально всё.', 'Everything seems to be blooming.', 'small'),
         photo('5734', 'Тут мы шли медленно. Сами видите почему.', 'We walked slowly here. You can see why.', 'wide'),
@@ -34,8 +32,7 @@
       title: ['Иногда идём в горы', 'Sometimes we head into the hills'],
       lead: ['После городских прогулок хочется сменить картинку. Идём на тропу, смотрим на виды, у водопада надеваем дождевики.', 'After a few days in the city, we head for the trails, the views and a waterfall.'],
       photos: [
-        photo('5439', 'Поднялись наверх. Вид того стоил.', 'We made it to the top. Worth it.', 'hero'),
-        photo('4919', 'У водопада без дождевика никак.', 'Raincoats were a good idea by the waterfall.', 'small'),
+        photo('4919', 'У водопада без дождевика никак.', 'Raincoats were a good idea by the waterfall.', 'tall'),
         photo('8222', 'По пути заглянули в храм.', 'Stopped by a temple on the way.', 'tall'),
         photo('9262', 'Гуляем, смотрим на город.', 'Walking and looking out over the city.', 'wide'),
         photo('9456', 'Остановились передохнуть.', 'Took a little break.', 'small')
@@ -111,8 +108,6 @@
           <span class="tg-story-eyebrow">${ru ? 'ФОТО С НАШИХ ПОЕЗДОК' : 'PHOTOS FROM OUR TRIPS'}</span>
           <h1>${ru ? 'Вот как мы ездим' : 'Here is how we travel'}</h1>
           <p>${ru ? 'Погуляли, посмотрели город, сходили в горы, поели. Вот несколько фото с наших поездок.' : 'We walked around, explored the city, went hiking and ate well. Here are some photos from our trips.'}</p>
-          <img src="${img('2366-2')}" alt="${ru ? 'Группа путешественников KoreaMate вместе на прогулке' : 'KoreaMate travel group together on a walk'}" decoding="async">
-          <span class="tg-scroll-cue">${ru ? 'ЛИСТАЙТЕ ВНИЗ ↓' : 'SCROLL DOWN ↓'}</span>
         </header>
         <div class="tg-story-chapters">${chapterHtml}</div>
         <footer class="tg-story-end"><span>✳</span><h2>${ru ? 'Это ещё не все фото' : 'There are more photos to come'}</h2><p>${ru ? 'В следующей поездке наснимаем ещё.' : 'We will take plenty more on the next trip.'}</p><button type="button" class="tg-back tg-back--end">${ru ? 'Посмотреть туры ↑' : 'See upcoming tours ↑'}</button></footer>
