@@ -10,7 +10,7 @@ function renderToursV2(page) {
   const gallery = window.KM_TOUR_GALLERY?.render(STATE.lang, safe);
   page.classList.add('tours-v2');
 
-  const cards = tours.map(tour => {
+  const cards = tours.filter(tour => !tour.past).map(tour => {
     const id = safe(tour.id);
     const title = safe(ru ? tour.title : (tour.titleEn || tour.title));
     const headerDates = safe((ru ? tour.headerDates : (tour.headerDatesEn || tour.headerDates)) || tr('Даты уточняются', 'Dates to be confirmed'));
@@ -72,6 +72,24 @@ function renderToursV2(page) {
       </article>`;
   }).join('');
 
+  const pastCards = tours.filter(tour => tour.past).map(tour => {
+    const title = safe(ru ? tour.title : (tour.titleEn || tour.title));
+    const dates = safe(ru ? tour.headerDates : (tour.headerDatesEn || tour.headerDates));
+    const city = safe(ru ? tour.city : (tour.cityEn || tour.city));
+    const highlights = ru ? tour.highlights : (tour.highlightsEn || tour.highlights);
+    return `<details class="tv-past-card">
+      <summary>
+        <img src="${safe(tour.image)}" alt="" loading="lazy" decoding="async">
+        <span class="tv-past-card-main"><strong>${title}</strong><small>${dates}${tour.pastYear ? ` ${safe(tour.pastYear)}` : ''} · ${city}</small></span>
+        <span class="tv-past-card-more">${tr('Посмотреть ↓', 'Take a look ↓')}</span>
+      </summary>
+      <div class="tv-past-card-body">
+        <p>${safe(ru ? tour.pastSummary : (tour.pastSummaryEn || tour.pastSummary))}</p>
+        ${Array.isArray(highlights) ? `<div class="tv-past-tags">${highlights.slice(1).map(item => `<span>${safe(item)}</span>`).join('')}</div>` : ''}
+      </div>
+    </details>`;
+  }).join('');
+
   page.innerHTML = `
     <div class="tv-shell">
       <header class="tv-intro"><span>${tr('Путешествия с KoreaMate', 'Travel with KoreaMate')}</span><h1>${tr('Поехали вместе ✨', 'Travel together ✨')}</h1><p>${tr('Групповые поездки на концерты и события — и индивидуальные путешествия, созданные под вас.', 'Group trips to concerts and events, plus trips tailored to you.')}</p><small>${tr('Выберите тур по душе — и поехали за впечатлениями ✨', 'Find a trip you love — and let’s go make memories ✨')}</small></header>
@@ -80,6 +98,7 @@ function renderToursV2(page) {
         <section class="tv-main" aria-label="${tr('Предстоящие туры', 'Upcoming tours')}">
           <div class="tv-section-title"><h2>${tr('Предстоящие туры', 'Upcoming tours')}</h2><span>${tr('Выберите, что интересно', 'Choose what interests you')}</span></div>
           <div class="tv-tour-list">${cards}</div>
+          ${pastCards ? `<section class="tv-past" aria-label="${tr('Прошлые туры', 'Past trips')}"><div class="tv-section-title"><h2>${tr('Прошлые туры', 'Past trips')}</h2><span>${tr('Где мы уже побывали', 'Where we have been')}</span></div><div class="tv-past-list">${pastCards}</div></section>` : ''}
         </section>
         <aside class="tv-aside">
           <section class="tv-about"><img src="assets/tours-team.webp" alt="Люба и Артём — команда KoreaMate" loading="lazy"><div><h2>${STATE.lang === 'ko' ? '여러분, 안녕하세요👋' : tr('Ёробун, аннёнхасэё👋', 'Yeoreobun, annyeonghaseyo👋')}</h2><p>${tr('Мы Люба и Артём. Любим путешествовать и помогаем другим открывать Южную Корею и новые места 🩷', 'We are Lyuba and Artyom. We love travelling and helping others discover South Korea and new places 🩷')}</p></div></section>

@@ -2763,7 +2763,7 @@ body.map-page-open { overflow: hidden; }
   .auth-check-flower, .auth-check-home-flower, .google-signin-flower { animation: none; }
 }
 </style>
-<link rel="stylesheet" href="assets/tours-page.css?v=20261001k">
+<link rel="stylesheet" href="assets/tours-page.css?v=20261026a">
 <link rel="stylesheet" href="assets/tour-gallery.css?v=20261026a">
 </head>
 <body>
@@ -7296,7 +7296,7 @@ function renderRegister(page) {
       : initials;
 
     const availableToursCount = (Array.isArray(window.KM_TOURS) ? window.KM_TOURS : [])
-      .filter(tour => !tour.demo && Number.isInteger(tour.remainingSeats) && tour.remainingSeats > 0).length;
+      .filter(tour => !tour.demo && !tour.past && Number.isInteger(tour.remainingSeats) && tour.remainingSeats > 0).length;
     const toursSummary = lang === 'ru'
       ? availableToursCount
         ? `Сейчас есть места в ${availableToursCount} ${availableToursCount === 1 ? 'поездке' : 'поездках'} · группы до 7 человек`
@@ -10078,9 +10078,9 @@ window.addEventListener('popstate', function(e) {
 
 </script>
 
-<script src="assets/tours-data.js?v=20261002g"></script>
+<script src="assets/tours-data.js?v=20261026a"></script>
 <script src="assets/tour-gallery.js?v=20261026a"></script>
-<script src="assets/tours-page.js?v=20261001k"></script>
+<script src="assets/tours-page.js?v=20261026a"></script>
 
 <!-- ====================== АДМИН-ПАНЕЛЬ (доступна по #admin в URL) ====================== -->
 <div id="kma-admin" style="display:none;position:fixed;inset:0;background:#fff;z-index:99999;overflow-y:auto;padding:20px;font-family:system-ui,-apple-system,sans-serif;">

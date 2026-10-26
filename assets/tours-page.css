@@ -10,6 +10,21 @@
 .tours-v2 .tv-section-title h2 { font-size: 19px; line-height: 1.2; }
 .tours-v2 .tv-section-title span { color: var(--ink-3); font-size: 11px; }
 .tours-v2 .tv-tour-list { display: grid; gap: 10px; }
+.tours-v2 .tv-past { margin-top: 30px; }
+.tours-v2 .tv-past-list { display: grid; gap: 9px; }
+.tours-v2 .tv-past-card { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.tours-v2 .tv-past-card summary { display: flex; align-items: center; gap: 12px; min-height: 78px; padding: 10px 14px; cursor: pointer; list-style: none; }
+.tours-v2 .tv-past-card summary::-webkit-details-marker { display: none; }
+.tours-v2 .tv-past-card summary img { width: 88px; height: 50px; flex: 0 0 88px; border-radius: 9px; object-fit: cover; background: #241c22; }
+.tours-v2 .tv-past-card-main { display: grid; gap: 3px; min-width: 0; }
+.tours-v2 .tv-past-card-main strong { font-size: 14px; line-height: 1.3; }
+.tours-v2 .tv-past-card-main small { color: var(--ink-3); font-size: 11px; line-height: 1.4; }
+.tours-v2 .tv-past-card-more { flex: 0 0 auto; margin-left: auto; color: var(--primary); font-size: 11px; font-weight: 800; }
+.tours-v2 .tv-past-card[open] .tv-past-card-more { color: var(--ink-3); }
+.tours-v2 .tv-past-card-body { padding: 0 14px 15px 114px; }
+.tours-v2 .tv-past-card-body p { margin: 0; color: var(--ink-2); font-size: 12px; line-height: 1.55; }
+.tours-v2 .tv-past-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tours-v2 .tv-past-tags span { padding: 5px 8px; border-radius: 999px; background: #fff0ec; color: #9f4741; font-size: 10px; font-weight: 700; }
 .tours-v2 .tv-tour { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
 .tours-v2 .tv-tour.is-open { border-color: #EFC5C0; box-shadow: var(--shadow); }
 .tours-v2 .tv-tour-head { --tv-thumb-width: clamp(124px,37vw,156px); width: 100%; padding: 10px 12px; display: grid; grid-template-columns: var(--tv-thumb-width) minmax(0,1fr); align-items: center; gap: 8px 12px; text-align: left; scroll-margin-top: 80px; }
@@ -102,6 +117,9 @@
 }
 @media (max-width: 399px) {
   .tours-v2 .tv-section-title span { display: none; }
+  .tours-v2 .tv-past-card summary { flex-wrap: wrap; }
+  .tours-v2 .tv-past-card-more { width: 100%; padding-left: 100px; }
+  .tours-v2 .tv-past-card-body { padding-left: 14px; }
   .tours-v2 .tv-details-footer { align-items: stretch; flex-direction: column; }
   .tours-v2 .tv-details-footer a { text-align: center; }
 }

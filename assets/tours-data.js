@@ -2,9 +2,14 @@
 // Фото по умолчанию — иллюстрация, а не снимок конкретного концерта.
 // groupSize — максимум участников; remainingSeats: 0 = SOLD OUT, 3 = осталось 3 места, null = число пока неизвестно.
 // headerDates — короткие даты рядом с названием тура; если их нет, показываем «Даты уточняются».
+// past: true переносит завершившуюся поездку из предстоящих в компактный архив; pastSummary — текст раскрытой карточки.
 window.KM_TOURS = [
   {
     id: 'weeknd-seoul-busan',
+    past: true,
+    pastYear: 2026,
+    pastSummary: 'Сеул → Пусан → Сеул. Городские прогулки, три дня у моря, места BTS и поездка на концерт The Weeknd.',
+    pastSummaryEn: 'Seoul → Busan → Seoul. City walks, three days by the sea, BTS spots and a trip to see The Weeknd.',
     title: 'The Weeknd: Сеул и Пусан',
     titleEn: 'The Weeknd: Seoul and Busan',
     headerDates: '5–15 октября',
