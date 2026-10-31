@@ -7028,7 +7028,7 @@ function loadState() {
       currentMapCat: 'all',
       mapView: 'list', // Каталог теперь всегда открывается списком.
       user: null, // Firebase Auth is the only source of account identity.
-      saved: s.saved || [],
+      saved: [], // Loaded only after Firebase resolves the account identity.
       reviews: s.reviews || {},  // { placeId: [ {user, name, rating, text, date} ] }
       premium: false, // Never restore access rights from localStorage.
       xp: s.xp || 0,
@@ -7038,9 +7038,25 @@ function loadState() {
 }
 function saveState() {
   const { lang, saved, reviews, xp, visited, mapView } = STATE;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, saved, reviews, xp, visited, mapView }));
+  // Preserve legacy data without assigning an unknown owner's bookmarks.
+  const previous = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...previous, lang, reviews, xp, visited, mapView }));
+  if (bookmarkOwner !== undefined) {
+    localStorage.setItem(bookmarkStorageKey(bookmarkOwner), JSON.stringify(saved));
+  }
 }
 const STATE = loadState();
+let bookmarkOwner;
+function bookmarkStorageKey(uid) {
+  return STORAGE_KEY + ':saved:' + (uid ? 'user:' + uid : 'guest');
+}
+function selectAccountBookmarks(uid) {
+  bookmarkOwner = uid || null;
+  try {
+    const saved = JSON.parse(localStorage.getItem(bookmarkStorageKey(bookmarkOwner)) || '[]');
+    STATE.saved = Array.isArray(saved) ? [...new Set(saved.filter(id => typeof id === 'string'))] : [];
+  } catch { STATE.saved = []; }
+}
 
 const KM_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyB7EVRdcrbFK9NUnn3boCBIdMocqdoI0yg',
@@ -7086,6 +7102,7 @@ function restorePublicCatalog() {
 
 async function refreshFirebaseAccount(user) {
   const revision = ++kmAuthRevision;
+  selectAccountBookmarks(user?.uid);
   setAuthChecking(true);
   clearTimeout(premiumRefreshTimer);
   const wasPremium = STATE.premium;
@@ -7101,8 +7118,9 @@ async function refreshFirebaseAccount(user) {
   STATE.premiumExpiresAt = null;
   if (wasPremium) {
     if (STATE.currentTab === 'detail' && !FREE_PLACE_IDS.includes(STATE.currentPlace)) STATE.currentTab = 'map';
-    renderPage(STATE.currentTab);
   }
+  // Clear the previous account's saved list before any asynchronous access check.
+  renderPage(STATE.currentTab);
   if (user && user.emailVerified && KM_DB) {
     try {
       const snapshot = await KM_DB.collection('entitlements').doc(user.uid).get();
@@ -8756,6 +8774,10 @@ function shareDetail(id) {
 
 // ================= SAVED =================
 function toggleSavePlace(placeId, btn) {
+  if (bookmarkOwner === undefined) {
+    toast(STATE.lang === 'ru' ? 'Подождите, проверяем аккаунт.' : 'Please wait while we check your account.');
+    return;
+  }
   const idx = STATE.saved.indexOf(placeId);
   if (idx === -1) {
     STATE.saved.push(placeId);
@@ -9025,6 +9047,8 @@ function authErrorMessage(error) {
     'auth/too-many-requests': ru?'Слишком много попыток. Попробуйте позже.':'Too many attempts. Try again later.',
     'auth/popup-closed-by-user': ru?'Вход через Google отменён.':'Google sign-in was cancelled.',
     'auth/popup-blocked': ru?'Браузер заблокировал окно Google. Разрешите всплывающие окна и повторите.':'Allow pop-ups and try again.',
+    'auth/unauthorized-domain': ru?'Вход на этом адресе ещё не настроен. Сообщите нам через раздел «Связаться с нами».':'Sign-in is not configured for this domain yet. Please contact us.',
+    'auth/network-request-failed': ru?'Не удалось связаться с сервисом входа. Проверьте интернет и попробуйте ещё раз.':'Could not reach the sign-in service. Check your connection and try again.',
     'auth/account-exists-with-different-credential': ru?'Такая почта уже используется с другим способом входа.':'This email uses another sign-in method.',
   };
   return messages[error?.code] || (ru?'Не удалось войти. Попробуйте ещё раз.':'Sign-in failed. Please try again.');
