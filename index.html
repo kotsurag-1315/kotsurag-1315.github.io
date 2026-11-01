@@ -3257,6 +3257,17 @@ function getImg(p) {
   return p.img || '';
 }
 
+function placeValue(p, key, lang = STATE.lang) {
+  const localized = p?.i18n?.[lang]?.[key];
+  return localized ?? p?.[key] ?? '';
+}
+
+function placeDescription(p, lang = STATE.lang) {
+  const localized = p?.i18n?.[lang]?.desc;
+  if (Array.isArray(localized)) return localized;
+  return Array.isArray(p?.desc) ? p.desc : [];
+}
+
 // Small, individually framed previews; full photos keep their original composition.
 function getThumbImg(p) {
   const src = getImg(p);
@@ -3509,6 +3520,26 @@ const PLACES = [
       "Захватите воду и перекус — минимум 1.5 л  воды на человека и 2/3 перекуса.",
       "Также  совет на  следующий  день  после восхождения  сделайте разгрузочный  день, чтоб организм восстановился."
     ],
+    "i18n": {
+      "en": {
+        "transit": "The easiest way to reach the park is by bus from Jeju City; the main trailhead is Seongpanak.",
+        "entry": "free, but advance trail reservation is REQUIRED",
+        "best_time": "morning / daytime",
+        "duration": "3–7 hours, depending on the trail",
+        "desc": [
+          "⚠️ IMPORTANT: reaching the summit requires an advance reservation at https://visithalla.jeju.go.kr (English / Korean). You will not be allowed onto the Seongpanak or Gwaneumsa trails without a booking.",
+          "Hallasan is Korea’s highest mountain and volcano (1,950 m), at the heart of the national park of the same name.",
+          "Expect panoramic island views, lava fields, craters, forests and endemic plants.",
+          "This is not an easy walk. The climb is mostly gradual and often stepped, but allow about 3.5 hours up and another 3.5 hours down.",
+          "The trail is 10.7 km each way.",
+          "Dress for changing weather; the summit can be cool even in summer.",
+          "Proper hiking shoes are essential.",
+          "Start early so you can return before the trails close and enjoy the views before the crowds arrive.",
+          "Bring water and food: at least 1.5 litres of water per person and two or three snacks.",
+          "Plan a lighter day after the hike so your body has time to recover."
+        ]
+      }
+    },
     "premium": false
   },
   {
@@ -5143,6 +5174,18 @@ const PLACES = [
       "Самый известный фестиваль сакуры в Сеуле: почти 1 900 вишнёвых деревьев вдоль Yeouiseo-ro.",
       "В выходные очень многолюдно — приходите рано утром для фото без толп. Вечером красивая подсветка."
     ],
+    "i18n": {
+      "en": {
+        "transit": "Yeouinaru (여의나루역) — Line 5",
+        "entry": "free",
+        "best_time": "early April; weekday mornings",
+        "duration": "1.5–2 hours",
+        "desc": [
+          "Seoul’s best-known cherry blossom festival, with almost 1,900 cherry trees lining Yeouiseo-ro.",
+          "Weekends get extremely busy, so arrive early for photos without the crowds. The evening illumination is also beautiful."
+        ]
+      }
+    },
     "id": "pch01"
   },
   {
@@ -8394,7 +8437,8 @@ function showMapCard(p, opts = {}) {
   const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji||'📍');
   const lang = STATE.lang;
   const cityName = placeCityName(p, lang);
-  const previewText = (p.desc && p.desc[0]) ? p.desc[0] : '';
+  const localizedDescription = placeDescription(p, lang);
+  const previewText = localizedDescription[0] || '';
   card.innerHTML = `
     <div class="thumb">${thumb}</div>
     <div class="info">
@@ -8405,7 +8449,7 @@ function showMapCard(p, opts = {}) {
         <span>·</span>
         <span>${t('cat.'+(p.subcat||p.cat))}</span>
       </div>
-      <div class="tag">${escapeHtml(previewText || p.transit || '')}</div>
+      <div class="tag">${escapeHtml(previewText || placeValue(p, 'transit', lang))}</div>
     </div>
     <div class="actions">
       <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
@@ -8636,9 +8680,14 @@ function renderDetail(page) {
   const lang = STATE.lang;
   const isLocked = !isFreePlace(p.id);
   const privateEntry = PRIVATE_PLACE_CACHE.get(p.id);
-  const fullDescription = FREE_PLACE_IDS.includes(p.id) ? p.desc : privateEntry?.desc;
+  const fullDescription = placeDescription(p, lang);
   const isSaved = STATE.saved.includes(p.id);
-  const previewText = (p.desc && p.desc[0]) || '';
+  const previewText = fullDescription[0] || '';
+  const transitText = placeValue(p, 'transit', lang);
+  const entryText = placeValue(p, 'entry', lang);
+  const hoursText = placeValue(p, 'hours', lang);
+  const bestTimeText = placeValue(p, 'best_time', lang);
+  const durationText = placeValue(p, 'duration', lang);
   const cityName = placeCityName(p, lang);
   const reviews = STATE.reviews[p.id] || [];
   const avgRating = reviews.length ? reviews.reduce((s,r) => s + r.rating, 0) / reviews.length : 0;
@@ -8719,11 +8768,11 @@ function renderDetail(page) {
       </div>
 
       <div class="quick-stats">
-        <div class="quick-stat"><div class="ic">📍</div><div class="lbl">${escapeHtml(p.transit || '')}</div></div>
-        ${p.entry ? `<div class="quick-stat"><div class="ic">🎟</div><div class="lbl">${escapeHtml(p.entry)}</div></div>` : ''}
-        ${p.hours ? `<div class="quick-stat"><div class="ic">🕘</div><div class="lbl">${escapeHtml(p.hours)}</div></div>` : ''}
-        ${p.best_time ? `<div class="quick-stat"><div class="ic">🕒</div><div class="lbl">${escapeHtml(p.best_time)}</div></div>` : ''}
-        ${p.duration ? `<div class="quick-stat"><div class="ic">🌿</div><div class="lbl">${escapeHtml(p.duration)}</div></div>` : ''}
+        <div class="quick-stat"><div class="ic">📍</div><div class="lbl">${escapeHtml(transitText)}</div></div>
+        ${entryText ? `<div class="quick-stat"><div class="ic">🎟</div><div class="lbl">${escapeHtml(entryText)}</div></div>` : ''}
+        ${hoursText ? `<div class="quick-stat"><div class="ic">🕘</div><div class="lbl">${escapeHtml(hoursText)}</div></div>` : ''}
+        ${bestTimeText ? `<div class="quick-stat"><div class="ic">🕒</div><div class="lbl">${escapeHtml(bestTimeText)}</div></div>` : ''}
+        ${durationText ? `<div class="quick-stat"><div class="ic">🌿</div><div class="lbl">${escapeHtml(durationText)}</div></div>` : ''}
       </div>
 
       </div>
@@ -8794,10 +8843,12 @@ async function loadPrivatePlace(placeId) {
   try {
     const snapshot = await KM_DB.collection('premium_places').doc(placeId).get();
     if (KM_AUTH.currentUser?.uid !== uid || !STATE.premium) return;
+    const data = snapshot.exists ? snapshot.data() : null;
     PRIVATE_PLACE_CACHE.set(placeId, {
-      desc: snapshot.exists && Array.isArray(snapshot.data().desc)
-        ? snapshot.data().desc
+      desc: data && Array.isArray(data.desc)
+        ? data.desc
         : [STATE.lang==='ru'?'Описание пока готовится.':'Description is coming soon.'],
+      i18n: data?.i18n || {},
     });
   } catch (error) {
     console.warn('Premium place could not be loaded', error);
@@ -9312,8 +9363,8 @@ function _scorePlace(p, q, lang) {
     // category label localized (e.g. "BTS-места" / "BTS Spots" / "BTS 장소")
     { v: t('cat.' + p.cat), weight: 5 },
     { v: p.cat,     weight: 5 },     // also raw "bts" / "cafe"
-    { v: p.transit, weight: 3 },
-    { v: (p.desc || []).join(' '), weight: 2 },
+    { v: placeValue(p, 'transit', lang), weight: 3 },
+    { v: placeDescription(p, lang).join(' '), weight: 2 },
   ];
   let score = 0;
   for (const f of fields) {
