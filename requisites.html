@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#faf7f2">
+  <title>Реквизиты и контакты — KoreaMate</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #faf7f2;
+      --card: #fff;
+      --ink: #1a1a1a;
+      --muted: #77716b;
+      --line: #ece6db;
+      --accent: #e8635a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(680px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 72px; }
+    .brand { margin-bottom: 30px; color: var(--accent); font-size: 22px; font-weight: 800; text-decoration: none; }
+    .brand span { color: var(--ink); }
+    h1 { margin: 18px 0 8px; font-size: clamp(30px, 7vw, 44px); line-height: 1.08; letter-spacing: -.04em; }
+    .lead { margin: 0 0 26px; color: var(--muted); }
+    .card { padding: 8px 24px; border: 1px solid var(--line); border-radius: 22px; background: var(--card); }
+    .row { display: grid; grid-template-columns: minmax(150px, .8fr) 1.4fr; gap: 18px; padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .row:last-child { border-bottom: 0; }
+    dt { color: var(--muted); }
+    dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+    a { color: inherit; }
+    .notice { margin-top: 20px; padding: 16px 18px; border-radius: 16px; background: #f3eee7; color: var(--muted); font-size: 14px; }
+    .back { display: inline-block; margin-top: 26px; color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
+    @media (max-width: 560px) {
+      main { padding-top: 30px; }
+      .card { padding: 4px 18px; }
+      .row { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="brand" href="https://koreamate.ru/">Korea<span>Mate</span></a>
+    <h1>Реквизиты и контакты</h1>
+    <p class="lead">Информация об исполнителе и способы связи по вопросам доступа к онлайн-гиду.</p>
+
+    <dl class="card">
+      <div class="row">
+        <dt>Исполнитель</dt>
+        <dd>Коцур Артём Геннадьевич</dd>
+      </div>
+      <div class="row">
+        <dt>Статус</dt>
+        <dd>Самозанятый, плательщик налога на профессиональный доход</dd>
+      </div>
+      <div class="row">
+        <dt>ИНН</dt>
+        <dd>781144989281</dd>
+      </div>
+      <div class="row">
+        <dt>Электронная почта</dt>
+        <dd><a href="mailto:kotsur.a.g@gmail.com">kotsur.a.g@gmail.com</a></dd>
+      </div>
+      <div class="row">
+        <dt>Телефон</dt>
+        <dd><a href="tel:+79315393623">+7 931 539-36-23</a></dd>
+      </div>
+      <div class="row">
+        <dt>Почтовый адрес для корреспонденции</dt>
+        <dd>193312, г. Санкт-Петербург, до востребования, Коцур Артём Геннадьевич</dd>
+      </div>
+    </dl>
+
+    <p class="notice">Для быстрого ответа используйте электронную почту. Письма, отправленные до востребования, необходимо получать в почтовом отделении по указанному индексу.</p>
+    <a class="back" href="https://koreamate.ru/">← Вернуться на KoreaMate</a>
+  </main>
+</body>
+</html>
+
