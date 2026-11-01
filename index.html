@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FAF7F2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23FAF7F2'/%3E%3Cpath d='M16 13h9v15l13-15h11L34 30l16 21H39L28 36l-3 3v12h-9z' fill='%23E85F55'/%3E%3C/svg%3E">
 <title>KoreaMate — гид по Южной Корее: Сеул, Пусан и Чеджу</title>
 <meta name="description" content="Гид по Южной Корее на русском: 250+ мест в Сеуле, Пусане и на Чеджу. Кафе, достопримечательности, BTS-локации, шопинг, сакура и хайкинг — с фотографиями и ссылками на KakaoMap.">
 <link rel="canonical" href="https://koreamate.ru/">
@@ -7294,7 +7295,7 @@ function showPage(name) {
   if (appEl) appEl.classList.toggle('map-page-open', isMap);
   renderPage(name);
 }
-function renderPage(name) {
+function renderPage(name, tipsView = null) {
   const root = $('#pages');
   root.innerHTML = '';
   const page = el('section', { class: 'page active' });
@@ -7308,7 +7309,7 @@ function renderPage(name) {
   else if (name === 'detail') renderDetail(page);
   else if (name === 'tours') renderToursV2(page);
   else if (name === 'food') renderFoodPage(page);
-  else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page); }
+  else if (name === 'tips') { if (!STATE.premium) { showPaywall(); return; } renderTips(page, tipsView); }
   if (authCheckPending && name !== 'home') {
     const message = STATE.lang === 'ko' ? '잠깐만요, 이용 권한을 확인하고 있어요' : STATE.lang === 'en' ? 'Just a moment — checking your access' : 'Минуточку, проверяем ваш доступ';
     page.insertAdjacentHTML('afterbegin', `<div class="auth-check-note" id="auth-check-note" role="status"><span class="auth-check-flower" aria-hidden="true">🌸</span><span>${message}</span></div>`);
@@ -9508,6 +9509,10 @@ document.addEventListener('click', (e) => {
 
 // ================= LANG SWITCH =================
 function setLang(lang) {
+  const tipsPage = document.querySelector('.page.active[data-tip-id]');
+  const tipsView = STATE.currentTab === 'tips' && tipsPage
+    ? { id: tipsPage.dataset.tipId, slide: Number(tipsPage.dataset.tipSlide || 0) }
+    : null;
   STATE.lang = lang;
   document.documentElement.lang = lang;
   $$('[data-i18n]').forEach(e => { e.textContent = t(e.dataset.i18n); });
@@ -9518,7 +9523,7 @@ function setLang(lang) {
   const elFlag = $('#lang-flag'); if (elFlag) elFlag.textContent = flag;
   const elCode = $('#lang-code'); if (elCode) elCode.textContent = code;
   saveState();
-  renderPage(STATE.currentTab);
+  renderPage(STATE.currentTab, tipsView);
 }
 
 // ================= INIT =================
@@ -9886,11 +9891,14 @@ function setFoodSub(id) {
 // ================= TIPS PAGE =================
 const TIPS_DATA = { apps: [], hacks: [] };
 
-function renderTips(page) {
+function renderTips(page, view = null) {
   const lang = STATE.lang;
   const allItems = [...TIPS_DATA.apps, ...TIPS_DATA.hacks];
+  delete page.dataset.tipId;
+  delete page.dataset.tipSlide;
 
   function renderTipDetail(item) {
+    page.dataset.tipId = item.id;
     const isApp = TIPS_DATA.apps.find(a => a.id === item.id);
     const safeTipText = value => String(value ?? '').replace(/[&<>"']/g, char => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -9964,7 +9972,7 @@ function renderTips(page) {
       <div class="tip-detail-card">
         <div class="tip-detail-icon" style="background:${item.color}22;">${item.emoji}</div>
         <div class="tip-detail-body">
-          ${guideHtml || (item.desc[lang] || item.desc.ru).split('\n\n').map(p =>
+          ${guideHtml || (item.desc[lang] || item.desc.ru).replace(/\\n/g, '\n').split('\n\n').map(p =>
             `<p class="tip-detail-para">${safeTipText(p).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</p>`
           ).join('')}
           ${!guideHtml && tipLinks.length ? `
@@ -9999,6 +10007,7 @@ function renderTips(page) {
       const next = page.querySelector('.guide-next');
       const showGuideSlide = nextIndex => {
         guideIndex = Math.max(0, Math.min(guideSlides.length - 1, nextIndex));
+          page.dataset.tipSlide = String(guideIndex);
         track.style.transform = `translateX(-${guideIndex * 100}%)`;
         tabs.forEach((tab, index) => { tab.classList.toggle('active', index === guideIndex); tab.setAttribute('aria-selected', String(index === guideIndex)); });
         dots.forEach((dot, index) => dot.classList.toggle('active', index === guideIndex));
@@ -10013,7 +10022,7 @@ function renderTips(page) {
         if (event.key === 'ArrowLeft') showGuideSlide(guideIndex - 1);
         if (event.key === 'ArrowRight') showGuideSlide(guideIndex + 1);
       });
-      showGuideSlide(0);
+        showGuideSlide(view?.id === item.id ? (view.slide || 0) : 0);
     }
   }
 
@@ -10135,189 +10144,7 @@ window.addEventListener('popstate', function(e) {
 <script src="assets/tour-gallery.js?v=20261026a"></script>
 <script src="assets/tours-page.js?v=20261026a"></script>
 
-<!-- ====================== АДМИН-ПАНЕЛЬ (доступна по #admin в URL) ====================== -->
-<div id="kma-admin" style="display:none;position:fixed;inset:0;background:#fff;z-index:99999;overflow-y:auto;padding:20px;font-family:system-ui,-apple-system,sans-serif;">
-  <div style="max-width:900px;margin:0 auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid #FF6B6B;padding-bottom:12px;">
-      <h1 style="margin:0;color:#FF6B6B;font-size:22px;">📷 KoreaMate · Загрузка фото</h1>
-      <button onclick="document.getElementById('kma-admin').style.display='none';location.hash='';" style="background:#eee;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:14px;">✕ Закрыть</button>
-    </div>
-    
-    <div style="background:#FFF4E6;border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;line-height:1.5;">
-      <b>Как пользоваться:</b><br>
-      1. Найдите место в списке (категории и поиск ниже)<br>
-      2. Нажмите «Выбрать фото» — выберите JPG/PNG/WebP с компьютера<br>
-      3. Фото сразу сохраняется в память сайта<br>
-      4. Когда закончили — нажмите <b>«Экспорт IMG_MAP»</b> внизу — скачается JS-файл который нужно вставить в index.html
-    </div>
-    
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-      <input id="kma-admin-search" placeholder="🔍 Поиск по названию или ID..." style="flex:1;min-width:200px;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
-      <select id="kma-admin-cat" style="padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
-        <option value="">Все категории</option>
-        <option value="sight">Достопримечательности</option>
-        <option value="bts">BTS-места</option>
-        <option value="kpop">K-Pop</option>
-        <option value="shopping">Шоппинг</option>
-        <option value="cherry">Сакура</option>
-        <option value="hiking">Хайкинг</option>
-        <option value="food">Еда</option>
-        <option value="cafe">Кафе</option>
-        <option value="food-market">Рынки еды</option>
-        <option value="food-street">Стрит-фуд</option>
-        <option value="food-michelin">Мишлен</option>
-        <option value="food-burger">Бургеры</option>
-        <option value="cafe-idol">Айдол-кафе</option>
-        <option value="food-bbq">BBQ</option>
-        <option value="cafe-regular">Кафе обычное</option>
-      </select>
-      <button onclick="document.getElementById('kma-admin-filter-empty').checked=!document.getElementById('kma-admin-filter-empty').checked;renderAdmin();" style="padding:10px 14px;background:#FF6B6B;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Без фото</button>
-      <label style="display:none;"><input id="kma-admin-filter-empty" type="checkbox" checked></label>
-    </div>
-    
-    <div id="kma-admin-stats" style="font-size:13px;color:#666;margin-bottom:12px;"></div>
-    <div id="kma-admin-list"></div>
-    
-    <div style="position:sticky;bottom:0;background:#fff;padding:16px 0;margin-top:24px;border-top:2px solid #FF6B6B;text-align:center;">
-      <button onclick="kmaExport()" style="background:#22C55E;color:#fff;border:none;border-radius:10px;padding:14px 28px;cursor:pointer;font-size:16px;font-weight:600;">📥 Экспорт IMG_MAP в файл</button>
-      <div style="font-size:12px;color:#666;margin-top:8px;">Скачается файл img_map_update.txt — вставьте его содержимое в index.html вместо текущего <code>const IMG_MAP = {...};</code></div>
-    </div>
-  </div>
-</div>
-
 <script>
-// ====================== АДМИН-ПАНЕЛЬ — логика ======================
-function renderAdmin() {
-  const list = document.getElementById('kma-admin-list');
-  const search = (document.getElementById('kma-admin-search').value || '').toLowerCase();
-  const cat = document.getElementById('kma-admin-cat').value;
-  const onlyEmpty = document.getElementById('kma-admin-filter-empty').checked;
-  
-  if (typeof PLACES === 'undefined' || typeof IMG_MAP === 'undefined') {
-    list.innerHTML = '<div style="padding:20px;color:#900;">Ошибка: PLACES или IMG_MAP не загружены</div>';
-    return;
-  }
-  
-  let items = PLACES.slice();
-  if (cat) items = items.filter(p => p.cat === cat);
-  if (search) items = items.filter(p => 
-    (p.id||'').toLowerCase().includes(search) || 
-    (p.name||'').toLowerCase().includes(search) ||
-    (p.han||'').toLowerCase().includes(search)
-  );
-  if (onlyEmpty) items = items.filter(p => !IMG_MAP[p.id]);
-  
-  // Сортируем: сначала без фото, потом с фото
-  items.sort((a, b) => {
-    const ae = IMG_MAP[a.id] ? 1 : 0;
-    const be = IMG_MAP[b.id] ? 1 : 0;
-    if (ae !== be) return ae - be;
-    return (a.name||'').localeCompare(b.name||'');
-  });
-  
-  const totalWithPhoto = PLACES.filter(p => IMG_MAP[p.id]).length;
-  const totalEmpty = PLACES.length - totalWithPhoto;
-  document.getElementById('kma-admin-stats').innerHTML = 
-    `Показано: <b>${items.length}</b> из ${PLACES.length} · С фото: <b style="color:#22C55E;">${totalWithPhoto}</b> · Без фото: <b style="color:#FF6B6B;">${totalEmpty}</b>`;
-  
-  list.innerHTML = items.map(p => {
-    const hasImg = !!IMG_MAP[p.id];
-    const preview = hasImg ? IMG_MAP[p.id] : '';
-    return `
-    <div class="kma-row" data-id="${p.id}" style="display:flex;gap:12px;align-items:center;padding:10px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;background:${hasImg?'#F0FDF4':'#FEF2F2'};">
-      <div style="width:80px;height:80px;border-radius:8px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
-        ${preview ? `<img src="${preview}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:32px;color:#ccc;">📷</span>'}
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;font-size:14px;color:#222;">${p.name}</div>
-        <div style="font-size:12px;color:#888;margin-top:2px;">${p.han||''} · ${p.cat} · <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px;">${p.id}</code></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0;">
-        <label style="background:#3B82F6;color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;">
-          ${hasImg ? '🔄 Заменить' : '📤 Загрузить'}
-          <input type="file" accept="image/*" style="display:none;" onchange="kmaUpload('${p.id}', this)">
-        </label>
-        ${hasImg ? `<button onclick="kmaDelete('${p.id}')" style="background:#EF4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;">🗑</button>` : ''}
-      </div>
-    </div>`;
-  }).join('') || '<div style="padding:30px;text-align:center;color:#888;">Ничего не найдено</div>';
-}
-
-function kmaUpload(pid, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    // Конвертируем в WebP через canvas чтобы уменьшить размер
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX = 800;
-      let w = img.width, h = img.height;
-      if (w > h && w > MAX) { h = h * MAX / w; w = MAX; }
-      else if (h > MAX) { w = w * MAX / h; h = MAX; }
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      // Пробуем WebP, иначе JPEG
-      let dataUrl;
-      try { dataUrl = canvas.toDataURL('image/webp', 0.85); }
-      catch(e) { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
-      IMG_MAP[pid] = dataUrl;
-      renderAdmin();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-
-function kmaDelete(pid) {
-  if (!confirm('Удалить фото для ' + pid + '?')) return;
-  IMG_MAP[pid] = '';
-  renderAdmin();
-}
-
-function kmaExport() {
-  // Сгенерируем JS-код для IMG_MAP
-  const lines = ['const IMG_MAP = {'];
-  // Порядок: как в PLACES
-  PLACES.forEach((p, i) => {
-    const val = IMG_MAP[p.id] || '';
-    const comma = i < PLACES.length - 1 ? ',' : '';
-    lines.push(`  "${p.id}": "${val}"${comma}`);
-  });
-  lines.push('};');
-  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'img_map_update.txt';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 100);
-  alert('✅ Файл img_map_update.txt скачан!\n\nВставьте его содержимое в index.html вместо текущего блока const IMG_MAP = {...};');
-}
-
-// Открытие админки по #admin в URL
-function kmaCheckHash() {
-  if (location.hash === '#admin') {
-    document.getElementById('kma-admin').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    setTimeout(renderAdmin, 100);
-    
-    // Привяжем фильтры
-    const s = document.getElementById('kma-admin-search');
-    const c = document.getElementById('kma-admin-cat');
-    if (s && !s._bound) { s._bound = true; s.addEventListener('input', renderAdmin); }
-    if (c && !c._bound) { c._bound = true; c.addEventListener('change', renderAdmin); }
-  } else {
-    document.getElementById('kma-admin').style.display = 'none';
-    document.body.style.overflow = '';
-  }
-}
-window.addEventListener('hashchange', kmaCheckHash);
-window.addEventListener('DOMContentLoaded', () => setTimeout(kmaCheckHash, 500));
-
 // ── Восстановление текущей страницы после обновления ──
 // Это ЕДИНСТВЕННЫЙ стартовый рендер страницы. Запускается один раз при загрузке.
 // Читает hash из URL и открывает соответствующий раздел.
