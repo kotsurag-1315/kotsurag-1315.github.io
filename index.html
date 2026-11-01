@@ -2847,7 +2847,7 @@ const I18N = {
   ru: {
     'nav.home': 'Главная', 'nav.map': 'Карта', 'nav.tours': 'Туры', 'nav.profile': 'Профиль',
     'home.greet': 'Путешественник',
-    'home.sub': 'Открой Южную Корею.',
+    'home.sub': 'Места, кафе и BTS-локации в Корее — с фотографиями, советами и ссылками на KakaoMap.',
     'home.search': 'Куда дальше?',
     'search.empty': 'Ничего не найдено',
     'home.popular': 'Популярные направления',
@@ -2931,7 +2931,7 @@ const I18N = {
   en: {
     'nav.home': 'Home', 'nav.map': 'Map', 'nav.tours': 'Tours', 'nav.profile': 'Profile',
     'home.greet': 'Traveller',
-    'home.sub': 'Discover South Korea.',
+    'home.sub': 'Places, cafés and BTS spots in Korea — with photos, tips and KakaoMap links.',
     'home.search': 'Where to next?',
     'search.empty': 'No matches',
     'home.popular': 'Popular destinations',
@@ -3015,7 +3015,7 @@ const I18N = {
   ko: {
     'nav.home': '홈', 'nav.map': '지도', 'nav.tours': '투어', 'nav.profile': '프로필',
     'home.greet': '여행자',
-    'home.sub': '한국을 발견하세요.',
+    'home.sub': '사진, 여행 팁, 카카오맵 링크와 함께 한국의 명소, 카페, BTS 관련 장소를 만나보세요.',
     'home.search': '어디로 갈까요?',
     'search.empty': '검색 결과 없음',
     'home.popular': '인기 여행지',
@@ -7587,6 +7587,16 @@ function placeCityName(place, lang) {
   return DRAMA_AREA_NAMES[place.id]?.[lang] || CITIES.find(c => c.id === place.city)?.name[lang] || place.city;
 }
 
+function formatPlaceCount(count, lang = STATE.lang) {
+  if (lang === 'ko') return `${count}곳`;
+  if (lang === 'en') return `${count} ${count === 1 ? 'place' : 'places'}`;
+  const lastTwo = count % 100;
+  const last = count % 10;
+  const noun = lastTwo >= 11 && lastTwo <= 14 ? 'мест'
+    : last === 1 ? 'место' : last >= 2 && last <= 4 ? 'места' : 'мест';
+  return `${count} ${noun}`;
+}
+
 function renderHome(page) {
   const lang = STATE.lang;
   const greetHan = lang === 'ko' ? '안녕' : '안녕';
@@ -7621,7 +7631,7 @@ function renderHome(page) {
       <img src="${c.img}" alt="" loading="lazy" onerror="this.style.display='none'">
       <div class="info">
         <h3>${c.name[lang]}</h3>
-        <div class="tag">${c.tag[lang]} · ${placesCount} places</div>
+        <div class="tag">${c.tag[lang]} · ${formatPlaceCount(placesCount, lang)}</div>
       </div>
     `;
     cityScroll.appendChild(card);
@@ -7763,7 +7773,7 @@ function renderHome(page) {
         <h4>${shortLabel}</h4>
         <div class="tile-desc">${descText}</div>
       </div>
-      ${c.id === 'tips' ? '' : `<div class="tile-count">${count} places</div>`}
+      ${c.id === 'tips' ? '' : `<div class="tile-count">${formatPlaceCount(count, lang)}</div>`}
     `;
     grid.appendChild(tile);
   });
