@@ -2797,6 +2797,8 @@ body.map-page-open { overflow: hidden; }
 </style>
 <link rel="stylesheet" href="assets/tours-page.css?v=20261026a">
 <link rel="stylesheet" href="assets/tour-gallery.css?v=20261026a">
+<link rel="stylesheet" href="assets/premium-payment.css">
+<script src="assets/premium-payment.js"></script>
 </head>
 <body>
 <div class="app">
@@ -2831,7 +2833,7 @@ body.map-page-open { overflow: hidden; }
 <main id="pages"></main>
 
 <footer class="site-legal-footer" aria-label="Юридическая информация">
-  <a href="requisites.html" target="_blank" rel="nofollow">Реквизиты</a>
+  <a href="offer.html" target="_blank">Оферта</a> · <a href="privacy.html" target="_blank">Конфиденциальность</a> · <a href="requisites.html" target="_blank" rel="nofollow">Реквизиты</a>
 </footer>
 
 <!-- BOTTOM NAV -->
@@ -7414,7 +7416,7 @@ function renderPage(name, tipsView = null) {
   else if (name === 'register') renderRegister(page);
   else if (name === 'map') renderMapPage(page);
   else if (name === 'saved') renderSaved(page);
-  else if (name === 'profile') renderProfile(page);
+  else if (name === 'profile') { renderProfile(page); renderPaymentReturn(page); }
   else if (name === 'detail') renderDetail(page);
   else if (name === 'tours') renderToursV2(page);
   else if (name === 'food') renderFoodPage(page);
@@ -7681,22 +7683,19 @@ function showPaywall() {
         </div>
         <div class="paywall-price-row">
           <div>
-            <div class="paywall-price-big">${lang==='ru'?'1 490 ₽':'$16'}</div>
-            <div class="paywall-price-per">${lang==='ru'?'в год · 124 ₽/мес':'per year · $1.3/mo'}</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="paywall-price-cross">${lang==='ru'?'2 990 ₽':'$32'}</div>
-            <div class="paywall-price-save">−50%</div>
+            <div class="paywall-price-big">${lang==='ru'?'1 490 ₽':'RUB 1,490'}</div>
+            <div class="paywall-price-per">${lang==='ru'?'за 12 месяцев · разовый платёж':'12 months · one-time payment'}</div>
           </div>
         </div>
         ${STATE.user
-          ? `<button class="paywall-btn-primary" type="button" disabled style="opacity:.6;cursor:not-allowed">${lang==='ru'?'Оплата пока не подключена':'Payment is not available yet'}</button>`
+          ? `<div data-payment-slot></div>`
           : `<button class="paywall-btn-primary" onclick="openAuth('signin')">🌸 ${lang==='ru'?'Войти / Регистрация':'Sign in / Register'}</button>`}
         <button class="paywall-btn-secondary" onclick="closePaywall()">${lang==='ru'?'Может в другой раз':'Maybe later'}</button>
       </div>
     </div>
   `;
   document.body.appendChild(overlay);
+  mountPremiumPayment(overlay);
 }
 
 function closePaywall() {

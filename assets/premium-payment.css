@@ -1,0 +1,11 @@
+.km-payment-form { margin-top: 18px; }
+.km-payment-email { display: grid; gap: 7px; font-size: 14px; font-weight: 600; }
+.km-payment-email input { width: 100%; min-width: 0; padding: 12px; border: 1px solid #ded7ce; border-radius: 12px; background: #faf7f2; font: inherit; }
+.paywall-body .km-payment-note { font-size: 14px; line-height: 1.55; margin: 14px 0; }
+.km-payment-check { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0; font-size: 14px; line-height: 1.5; text-align: left; }
+.km-payment-check input { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 2px; accent-color: #e8635a; }
+.km-payment-form a, .km-payment-return a { color: #a93d36; text-decoration: underline; overflow-wrap: anywhere; }
+.km-payment-error { color: #a52424; }
+.km-payment-return { max-width: 1000px; margin: 20px auto; padding: 22px; border: 1px solid #edc7a6; border-radius: 18px; background: #fff5e9; line-height: 1.6; }
+.km-payment-return h3 { margin: 0 0 8px; }
+.km-payment-return button { margin-left: 18px; padding: 8px 14px; border: 1px solid #bca590; border-radius: 10px; background: white; cursor: pointer; }
