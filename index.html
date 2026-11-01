@@ -7409,7 +7409,7 @@ function renderRegister(page) {
       }
       const p = PLACES.find(x=>x.id===id);
       const cityName = p ? CITIES.find(c=>c.id===p.city)?.name[lang] : null;
-      return p ? { id, kind: 'place', name: p.name, meta: cityName || '' } : null;
+      return p ? { id, kind: 'place', name: placeValue(p, 'name'), meta: cityName || '' } : null;
     }).filter(Boolean);
     const savedPlaces = savedItems.slice(0,3);
     const moreCount = Math.max(0, savedItems.length - savedPlaces.length);
@@ -8195,7 +8195,7 @@ function renderMapList() {
     subItems.forEach(p => {
       const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
-      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '🍜');
+      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '🍜');
       if (isMultiCity && p.city !== lastCity) {
         const cLabel = { seoul: { ru: 'Сеул', en: 'Seoul', ko: '서울' }, busan: { ru: 'Пусан', en: 'Busan', ko: '부산' }, jeju: { ru: 'Чеджу', en: 'Jeju', ko: '제주' } }[p.city]?.[lang] || p.city;
         html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
@@ -8211,10 +8211,10 @@ function renderMapList() {
               <span class="chip">${escapeHtml(catLbl)}</span>
               ${STATE.premium ? '' : (isFreePlace(p.id) ? '<span class="chip free">+ FREE</span>' : '<span class="chip premium-chip">🔒 Premium</span>')}
             </div>
-            <div class="name">${escapeHtml(p.name)}</div>
+            <div class="name">${escapeHtml(placeValue(p, 'name'))}</div>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation();tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation();tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name').replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
               Kakao
             </button>
@@ -8261,7 +8261,7 @@ function renderMapList() {
     visibleItems.forEach(p => {
       const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
-      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
+      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
       if (isMultiCity && p.city !== lastCity2) {
         const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
         html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
@@ -8275,10 +8275,10 @@ function renderMapList() {
               <span class="chip city">${escapeHtml(cityName)}</span>
               ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
             </div>
-            <h4>${escapeHtml(p.name)}</h4>
+            <h4>${escapeHtml(placeValue(p, 'name'))}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name').replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -8327,7 +8327,7 @@ function renderMapList() {
     visibleItems.forEach(p => {
       const cityName = placeCityName(p, lang);
       const isLocked = p.premium && !STATE.premium;
-      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
+      const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
       if (isMultiCity && p.city !== lastCity2) {
         const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
         html += `<div class="list-group-header list-city-header">${cLabel}</div>`;
@@ -8341,10 +8341,10 @@ function renderMapList() {
               <span class="chip city">${escapeHtml(cityName)}</span>
               ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
             </div>
-            <h4>${escapeHtml(p.name)}</h4>
+            <h4>${escapeHtml(placeValue(p, 'name'))}</h4>
           </div>
           <div class="actions">
-            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+            <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name').replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
               ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
             </button>
           </div>
@@ -8365,7 +8365,7 @@ function renderMapList() {
   items.forEach(p => {
     const cityName = placeCityName(p, lang);
     const isLocked = p.premium && !STATE.premium;
-    const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
+    const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji || '📍');
 
     if (isMultiCity && p.city !== lastCity) {
       const cLabel = p.cat === 'drama' ? { ru: 'Сеул и окрестности', en: 'Seoul area', ko: '서울 및 근교' }[lang] : cityLabels[p.city]?.[lang] || p.city;
@@ -8395,10 +8395,10 @@ function renderMapList() {
             ${!isMultiCat ? '' : `<span class="chip">${t('cat.' + p.cat)}</span>`}
             ${STATE.premium ? `` : (FREE_PLACE_IDS.includes(p.id) ? `<span class="free-badge">✦ FREE</span>` : `<span class="chip lock">🔒 Premium</span>`)}
           </div>
-          <h4>${escapeHtml(p.name)}</h4>
+          <h4>${escapeHtml(placeValue(p, 'name'))}</h4>
         </div>
         <div class="actions">
-          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+          <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name').replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
             ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
           </button>
         </div>
@@ -8434,7 +8434,7 @@ function showMapCard(p, opts = {}) {
   const card = $('#map-card');
   if (!card) return;
   const isLocked = p.premium && !STATE.premium;
-  const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji||'📍');
+  const thumb = getImg(p) ? `<img src="${getThumbImg(p)}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : (p.emoji||'📍');
   const lang = STATE.lang;
   const cityName = placeCityName(p, lang);
   const localizedDescription = placeDescription(p, lang);
@@ -8442,7 +8442,7 @@ function showMapCard(p, opts = {}) {
   card.innerHTML = `
     <div class="thumb">${thumb}</div>
     <div class="info">
-      <h4>${escapeHtml(p.name)} ${isLocked?'<span style="font-size:10px;color:#E8635A;">🔒</span>':''}</h4>
+      <h4>${escapeHtml(placeValue(p, 'name'))} ${isLocked?'<span style="font-size:10px;color:#E8635A;">🔒</span>':''}</h4>
       <div class="han">${p.han}</div>
       <div class="meta">
         <span>${escapeHtml(cityName)}</span>
@@ -8452,7 +8452,7 @@ function showMapCard(p, opts = {}) {
       <div class="tag">${escapeHtml(previewText || placeValue(p, 'transit', lang))}</div>
     </div>
     <div class="actions">
-      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+      <button class="btn-kakao ${!isFreePlace(p.id) ? 'btn-kakao-locked' : ''}" onclick="event.stopPropagation(); tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name').replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
         ${isFreePlace(p.id) ? '🗺' : '🔒'} ${t('detail.kakao')}
       </button>
     </div>
@@ -8725,17 +8725,17 @@ function renderDetail(page) {
           </svg>
         </button>
         ${!getImg(p)
-          ? `<div class="drama-hero-placeholder"><span class="scene-emoji">${p.emoji || '📍'}</span><span class="scene-label">KoreaMate · ${p.cat === 'drama' ? 'K-Drama' : 'Food & Cafés'}</span><span class="scene-name">${escapeHtml(p.name)}</span><span>${lang === 'ru' ? 'Фото пока не добавлено' : lang === 'ko' ? '사진은 추후 추가됩니다' : 'Photo coming soon'}</span></div>`
-          : `<img src="${getImg(p)}" alt="${escapeHtml(p.name)}" decoding="async" onerror="this.style.display='none'" />`}
+          ? `<div class="drama-hero-placeholder"><span class="scene-emoji">${p.emoji || '📍'}</span><span class="scene-label">KoreaMate · ${p.cat === 'drama' ? 'K-Drama' : 'Food & Cafés'}</span><span class="scene-name">${escapeHtml(placeValue(p, 'name', lang))}</span><span>${lang === 'ru' ? 'Фото пока не добавлено' : lang === 'ko' ? '사진은 추후 추가됩니다' : 'Photo coming soon'}</span></div>`
+          : `<img src="${getImg(p)}" alt="${escapeHtml(placeValue(p, 'name', lang))}" decoding="async" onerror="this.style.display='none'" />`}
       </div>
 
       <div class="detail-summary">
       <div class="detail-card">
         <div class="han-row">${p.han} · ${escapeHtml(cityName)}</div>
-        <h1>${escapeHtml(p.name)}</h1>
+        <h1>${escapeHtml(placeValue(p, 'name', lang))}</h1>
         <div class="preview">${escapeHtml(previewText)}</div>
         <div class="detail-actions">
-          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(p.name.replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
+          <button class="open-route ${!isFreePlace(p.id) ? 'open-route-locked' : ''}" onclick="tryOpenKakao(${p.lat},${p.lng},'${escapeHtml(placeValue(p, 'name', lang).replace(/'/g,''))}',${p.kakaoUrl?`'${p.kakaoUrl}'`:undefined},${p.kakaoOptions?`JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(p.kakaoOptions))}'))`:undefined},'${p.id}')">
             ${!isFreePlace(p.id) && !STATE.premium
               ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="18" height="18"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                  <span>${t('detail.open_route')} — Premium</span>`
@@ -8861,9 +8861,9 @@ function shareDetail(id) {
   const p = PLACES.find(x => x.id === id);
   if (!p) return;
   if (navigator.share) {
-    navigator.share({ title: 'KoreaMate · '+p.name, text: p.name+' ('+p.han+')', url: location.href }).catch(()=>{});
+    navigator.share({ title: 'KoreaMate · '+placeValue(p, 'name'), text: placeValue(p, 'name')+' ('+p.han+')', url: location.href }).catch(()=>{});
   } else {
-    navigator.clipboard.writeText(p.name + ' — KoreaMate');
+    navigator.clipboard.writeText(placeValue(p, 'name') + ' — KoreaMate');
     toast('Скопировано');
   }
 }
@@ -9207,7 +9207,7 @@ function openReviewModal(placeId) {
   m.innerHTML = `
     <div class="grabber"></div>
     <h3>${t('review.title')}</h3>
-    <div class="modal-sub">${escapeHtml(p.name)} · ${p.han}</div>
+    <div class="modal-sub">${escapeHtml(placeValue(p, 'name'))} · ${p.han}</div>
     <div class="modal-content">
       <div class="star-rating" id="star-rating">
         ${[1,2,3,4,5].map(i => `<button class="${i<=5?'on':''}" data-r="${i}" onclick="setStar(${i})">★</button>`).join('')}
@@ -9356,7 +9356,8 @@ function _normalize(s) {
 function _scorePlace(p, q, lang) {
   if (!q) return 0;
   const fields = [
-    { v: p.name,    weight: 10 },
+    { v: placeValue(p, 'name', lang), weight: 10 },
+    { v: p.name,    weight: 8 },
     { v: p.han,     weight: 9  },
     // city in current language
     { v: (CITIES.find(c => c.id === p.city)?.name?.[lang]) || p.city, weight: 6 },
@@ -9430,13 +9431,13 @@ function renderSuggest(query) {
       const catLabel = t('cat.' + p.cat);
       const isLocked = p.premium && !STATE.premium;
       const thumb = getImg(p)
-        ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.textContent='${p.emoji||'📍'}';">`
+        ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.textContent='${p.emoji||'📍'}';">`
         : (p.emoji || '📍');
       return `
         <button class="item" data-idx="${i}" onmousedown="event.preventDefault();" onclick="pickSuggest(${i})">
           <div class="thumb">${thumb}</div>
           <div class="info">
-            <div class="name">${_highlight(p.name, query)}</div>
+            <div class="name">${_highlight(placeValue(p, 'name'), query)}</div>
             <div class="meta">${escapeHtml(cityName)} · ${escapeHtml(catLabel)}${p.han ? ' · ' + _highlight(p.han, query) : ''}</div>
           </div>
           ${isLocked ? `<span class="lock-tag">🔒</span>` : ``}
@@ -9540,13 +9541,13 @@ function openMobileSearch() {
       res.innerHTML = results.map((p, i) => {
         const cityName = placeCityName(p, lang);
         const thumb = getImg(p)
-          ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+          ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
           : (p.emoji || '📍');
         const hl = (s) => s ? s.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>') : s;
         return `<button class="mobile-search-result-item" onclick="closeMobileSearch();openPlaceDetail('${escapeHtml(p.id)}')">
           <div class="mobile-result-thumb">${thumb}</div>
           <div class="mobile-result-info">
-            <div class="mobile-result-name">${hl(p.name)}</div>
+            <div class="mobile-result-name">${hl(placeValue(p, 'name'))}</div>
             <div class="mobile-result-meta">${escapeHtml(cityName)}${p.han ? ' · ' + hl(p.han) : ''}</div>
           </div>
         </button>`;
