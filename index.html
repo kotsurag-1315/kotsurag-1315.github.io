@@ -806,8 +806,9 @@ body.map-page-open { overflow: hidden; }
   letter-spacing: -0.01em;
   line-height: 1.3;
   white-space: normal;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
 }
 .cat-tile .tile-desc {
   font-size: 12px; color: var(--ink-3); font-weight: 400;
@@ -2805,11 +2806,18 @@ body.map-page-open { overflow: hidden; }
 .home-instagram .profile-contact-handle { font-size:12px; }
 .home-instagram:hover { background:var(--card); }
 .home-instagram .profile-contact-handle { display:block; }
+
+/* Compact desktop navigation and accessible saved-place shortcut. */
+@media (min-width: 768px) { .city-dots { display: none !important; } }
+.profile-saved-button { border: 0; border-radius: 0; font: inherit; cursor: pointer; color: inherit; }
+.profile-saved-button:hover { background: var(--bg); }
+.profile-saved-button:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; }
+.cat-tips .tile-count { display: none; }
 </style>
 <link rel="stylesheet" href="assets/tours-page.css?v=20261026a">
 <link rel="stylesheet" href="assets/tour-gallery.css?v=20261026a">
 <link rel="stylesheet" href="assets/premium-payment.css">
-<script src="assets/premium-payment.js"></script>
+<script src="assets/premium-payment.js?v=20261102-ui"></script>
 </head>
 <body>
 <div class="app">
@@ -3312,7 +3320,24 @@ const PLACES = [
       "Летом будьте готовы к жаре, а зимой — к холодному ветру на открытых площадках."
     ],
     "premium": false,
-    "kakaoUrl": "https://kko.to/YBro3m-W51"
+    "kakaoUrl": "https://kko.to/YBro3m-W51",
+    "i18n": {
+      "en": {
+        "transit": "Gyeongbokgung (경복궁역) — Line 3",
+        "entry": "₩3,000 (about $2.50)",
+        "best_time": "morning / early morning",
+        "duration": "2 hours",
+        "desc": [
+          "Built in 1395, Gyeongbokgung is the main and largest royal palace of the Joseon dynasty. It housed the royal family and the offices that ran the country.",
+          "Each building had its own purpose: Geunjeongjeon was the throne hall, Gyeonghoeru Pavilion hosted banquets and celebrations, and Sujeongjeon served as an administrative centre.",
+          "The changing of the guard (10:00, 11:00, 14:00 and 15:00) features traditional costumes, music and Joseon military rituals.",
+          "Early morning means fewer visitors and softer light for photos.",
+          "Wear comfortable shoes to explore the palace grounds.",
+          "For the changing of the guard, arrive 15–20 minutes early to get a good spot for photos.",
+          "Be prepared for summer heat and cold winds across the open courtyards in winter."
+        ]
+      }
+    }
   },
   {
     "id": "pseoul2",
@@ -3453,7 +3478,20 @@ const PLACES = [
       "Одно из лучших мест в Пусане для встречи заката с видом на море и город. Центр туристической жизни района Haeundae.",
       "Лучше приходить рано утром или ближе к закату — днём, особенно летом, здесь очень многолюдно. Удобно совместить с Busan X the Sky и Haeundae Blueline Park + Sky Capsule — все рядом. Вечером у моря бывает ветрено, лёгкая куртка не помешает."
     ],
-    "premium": false
+    "premium": false,
+    "i18n": {
+      "en": {
+        "transit": "Haeundae (해운대역) — Line 2",
+        "entry": "free",
+        "best_time": "morning / sunset",
+        "duration": "1–2 hours",
+        "desc": [
+          "Busan’s best-known beach. A wide stretch of sand, palm trees, a waterfront promenade and skyscrapers give it a big-city resort atmosphere.",
+          "A great place to watch the sunset with views of the sea and city, right at the centre of the Haeundae tourist district.",
+          "Come early in the morning or near sunset: it gets very busy during the day, especially in summer. Busan X the Sky and Haeundae Blueline Park + Sky Capsule are nearby and easy to combine. Bring a light jacket for windy evenings by the sea."
+        ]
+      }
+    }
   },
   {
     "id": "pbusan10",
@@ -7524,10 +7562,10 @@ function renderRegister(page) {
 
             <!-- Stats -->
             <div class="profile-stats-row">
-              <div class="profile-stat-cell">
+              <button type="button" class="profile-stat-cell profile-saved-button" onclick="showPage('saved')" aria-label="${lang==='ru'?'Открыть сохранённые места':'Open saved places'}">
                 <div class="profile-stat-num" id="pstat-saved">${saved.length}</div>
                 <div class="profile-stat-label">${lang==='ru'?'сохранено':'saved'}</div>
-              </div>
+              </button>
               <div class="profile-stat-cell">
                 <div class="profile-stat-num" id="pstat-places">${PLACES.length}</div>
                 <div class="profile-stat-label">${lang==='ru'?'мест в гиде':'places'}</div>
@@ -7792,7 +7830,7 @@ function renderHome(page) {
   page.appendChild(cityScroll);
 
   // Peek dots indicator
-  const cityDots = el('div', { style: 'display:flex;justify-content:center;gap:5px;margin:8px 0 4px' });
+  const cityDots = el('div', { class: 'city-dots', style: 'display:flex;justify-content:center;gap:5px;margin:8px 0 4px' });
   CITIES.forEach((c, i) => {
     const dot = el('div', {
       style: `width:${i===0?'16':'6'}px;height:6px;border-radius:3px;background:${i===0?'var(--ink)':'var(--line)'};transition:all 0.3s`,
@@ -7914,11 +7952,9 @@ function renderHome(page) {
     });
     const labelText = c.label[STATE.lang] || c.label.ru;
     const descText = c.desc[STATE.lang] || c.desc.ru;
-    // Soft hyphen for long Russian words on mobile
-    const softHyphens = { sight: { ru: 'Достопримечатель&shy;ности' } };
-    const shortLabel = (softHyphens[c.id]?.[STATE.lang])
-      ? `<span class="title-full">${labelText}</span><span class="title-short">${softHyphens[c.id][STATE.lang]}</span>`
-      : labelText;
+    // Allow meaningful syllable breaks at every viewport width.
+    const shortLabel = c.id === 'sight' && lang === 'ru'
+      ? 'Досто&shy;примеча&shy;тельности' : labelText;
     tile.innerHTML = `
       <div class="tile-lock"><svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
       <div>
@@ -8768,8 +8804,8 @@ function renderDetail(page) {
   const cityName = placeCityName(p, lang);
   const reviews = STATE.reviews[p.id] || [];
   const avgRating = reviews.length ? reviews.reduce((s,r) => s + r.rating, 0) / reviews.length : 0;
-  const bookingText = p.bookingText || (lang === 'ru' ? 'Забронировать посещение ↗' : lang === 'ko' ? '방문 예약하기 ↗' : 'Book a visit ↗');
-  const infoText = p.infoText || (lang === 'ru' ? 'Подробнее ↗' : lang === 'ko' ? '자세히 보기 ↗' : 'More information ↗');
+  const bookingText = placeValue(p, 'bookingText', lang) || (lang === 'ru' ? 'Забронировать посещение ↗' : lang === 'ko' ? '방문 예약하기 ↗' : 'Book a visit ↗');
+  const infoText = placeValue(p, 'infoText', lang) || (lang === 'ru' ? 'Подробнее ↗' : lang === 'ko' ? '자세히 보기 ↗' : 'More information ↗');
 
   // Compute prev/next within current category cohort
   const { pool, label } = getDetailCohort(p);
