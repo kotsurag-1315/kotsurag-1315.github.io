@@ -7254,6 +7254,7 @@ const PRIVATE_PLACE_CACHE = new Map();
 let kmAuthRevision = 0;
 let premiumRefreshTimer = null;
 let authCheckPending = !!KM_AUTH;
+let pendingSharedPlace = null;
 
 function setAuthChecking(active) {
   authCheckPending = active;
@@ -7349,7 +7350,11 @@ async function refreshFirebaseAccount(user) {
   closeModal();
   setAuthChecking(false);
   if (STATE.premium) closePaywall();
-  renderPage(STATE.currentTab);
+  if (pendingSharedPlace && STATE.premium) {
+    const id = pendingSharedPlace;
+    pendingSharedPlace = null;
+    openPlaceDetail(id);
+  } else renderPage(STATE.currentTab);
   if (user) setGoogleSignInTransition(false);
 }
 
@@ -7419,6 +7424,7 @@ function navigateBack() {
 }
 
 function showPage(name) {
+  if (!['register', 'profile', 'detail'].includes(name)) pendingSharedPlace = null;
   STATE.currentTab = name;
   // Push to internal nav stack — сохраняем полное состояние карты
   _navStack.push({
@@ -7979,6 +7985,9 @@ function renderHome(page) {
 function openCity(cityId) {
   STATE.currentCity = cityId;
   STATE.currentMapCat = 'all';
+  STATE._mergedCats = null;
+  STATE._shopView = null;
+  STATE._foodSub = null;
   showPage('map');
 }
 
@@ -8665,6 +8674,7 @@ function showKakaoPicker(placeName, options) {
 // ================= PLACE DETAIL =================
 function openPlaceDetail(placeId) {
   if (!isFreePlace(placeId)) { showPaywall(); return; }
+  pendingSharedPlace = null;
   // Если сейчас на карте/списке — сохранить текущее состояние карты в стек
   // чтобы «назад» вернул именно сюда с нужным фильтром
   if (STATE.currentTab === 'map' || STATE.currentTab === 'food') {
@@ -8791,6 +8801,15 @@ function renderDetail(page) {
   if (!p) { page.innerHTML = '<p style="padding:40px;text-align:center">Not found</p>'; return; }
 
   const lang = STATE.lang;
+  if (!isFreePlace(p.id)) {
+    page.innerHTML = authCheckPending ? '' : `<div class="card" style="padding:32px;margin:24px auto;max-width:560px">
+      <h2>${lang === 'ru' ? 'Это место в Premium' : 'This place is in Premium'}</h2>
+      <p>${lang === 'ru' ? 'Войдите в аккаунт с доступом Premium, чтобы открыть место по этой ссылке.' : 'Sign in with your Premium account to open this shared place.'}</p>
+      <button class="btn" onclick="showPage('register')">${lang === 'ru' ? 'Войти в аккаунт' : 'Sign in'}</button>
+      <button class="btn" onclick="showPaywall()">${lang === 'ru' ? 'Подробнее о Premium' : 'Explore Premium'}</button>
+    </div>`;
+    return;
+  }
   const isLocked = !isFreePlace(p.id);
   const privateEntry = PRIVATE_PLACE_CACHE.get(p.id);
   const fullDescription = placeDescription(p, lang);
@@ -8970,14 +8989,20 @@ async function loadPrivatePlace(placeId) {
   if (STATE.currentTab === 'detail' && STATE.currentPlace === placeId) renderPage('detail');
 }
 
-function shareDetail(id) {
+async function shareDetail(id) {
   const p = PLACES.find(x => x.id === id);
   if (!p) return;
-  if (navigator.share) {
-    navigator.share({ title: 'KoreaMate · '+placeValue(p, 'name'), text: placeValue(p, 'name')+' ('+p.han+')', url: location.href }).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(placeValue(p, 'name') + ' — KoreaMate');
-    toast('Скопировано');
+  const url = new URL(location.pathname, location.origin);
+  url.hash = 'place/' + encodeURIComponent(id);
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'KoreaMate · ' + placeValue(p, 'name'), text: placeValue(p, 'name'), url: url.href });
+    } else {
+      await navigator.clipboard.writeText(url.href);
+      toast(STATE.lang === 'ru' ? 'Ссылка на место скопирована' : 'Place link copied');
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') toast(STATE.lang === 'ru' ? 'Не удалось поделиться ссылкой. Скопируйте адрес из браузера.' : 'Could not share. Please copy the address from your browser.');
   }
 }
 
@@ -9510,13 +9535,34 @@ function _scorePlace(p, q, lang) {
 function getSearchResults(rawQuery, limit = 8) {
   const q = _normalize(rawQuery);
   if (q.length < 1) return [];
-  return PLACES
+  const cities = CITIES.filter(c => Object.values(c.name).concat(c.id, c.han).some(name => _normalize(name).startsWith(q)))
+    .map(c => ({ ...c, searchType: 'city' }));
+  const exactCity = cities.find(c => Object.values(c.name).concat(c.id, c.han).some(name => _normalize(name) === q));
+  if (exactCity) return [exactCity];
+  const places = PLACES
     .filter(p => STATE.premium || FREE_PLACE_IDS.includes(p.id))
     .map(p => ({ p, score: _scorePlace(p, q, STATE.lang) }))
     .filter(x => x.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map(x => x.p);
+  return [...cities, ...places].slice(0, limit);
+}
+
+function openSearchResult(result) {
+  if (result.searchType === 'city') openCity(result.id);
+  else openPlaceDetail(result.id);
+}
+
+function citySearchItem(city, query, mobile, index) {
+  const name = city.name[STATE.lang] || city.name.en;
+  const label = STATE.lang === 'ru' ? 'Открыть раздел города' : STATE.lang === 'ko' ? '도시 둘러보기' : 'Explore this city';
+  return `<button class="${mobile ? 'mobile-search-result-item' : 'item'}" ${mobile ? `onclick="closeMobileSearch();openCity('${city.id}')"` : `onmousedown="event.preventDefault();" onclick="pickSuggest(${index})"`}>
+    <div class="${mobile ? 'mobile-result-thumb' : 'thumb'}">${city.emoji || '📍'}</div>
+    <div class="${mobile ? 'mobile-result-info' : 'info'}">
+      <div class="${mobile ? 'mobile-result-name' : 'name'}">${_highlight(name, query)}</div>
+      <div class="${mobile ? 'mobile-result-meta' : 'meta'}">${label}</div>
+    </div></button>`;
 }
 
 function _highlight(s, q) {
@@ -9555,6 +9601,7 @@ function renderSuggest(query) {
     drop.innerHTML = `<div class="empty">${t('search.empty') || 'Ничего не найдено'}</div>`;
   } else {
     drop.innerHTML = _searchResults.map((p, i) => {
+      if (p.searchType === 'city') return citySearchItem(p, query, false, i);
       const cityName = placeCityName(p, lang);
       const catLabel = t('cat.' + p.cat);
       const isLocked = p.premium && !STATE.premium;
@@ -9584,7 +9631,7 @@ function pickSuggest(i) {
   const inp = $('#search-input');
   if (inp) { inp.value = ''; inp.blur(); }
   $('#topbar-search')?.classList.remove('has-text');
-  openPlaceDetail(p.id);
+  openSearchResult(p);
 }
 
 function closeSuggest() {
@@ -9608,7 +9655,7 @@ function onSearchKey(e) {
     if (e.key === 'Enter' && e.target.value.trim()) {
       // No suggestions visible — open search results in list view as fallback
       const r = getSearchResults(e.target.value, 1);
-      if (r.length) { pickSuggest = pickSuggest; if(isFreePlace(r[0].id)) openPlaceDetail(r[0].id); else showPaywall(); clearSearch(e); }
+      if (r.length) { openSearchResult(r[0]); clearSearch(e); }
     }
     return;
   }
@@ -9667,6 +9714,7 @@ function openMobileSearch() {
         return;
       }
       res.innerHTML = results.map((p, i) => {
+        if (p.searchType === 'city') return citySearchItem(p, q, true, i);
         const cityName = placeCityName(p, lang);
         const thumb = getImg(p)
           ? `<img src="${escapeHtml(getThumbImg(p))}" alt="${escapeHtml(placeValue(p, 'name'))}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
@@ -10358,14 +10406,20 @@ window.addEventListener('keydown', e => {
 
   // Detail place: #place/ID
   if (hash.startsWith('#place/')) {
-    const placeId = hash.slice(7).trim();
+    let placeId;
+    try { placeId = decodeURIComponent(hash.slice(7)).trim(); } catch { placeId = ''; }
     const place = PLACES.find(p => p.id === placeId);
-    if (place && isFreePlace(placeId)) {
-      // openPlaceDetail сам поставит hash и снимет map-page-open
-      openPlaceDetail(placeId);
+    if (place) {
+      if (isFreePlace(placeId)) openPlaceDetail(placeId);
+      else {
+        pendingSharedPlace = placeId;
+        STATE.currentPlace = placeId;
+        STATE.currentTab = 'detail';
+        renderPage('detail');
+      }
       return;
     }
-    // Невалидный/закрытый place — упадём на home
+    // Unknown place IDs fall back to home.
   }
 
   // Any tab: #tab/NAME (с опциональными query-параметрами для карты)
