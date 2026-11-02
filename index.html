@@ -2798,7 +2798,11 @@ body.map-page-open { overflow: hidden; }
 .paywall-close { margin:12px; width:44px; height:44px; border:1px solid #ddd; border-radius:50%; background:white; color:#332e2b; font-size:32px; line-height:1; cursor:pointer; box-shadow:0 2px 8px #0002; flex-shrink:0; }
 .paywall-close:focus-visible { outline:3px solid #e8635a; outline-offset:2px; }
 .instagram-icon { width:40px; height:40px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; border-radius:13px; color:white; background:linear-gradient(35deg,#f9ad45,#e83e78,#8548bb); }
-.home-instagram { display:flex; align-items:center; gap:12px; width:fit-content; max-width:100%; margin:24px auto 12px; padding:12px 16px; color:var(--ink); text-decoration:none; border-radius:18px; }
+.home-instagram { display:flex; align-items:center; gap:9px; width:fit-content; max-width:100%; margin:20px 0 12px auto; padding:8px 10px; color:var(--ink); text-decoration:none; border-radius:18px; }
+.home-instagram .instagram-icon { width:30px; height:30px; border-radius:9px; }
+.home-instagram .instagram-icon svg { width:19px; height:19px; }
+.home-instagram .profile-contact-name { font-size:13px; }
+.home-instagram .profile-contact-handle { font-size:12px; }
 .home-instagram:hover { background:var(--card); }
 .home-instagram .profile-contact-handle { display:block; }
 </style>
@@ -7597,13 +7601,13 @@ function renderRegister(page) {
                 </span>
                 <span style="margin-left:auto;color:var(--ink-3);font-size:16px;" aria-hidden="true">›</span>
               </a>
-              <a href="https://t.me/qitour_stuff" target="_blank" rel="noopener noreferrer" class="profile-contact-item">
+              <a href="https://t.me/korea_mate" target="_blank" rel="noopener noreferrer" class="profile-contact-item">
                 <div class="profile-tg-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="white"/></svg>
                 </div>
                 <div>
                   <div class="profile-contact-name">${lang==='ru'?'Связаться с нами':'Contact us'}</div>
-                  <div class="profile-contact-handle">@qitour_stuff · Telegram</div>
+                  <div class="profile-contact-handle">@korea_mate · Telegram</div>
                 </div>
                 <div style="margin-left:auto;color:var(--ink-3);font-size:16px;">›</div>
               </a>
@@ -9815,13 +9819,13 @@ function renderTours(page) {
         : 'We fell in love with Korea on our first trip and want to show it through our eyes. We lead small groups — up to 8 people — so everyone truly feels the country. KoreaMate is the guide we built to bring Korea closer to you.'
       }</div>
       <div class="about-tg-links">
-        <a href="https://t.me/qitour_stuff" target="_blank" class="about-tg-btn">
+        <a href="https://t.me/korea_mate" target="_blank" class="about-tg-btn">
           <div class="about-tg-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="white"/></svg>
           </div>
           <div class="about-tg-info">
             <div class="about-tg-name">${lang==='ru'?'Написать нам':'Contact us'}</div>
-            <div class="about-tg-handle">@qitour_stuff</div>
+            <div class="about-tg-handle">@korea_mate</div>
           </div>
           <div class="about-tg-arrow">›</div>
         </a>
@@ -9878,7 +9882,7 @@ function renderTours(page) {
               <div class="tour-price-home">${t.price} <span>${perLabel}</span></div>
               ${t.note?`<div class="tour-price-note-home">${t.note}</div>`:''}
             </div>
-            <a href="https://t.me/qitour_stuff" target="_blank" class="tour-cta-home">
+            <a href="https://t.me/korea_mate" target="_blank" class="tour-cta-home">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21.41 3.09a1.5 1.5 0 0 0-1.54-.22L2.87 9.79a1.5 1.5 0 0 0 .07 2.79l4.07 1.35 1.56 4.9a1.5 1.5 0 0 0 2.62.43l2.13-2.8 4.26 3.13a1.5 1.5 0 0 0 2.32-1L22.5 4.6a1.5 1.5 0 0 0-1.09-1.51z" fill="white"/></svg>
               ${ctaLabel}
             </a>

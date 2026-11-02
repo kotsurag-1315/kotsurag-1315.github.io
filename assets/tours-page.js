@@ -5,7 +5,7 @@ function renderToursV2(page) {
   const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[ch]));
-  const contact = 'https://t.me/qitour_stuff';
+  const contact = 'https://t.me/korea_mate';
   const tours = Array.isArray(window.KM_TOURS) ? window.KM_TOURS : [];
   const gallery = window.KM_TOUR_GALLERY?.render(STATE.lang, safe);
   page.classList.add('tours-v2');
