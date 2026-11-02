@@ -1985,7 +1985,7 @@ body.map-page-open { overflow: hidden; }
 }
 .km-email-form .btn-primary { width: 100%; }
 .km-email-form button:disabled { opacity: .55; cursor: wait; }
-.km-auth-error { color: #a82424; font-size: 12px; line-height: 1.4; min-height: 1em; }
+.km-auth-error { color: #8f2424; font-size: 15px; line-height: 1.5; padding: 14px 16px; border: 1px solid #edbaba; border-radius: 12px; background: #fff0f0; margin: 0 0 16px; overflow-wrap: anywhere; }
 .km-auth-error:empty { display: none; }
 .km-auth-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .km-auth-links button { border: 0; background: none; color: var(--primary); font: inherit; font-size: 12px; cursor: pointer; }
@@ -2020,8 +2020,8 @@ body.map-page-open { overflow: hidden; }
 .auth-modal .km-email-form .btn-primary { margin-top: 13px; min-height: 48px; border-radius: 12px; }
 .auth-modal .km-auth-links { justify-content: flex-end; margin-top: 8px; }
 .auth-modal .km-auth-links button { font-size: 12px; font-weight: 600; padding: 4px 0; }
-.auth-modal .km-auth-error { margin-top: 10px; }
-.auth-modal .km-auth-error.success { color: #217347; }
+.auth-modal .km-auth-error { margin-top: 0; }
+.auth-modal .km-auth-error.success { color: #175c39; background: #edf8f0; border-color: #acd5b8; }
 @media (max-width: 480px) {
   .auth-modal .auth-head { padding: 22px 22px 0; }
   .auth-modal .modal-content { padding: 20px 22px 24px; }
@@ -9153,6 +9153,7 @@ function openAuth(mode = 'signin') {
       <div class="modal-sub">${signup ? (ru?'Откройте бесплатные места и сохраните понравившиеся.':'Discover free places and save your favourites.') : (ru?'Войдите, чтобы продолжить путешествие.':'Sign in to continue exploring.')}</div>
     </div>
     <div class="modal-content">
+      <div id="auth-error" class="km-auth-error" role="alert" aria-live="polite" tabindex="-1"></div>
       <div class="auth-mode-tabs" role="tablist" aria-label="${ru?'Режим входа':'Sign-in mode'}">
         <button type="button" role="tab" aria-selected="${!signup}" class="${!signup?'active':''}" onclick="openAuth('signin')">${ru?'Вход':'Sign in'}</button>
         <button type="button" role="tab" aria-selected="${signup}" class="${signup?'active':''}" onclick="openAuth('signup')">${ru?'Регистрация':'Register'}</button>
@@ -9164,11 +9165,11 @@ function openAuth(mode = 'signin') {
           <label for="auth-email">${ru?'Электронная почта':'Email address'}</label>
           <input id="auth-email" type="email" autocomplete="email" placeholder="name@example.com" required>
           <label for="auth-password">${ru?'Пароль':'Password'}</label>
-          <input id="auth-password" type="password" autocomplete="${signup?'new-password':'current-password'}" placeholder="${signup ? (ru?'Придумайте пароль от 6 символов':'Create a password (6+ characters)') : (ru?'Введите пароль':'Enter your password')}" minlength="6" required>
-          ${signup ? '' : `<div class="km-auth-links"><button type="button" onclick="resetEmailPassword()">${ru?'Забыли пароль?':'Forgot password?'}</button></div>`}
+          <input id="auth-password" type="password" autocomplete="${signup?'new-password':'current-password'}" placeholder="${signup ? (ru?'Придумайте пароль от 6 символов':'Create a password (6+ characters)') : (ru?'Введите пароль':'Enter your password')}" minlength="${signup ? 6 : 1}" required>
+          ${signup ? '' : `<div class="km-auth-links"><button type="button" id="auth-reset-button" onclick="resetEmailPassword()">${ru?'Забыли пароль?':'Forgot password?'}</button></div>`}
           <button class="btn-primary" type="submit">${signup ? (ru?'Зарегистрироваться':'Create account') : (ru?'Войти в аккаунт':'Sign in')}</button>
         </form>
-        <div id="auth-error" class="km-auth-error" role="alert" aria-live="polite"></div>
+
       </div>
     </div>
   `;
@@ -9176,11 +9177,15 @@ function openAuth(mode = 'signin') {
   renderGoogleButton($('#auth-google-btn'));
 }
 
-function showAuthError(message) {
-  const target = $('#auth-error');
-  if (target) { target.classList.remove('success'); target.textContent = message; }
-  else toast(message);
+function showAuthNotice(message, success = false, target = $('#auth-error')) {
+  if (target?.isConnected) {
+    target.classList.toggle('success', success);
+    target.setAttribute('role', success ? 'status' : 'alert');
+    target.textContent = message;
+    if (message) { target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); target.focus({ preventScroll: true }); }
+  } else if (!target && message) toast(message);
 }
+function showAuthError(message) { showAuthNotice(message); }
 
 function authErrorMessage(error) {
   const ru = STATE.lang === 'ru';
@@ -9188,8 +9193,10 @@ function authErrorMessage(error) {
     'auth/invalid-email': ru?'Проверьте адрес почты.':'Check the email address.',
     'auth/email-already-in-use': ru?'Такая почта уже зарегистрирована. Попробуйте войти.':'This email is already registered. Try signing in.',
     'auth/weak-password': ru?'Пароль должен быть не короче 6 символов.':'The password must be at least 6 characters.',
-    'auth/invalid-credential': ru?'Неверная почта или пароль.':'Incorrect email or password.',
-    'auth/wrong-password': ru?'Неверная почта или пароль.':'Incorrect email or password.',
+    'auth/invalid-credential': ru?'Почта или пароль не подошли. Проверьте их и попробуйте ещё раз 🩷':'That email or password didn’t match. Check them and try again 🩷',
+    'auth/user-not-found': ru?'Почта или пароль не подошли. Проверьте их и попробуйте ещё раз 🩷':'That email or password didn’t match. Check them and try again 🩷',
+    'auth/invalid-login-credentials': ru?'Почта или пароль не подошли. Проверьте их и попробуйте ещё раз 🩷':'That email or password didn’t match. Check them and try again 🩷',
+    'auth/wrong-password': ru?'Почта или пароль не подошли. Проверьте их и попробуйте ещё раз 🩷':'That email or password didn’t match. Check them and try again 🩷',
     'auth/too-many-requests': ru?'Слишком много попыток. Попробуйте позже.':'Too many attempts. Try again later.',
     'auth/popup-closed-by-user': ru?'Вход через Google отменён.':'Google sign-in was cancelled.',
     'auth/popup-blocked': ru?'Браузер заблокировал окно Google. Разрешите всплывающие окна и повторите.':'Allow pop-ups and try again.',
@@ -9227,18 +9234,26 @@ async function submitEmailAuth(event, mode) {
 }
 
 async function resetEmailPassword() {
-  const email = $('#auth-email')?.value.trim();
-  if (!email) return showAuthError(STATE.lang==='ru'?'Сначала введите адрес почты.':'Enter your email first.');
-  if (!KM_AUTH) return showAuthError(STATE.lang==='ru'?'Вход временно недоступен. Обновите страницу.':'Sign-in is temporarily unavailable. Reload the page.');
+  const input = $('#auth-email');
+  const email = input?.value.trim();
+  const ru = STATE.lang === 'ru';
+  if (!email) return showAuthError(ru?'Сначала введите адрес почты.':'Enter your email first.');
+  if (!input.checkValidity()) return showAuthError(ru?'Проверьте адрес почты.':'Check the email address.');
+  if (!KM_AUTH) return showAuthError(ru?'Вход временно недоступен. Обновите страницу.':'Sign-in is temporarily unavailable. Reload the page.');
+  const target = $('#auth-error');
+  const button = $('#auth-reset-button');
+  if (button?.disabled) return;
+  if (button) button.disabled = true;
+  const sent = ru?'Проверьте почту 🩷 Если эта почта зарегистрирована, письмо для восстановления пароля отправлено. Откройте почту и перейдите по ссылке в письме. Если его нет, проверьте папку «Спам».':'Check your inbox 🩷 If this email is registered, a password reset email has been sent. Open your inbox and follow the link. If it is missing, check your spam folder.';
+  showAuthNotice(ru?'Отправляем письмо…':'Sending email…', true, target);
   try {
     await KM_AUTH.sendPasswordResetEmail(email);
-    const target = $('#auth-error');
-    if (target) {
-      target.classList.add('success');
-      target.textContent = STATE.lang==='ru'?'Если адрес зарегистрирован, письмо для сброса отправлено. Проверьте также «Спам».':'If the address is registered, a reset email has been sent. Check your spam folder too.';
-    }
+    showAuthNotice(sent, true, target);
   } catch (error) {
-    showAuthError(authErrorMessage(error));
+    if (error?.code === 'auth/user-not-found') showAuthNotice(sent, true, target);
+    else showAuthNotice(authErrorMessage(error), false, target);
+  } finally {
+    if (button?.isConnected) button.disabled = false;
   }
 }
 
