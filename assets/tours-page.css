@@ -123,3 +123,15 @@
   .tours-v2 .tv-details-footer { align-items: stretch; flex-direction: column; }
   .tours-v2 .tv-details-footer a { text-align: center; }
 }
+
+/* Keep tour highlights separate from the price and action on every card. */
+.tours-v2 .tv-preview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; min-width: 0; }
+.tours-v2 .tv-preview-actions .tv-highlights { flex: 1 1 100%; min-width: 0; margin: 0; }
+.tours-v2 .tv-preview-actions .tv-price-row { flex: 1 1 220px; min-width: 0; margin: 0; gap: 10px 14px; }
+.tours-v2 .tv-preview-actions .tv-details-toggle { flex: 0 1 auto; max-width: 100%; margin: 0; margin-left: auto; white-space: normal; overflow-wrap: anywhere; }
+.tours-v2 .tv-preview-actions .tv-highlights span,
+.tours-v2 .tv-preview-actions .tv-seat-status,
+.tours-v2 .tv-preview-actions .tv-from-price { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .tours-v2 .tv-preview-actions .tv-details-toggle { flex-basis: 100%; width: 100%; }
+}
